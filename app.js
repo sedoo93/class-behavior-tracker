@@ -1,5 +1,5 @@
 // ==========================================
-// SUPABASE CONNECTION
+// SUPABASE
 // ==========================================
 
 const SUPABASE_URL =
@@ -18,37 +18,25 @@ const supabaseClient = window.supabase.createClient(
 // LOGIN DATA
 // ==========================================
 
-const ADMIN_USERNAME = "Mr. Sayed Ramadan";
-const ADMIN_PASSWORD = "Sara9112**";
+const ADMIN_EMAIL = "elsayedramadan500@gmail.com";
+const ADMIN_PASSWORD = "Sara9112";
 
 
 // ==========================================
-// PAGE ELEMENTS
+// ELEMENTS
 // ==========================================
 
-const loginScreen =
-  document.getElementById("login-screen");
+const loginScreen = document.getElementById("login-screen");
+const dashboard = document.getElementById("dashboard");
 
-const dashboard =
-  document.getElementById("dashboard");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
 
-const usernameInput =
-  document.getElementById("email");
+const loginBtn = document.getElementById("login-btn");
+const logoutBtn = document.getElementById("logout-btn");
 
-const passwordInput =
-  document.getElementById("password");
-
-const loginBtn =
-  document.getElementById("login-btn");
-
-const logoutBtn =
-  document.getElementById("logout-btn");
-
-const loginMessage =
-  document.getElementById("login-message");
-
-const teacherEmail =
-  document.getElementById("teacher-email");
+const loginMessage = document.getElementById("login-message");
+const teacherEmail = document.getElementById("teacher-email");
 
 
 // ==========================================
@@ -62,13 +50,13 @@ function showDashboard() {
 
   if (teacherEmail) {
     teacherEmail.textContent =
-      "Welcome, " + ADMIN_USERNAME;
+      "Logged in as: " + ADMIN_EMAIL;
   }
 }
 
 
 // ==========================================
-// SHOW LOGIN SCREEN
+// SHOW LOGIN
 // ==========================================
 
 function showLogin() {
@@ -83,59 +71,50 @@ function showLogin() {
 
 
 // ==========================================
-// LOGIN
+// LOGIN FUNCTION
 // ==========================================
 
 function login() {
 
-  const enteredUsername =
-    usernameInput.value.trim();
+  const enteredEmail =
+    emailInput.value.trim().toLowerCase();
 
   const enteredPassword =
     passwordInput.value;
 
+
   loginMessage.textContent = "";
 
 
-  // Check empty fields
-
-  if (!enteredUsername || !enteredPassword) {
+  // Empty fields
+  if (!enteredEmail || !enteredPassword) {
 
     loginMessage.textContent =
-      "Please enter your username and password.";
+      "Please enter your email and password.";
 
     return;
   }
 
 
-  // Check login data
-
+  // Check login
   if (
-    enteredUsername === ADMIN_USERNAME &&
+    enteredEmail === ADMIN_EMAIL.toLowerCase() &&
     enteredPassword === ADMIN_PASSWORD
   ) {
-
-    // Save login for this browser session
 
     sessionStorage.setItem(
       "teacherLoggedIn",
       "true"
     );
 
-
-    // Clear password
-
     passwordInput.value = "";
-
-
-    // Open dashboard
 
     showDashboard();
 
   } else {
 
     loginMessage.textContent =
-      "Incorrect username or password.";
+      "Incorrect email or password.";
 
   }
 }
@@ -152,10 +131,10 @@ loginBtn.addEventListener(
 
 
 // ==========================================
-// PRESS ENTER TO LOGIN
+// ENTER KEY
 // ==========================================
 
-usernameInput.addEventListener(
+emailInput.addEventListener(
   "keydown",
   function(event) {
 
@@ -191,23 +170,20 @@ logoutBtn.addEventListener(
       "teacherLoggedIn"
     );
 
-    usernameInput.value = "";
+    emailInput.value = "";
     passwordInput.value = "";
 
     showLogin();
-
   }
 );
 
 
 // ==========================================
-// CHECK LOGIN WHEN PAGE LOADS
+// CHECK LOGIN ON PAGE LOAD
 // ==========================================
 
 if (
-  sessionStorage.getItem(
-    "teacherLoggedIn"
-  ) === "true"
+  sessionStorage.getItem("teacherLoggedIn") === "true"
 ) {
 
   showDashboard();
@@ -215,7 +191,6 @@ if (
 } else {
 
   showLogin();
-
 }
 
 
@@ -224,83 +199,58 @@ if (
 // ==========================================
 
 const classButtons =
-  document.querySelectorAll(
-    ".class-card"
+  document.querySelectorAll(".class-card");
+
+
+classButtons.forEach(function(button) {
+
+  button.addEventListener(
+    "click",
+    function() {
+
+      const selectedClass =
+        button.dataset.class;
+
+      alert(
+        "Selected Class: " + selectedClass
+      );
+    }
   );
 
-
-classButtons.forEach(
-  function(button) {
-
-    button.addEventListener(
-      "click",
-      function() {
-
-        const selectedClass =
-          button.dataset.class;
-
-        console.log(
-          "Selected class:",
-          selectedClass
-        );
-
-        alert(
-          "Selected Class: " +
-          selectedClass
-        );
-
-      }
-    );
-
-  }
-);
+});
 
 
 // ==========================================
-// TEST SUPABASE CONNECTION
+// TEST SUPABASE
 // ==========================================
 
 async function testConnection() {
 
-  try {
-
-    const { data, error } =
-      await supabaseClient
-        .from("students")
-        .select("*")
-        .limit(5);
+  const { data, error } =
+    await supabaseClient
+      .from("students")
+      .select("*")
+      .limit(5);
 
 
-    if (error) {
-
-      console.error(
-        "Supabase error:",
-        error
-      );
-
-      return;
-    }
-
-
-    console.log(
-      "Supabase connected successfully."
-    );
-
-    console.log(
-      "Students loaded:",
-      data
-    );
-
-
-  } catch (error) {
+  if (error) {
 
     console.error(
-      "Connection error:",
+      "Supabase error:",
       error
     );
 
-  }
+  } else {
 
+    console.log(
+      "Supabase connected successfully"
+    );
+
+    console.log(
+      "Students:",
+      data
+    );
+  }
 }
 
 
