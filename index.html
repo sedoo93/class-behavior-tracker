@@ -7,14 +7,9 @@
 
   <title>Class Behavior Tracker</title>
 
-  <link rel="stylesheet" href="style.css?v=40">
+  <link rel="stylesheet" href="style.css">
 
   <style>
-
-    /* =========================
-       ACTION BUTTONS
-    ========================= */
-
     .history-btn {
       background: #f3e8ff;
       color: #7e22ce;
@@ -25,17 +20,12 @@
       color: #1d4ed8;
     }
 
-
-    /* =========================
-       REPORT + HISTORY SCREENS
-    ========================= */
-
-    #report-screen,
-    #history-screen {
-      background: rgba(255,255,255,.96);
+    #history-screen,
+    #report-screen {
+      background: rgba(255, 255, 255, 0.96);
       padding: 30px;
       border-radius: 20px;
-      box-shadow: 0 10px 35px rgba(0,0,0,.12);
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.12);
     }
 
     .screen-top {
@@ -59,8 +49,8 @@
       font-weight: bold;
     }
 
-    #report-back-btn,
-    #history-back-btn {
+    #history-back-btn,
+    #report-back-btn {
       background: #e2e8f0;
     }
 
@@ -69,10 +59,19 @@
       color: white;
     }
 
+    .history-student-info,
+    .report-student-info {
+      background: #f8fafc;
+      padding: 18px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
 
-    /* =========================
-       REPORT
-    ========================= */
+    .history-student-info p,
+    .report-student-info p {
+      margin: 7px 0;
+      font-size: 17px;
+    }
 
     .report-title {
       text-align: center;
@@ -85,23 +84,9 @@
       color: #173f91;
     }
 
-    .report-student-info,
-    .history-student-info {
-      background: #f8fafc;
-      border-radius: 12px;
-      padding: 18px;
-      margin-bottom: 20px;
-    }
-
-    .report-student-info p,
-    .history-student-info p {
-      margin: 7px 0;
-      font-size: 17px;
-    }
-
     .report-summary {
       display: grid;
-      grid-template-columns: repeat(3,1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 15px;
       margin-bottom: 25px;
     }
@@ -132,11 +117,6 @@
       background: #dbeafe;
       color: #1d4ed8;
     }
-
-
-    /* =========================
-       TABLES
-    ========================= */
 
     .table-wrap {
       overflow-x: auto;
@@ -172,12 +152,7 @@
 
     .forgiven-row {
       background: #f1f5f9;
-      opacity: .7;
-    }
-
-    .forgiven-text {
-      color: #64748b;
-      font-weight: bold;
+      opacity: 0.7;
     }
 
     .forgive-btn {
@@ -199,8 +174,8 @@
       font-weight: bold;
     }
 
-    #report-status,
-    #history-status {
+    #history-status,
+    #report-status {
       text-align: center;
       padding: 20px;
       font-weight: bold;
@@ -212,13 +187,7 @@
       font-size: 14px;
     }
 
-
-    /* =========================
-       MOBILE
-    ========================= */
-
     @media (max-width: 750px) {
-
       .report-summary {
         grid-template-columns: 1fr;
       }
@@ -235,16 +204,9 @@
       .screen-actions button {
         flex: 1;
       }
-
     }
 
-
-    /* =========================
-       PRINT / PDF
-    ========================= */
-
     @media print {
-
       @page {
         size: A4;
         margin: 15mm;
@@ -284,14 +246,12 @@
       }
 
       .report-summary {
-        grid-template-columns: repeat(3,1fr);
+        grid-template-columns: repeat(3, 1fr);
       }
-
     }
-
   </style>
-</head>
 
+</head>
 
 <body>
 
@@ -301,7 +261,6 @@
     <h1>Class Behavior Tracker</h1>
     <p>Student Behavior & Performance Management</p>
   </header>
-
 
   <main>
 
@@ -343,13 +302,9 @@
       <div class="dashboard-header">
 
         <div>
-
           <h2>Teacher Dashboard</h2>
-
           <p id="teacher-email"></p>
-
           <p>Select a class to start.</p>
-
         </div>
 
         <button type="button" id="logout-btn">
@@ -366,10 +321,8 @@
           class="class-card"
           data-class="7/A"
         >
-
           <strong>7/A</strong>
           <span>18 Students</span>
-
         </button>
 
 
@@ -378,10 +331,8 @@
           class="class-card"
           data-class="7/B"
         >
-
           <strong>7/B</strong>
           <span>24 Students</span>
-
         </button>
 
       </div>
@@ -389,7 +340,7 @@
     </div>
 
 
-    <!-- CLASS -->
+    <!-- CLASS SCREEN -->
 
     <div id="class-screen" class="hidden">
 
@@ -400,11 +351,8 @@
         </button>
 
         <div>
-
           <h2 id="class-title">Class</h2>
-
           <p id="class-count"></p>
-
         </div>
 
       </div>
@@ -414,7 +362,7 @@
     </div>
 
 
-    <!-- HISTORY -->
+    <!-- HISTORY SCREEN -->
 
     <div id="history-screen" class="hidden">
 
@@ -422,6 +370,7 @@
 
         <div>
           <h2>🕘 Student History</h2>
+          <p>Complete student behavior history</p>
         </div>
 
         <div class="screen-actions">
@@ -452,7 +401,6 @@
 
       </div>
 
-
       <p id="history-status"></p>
 
 
@@ -464,7 +412,6 @@
         <table class="data-table">
 
           <thead>
-
             <tr>
               <th>Date</th>
               <th>Time</th>
@@ -473,7 +420,6 @@
               <th>Points</th>
               <th>Status / Action</th>
             </tr>
-
           </thead>
 
           <tbody id="history-table-body"></tbody>
@@ -485,7 +431,7 @@
     </div>
 
 
-    <!-- REPORT -->
+    <!-- REPORT SCREEN -->
 
     <div id="report-screen" class="hidden">
 
@@ -595,7 +541,6 @@
         <table class="data-table">
 
           <thead>
-
             <tr>
               <th>Date</th>
               <th>Time</th>
@@ -603,7 +548,6 @@
               <th>Details</th>
               <th>Points</th>
             </tr>
-
           </thead>
 
           <tbody id="report-table-body"></tbody>
@@ -627,10 +571,15 @@
 </div>
 
 
+<!-- SUPABASE -->
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script src="./app.js?v=60"></script>
+
+<!-- APP.JS -->
+
+<script src="app.js"></script>
+
 
 </body>
-
 </html>
