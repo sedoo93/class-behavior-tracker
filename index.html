@@ -1,193 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Class Behavior Tracker</title>
 
-  <link rel="stylesheet" href="style.css?v=20">
+  <link rel="stylesheet" href="style.css?v=30">
 </head>
 
 <body>
 
-  <div class="app">
+<div class="app">
 
-    <!-- =========================
-         HEADER
-    ========================== -->
+  <header>
+    <h1>Class Behavior Tracker</h1>
+    <p>Student Behavior & Performance Management</p>
+  </header>
 
-    <header>
+  <main>
 
-      <h1>Class Behavior Tracker</h1>
+    <!-- LOGIN -->
+    <div id="login-screen" class="card">
 
-      <p>
-        Student Behavior & Performance Management
-      </p>
+      <h2>Teacher Login</h2>
 
-    </header>
+      <label for="email">Email</label>
+      <input
+        type="email"
+        id="email"
+        placeholder="Enter your email"
+      >
 
+      <label for="password">Password</label>
+      <input
+        type="password"
+        id="password"
+        placeholder="Enter your password"
+      >
 
-    <main>
+      <button type="button" id="login-btn">
+        Login
+      </button>
 
-      <!-- =========================
-           LOGIN SCREEN
-      ========================== -->
+      <p id="login-message"></p>
 
-      <div id="login-screen" class="card">
-
-        <h2>Teacher Login</h2>
-
-
-        <label for="email">
-          Email
-        </label>
-
-        <input
-          type="email"
-          id="email"
-          placeholder="Enter your email"
-          autocomplete="email"
-        >
+    </div>
 
 
-        <label for="password">
-          Password
-        </label>
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="hidden">
 
-        <input
-          type="password"
-          id="password"
-          placeholder="Enter your password"
-          autocomplete="current-password"
-        >
+      <div class="dashboard-header">
 
+        <div>
+          <h2>Teacher Dashboard</h2>
+          <p id="teacher-email"></p>
+          <p>Select a class to start.</p>
+        </div>
+
+        <button type="button" id="logout-btn">
+          Logout
+        </button>
+
+      </div>
+
+
+      <div class="class-grid">
 
         <button
           type="button"
-          id="login-btn"
+          class="class-card"
+          data-class="7/A"
         >
-          Login
+          <strong>7/A</strong>
+          <span>18 Students</span>
         </button>
 
-
-        <p id="login-message"></p>
+        <button
+          type="button"
+          class="class-card"
+          data-class="7/B"
+        >
+          <strong>7/B</strong>
+          <span>24 Students</span>
+        </button>
 
       </div>
 
-
-      <!-- =========================
-           DASHBOARD
-      ========================== -->
-
-      <div
-        id="dashboard"
-        class="hidden"
-      >
-
-        <div class="dashboard-header">
-
-          <div>
-
-            <h2>
-              Teacher Dashboard
-            </h2>
-
-            <p id="teacher-email"></p>
-
-            <p>
-              Select a class to start.
-            </p>
-
-          </div>
+    </div>
 
 
-          <button
-            type="button"
-            id="logout-btn"
-          >
-            Logout
-          </button>
+    <!-- CLASS SCREEN -->
+    <div id="class-screen" class="hidden">
 
-        </div>
+      <div class="class-header">
 
+        <button
+          type="button"
+          id="back-btn"
+        >
+          ← Back to Classes
+        </button>
 
-        <!-- =========================
-             CLASSES
-        ========================== -->
-
-        <div class="class-grid">
-
-
-          <!-- CLASS 7/A -->
-
-          <button
-            type="button"
-            class="class-card"
-            data-class="7/A"
-          >
-
-            <strong>
-              7/A
-            </strong>
-
-            <span>
-              20 Students
-            </span>
-
-          </button>
-
-
-          <!-- CLASS 7/B -->
-
-          <button
-            type="button"
-            class="class-card"
-            data-class="7/B"
-          >
-
-            <strong>
-              7/B
-            </strong>
-
-            <span>
-              24 Students
-            </span>
-
-          </button>
-
-
+        <div>
+          <h2 id="class-title">Class</h2>
+          <p id="class-count"></p>
         </div>
 
       </div>
 
-    </main>
 
-  </div>
+      <div id="students-list"></div>
 
+    </div>
 
-  <!-- =========================
-       SUPABASE
-  ========================== -->
+  </main>
 
-  <script
-    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-  </script>
+</div>
 
 
-  <!-- =========================
-       APPLICATION
-       v=20 forces browser to load
-       the newest app.js
-  ========================== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <script src="./app.js?v=20"></script>
+<script src="./app.js?v=30"></script>
 
 </body>
-
 </html>
