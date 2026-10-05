@@ -1,251 +1,576 @@
+/* ==========================================
+   GLOBAL
+========================================== */
+
 * {
   box-sizing: border-box;
 }
 
+html {
+  min-height: 100%;
+}
+
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f4f7fb;
+  min-height: 100vh;
+
+  font-family: Arial, Helvetica, sans-serif;
+
   color: #14213d;
+
+  background-image:
+    linear-gradient(
+      rgba(244, 247, 251, 0.72),
+      rgba(244, 247, 251, 0.82)
+    ),
+    url("./classroom-bg.png");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
+
+
+/* ==========================================
+   MAIN APP
+========================================== */
 
 .app {
   max-width: 1200px;
-  margin: auto;
+  margin: 0 auto;
   padding: 30px;
+  min-height: 100vh;
 }
+
+
+/* ==========================================
+   HEADER
+========================================== */
 
 header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 35px;
 }
 
 header h1 {
-  margin-bottom: 8px;
+  margin: 0 0 8px;
+
   color: #173f91;
+
   font-size: 40px;
+
+  text-shadow:
+    0 2px 4px rgba(255,255,255,.9);
 }
 
 header p {
-  color: #64748b;
+  margin: 0;
+
+  color: #334155;
+
   font-size: 18px;
+
+  font-weight: 600;
 }
+
+
+/* ==========================================
+   HIDDEN
+========================================== */
 
 .hidden {
   display: none !important;
 }
 
 
-/* LOGIN */
+/* ==========================================
+   LOGIN
+========================================== */
 
 .card {
   max-width: 560px;
-  margin: 40px auto;
-  background: white;
+
+  margin: 45px auto;
+
   padding: 38px;
+
+  background:
+    rgba(255,255,255,0.94);
+
   border-radius: 20px;
-  box-shadow: 0 12px 35px rgba(0,0,0,.08);
+
+  box-shadow:
+    0 15px 45px rgba(0,0,0,.18);
+
+  backdrop-filter: blur(6px);
 }
 
 .card h2 {
   text-align: center;
+
   margin-top: 0;
   margin-bottom: 30px;
+
+  font-size: 30px;
 }
+
 
 label {
   display: block;
+
   margin-top: 18px;
   margin-bottom: 8px;
+
   font-weight: bold;
 }
+
 
 input {
   width: 100%;
+
   padding: 16px;
-  border: 1px solid #cbd5e1;
+
+  border:
+    1px solid #cbd5e1;
+
   border-radius: 10px;
+
+  background:
+    rgba(255,255,255,.95);
+
   font-size: 17px;
 }
 
+
 #login-btn {
   width: 100%;
+
   margin-top: 28px;
+
   padding: 16px;
+
   border: none;
+
   border-radius: 10px;
+
   background: #2563eb;
+
   color: white;
+
   font-size: 18px;
+
   font-weight: bold;
+
   cursor: pointer;
 }
+
+
+#login-btn:hover {
+  background: #1d4ed8;
+}
+
 
 #login-message {
   text-align: center;
+
   color: #dc2626;
+
+  font-weight: bold;
 }
 
 
-/* DASHBOARD */
+/* ==========================================
+   DASHBOARD
+========================================== */
+
+#dashboard {
+
+  padding: 25px;
+
+  border-radius: 20px;
+
+  background:
+    rgba(244,247,251,.80);
+
+  backdrop-filter: blur(5px);
+
+  box-shadow:
+    0 10px 35px rgba(0,0,0,.12);
+}
+
 
 .dashboard-header {
   display: flex;
-  justify-content: space-between;
+
+  justify-content:
+    space-between;
+
   align-items: center;
+
   margin-bottom: 35px;
 }
 
+
+.dashboard-header h2 {
+  margin-bottom: 5px;
+
+  font-size: 30px;
+}
+
+
+.dashboard-header p {
+  margin: 3px 0;
+}
+
+
 #logout-btn {
   border: none;
+
   background: #e2e8f0;
+
   padding: 14px 24px;
+
   border-radius: 10px;
+
   font-size: 16px;
+
   cursor: pointer;
 }
+
+
+#logout-btn:hover {
+  background: #cbd5e1;
+}
+
+
+/* ==========================================
+   CLASS CARDS
+========================================== */
 
 .class-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+
+  grid-template-columns:
+    repeat(2, 1fr);
+
   gap: 24px;
 }
 
+
 .class-card {
   min-height: 210px;
-  background: white;
-  border: 2px solid transparent;
-  border-radius: 14px;
+
+  background:
+    rgba(255,255,255,.94);
+
+  border:
+    2px solid transparent;
+
+  border-radius: 15px;
+
   cursor: pointer;
-  box-shadow: 0 8px 25px rgba(0,0,0,.06);
+
+  box-shadow:
+    0 8px 25px rgba(0,0,0,.10);
+
+  transition:
+    .2s ease;
 }
 
+
 .class-card:hover {
+
   border-color: #2563eb;
-  transform: translateY(-3px);
+
+  transform:
+    translateY(-4px);
+
+  box-shadow:
+    0 12px 30px rgba(0,0,0,.16);
 }
+
 
 .class-card strong {
   display: block;
+
   font-size: 42px;
+
   color: #173f91;
+
   margin-bottom: 12px;
 }
 
+
 .class-card span {
   font-size: 19px;
+
   color: #64748b;
 }
 
 
-/* CLASS PAGE */
+/* ==========================================
+   CLASS SCREEN
+========================================== */
+
+#class-screen {
+
+  padding: 25px;
+
+  border-radius: 20px;
+
+  background:
+    rgba(244,247,251,.86);
+
+  backdrop-filter: blur(5px);
+}
+
 
 .class-header {
   display: flex;
+
   align-items: center;
+
   gap: 25px;
+
   margin-bottom: 25px;
 }
 
+
+.class-header h2 {
+  margin: 0 0 5px;
+
+  font-size: 30px;
+}
+
+
+.class-header p {
+  margin: 0;
+
+  color: #64748b;
+}
+
+
 #back-btn {
   border: none;
+
   background: #e2e8f0;
+
   padding: 13px 18px;
+
   border-radius: 9px;
+
   cursor: pointer;
+
   font-weight: bold;
 }
+
+
+#back-btn:hover {
+  background: #cbd5e1;
+}
+
+
+/* ==========================================
+   STUDENTS
+========================================== */
 
 #students-list {
   display: flex;
+
   flex-direction: column;
+
   gap: 12px;
 }
 
+
 .student-card {
-  background: white;
-  border-radius: 12px;
+
+  background:
+    rgba(255,255,255,.96);
+
+  border-radius: 13px;
+
   padding: 18px;
+
   display: grid;
-  grid-template-columns: 45px 1fr auto;
+
+  grid-template-columns:
+    45px 1fr auto;
+
   align-items: center;
+
   gap: 15px;
-  box-shadow: 0 4px 15px rgba(0,0,0,.05);
+
+  box-shadow:
+    0 4px 15px rgba(0,0,0,.08);
 }
+
 
 .student-number {
-  width: 35px;
-  height: 35px;
+
+  width: 38px;
+  height: 38px;
+
   border-radius: 50%;
+
   background: #e8efff;
+
   color: #173f91;
+
   display: flex;
+
   align-items: center;
+
   justify-content: center;
+
   font-weight: bold;
 }
+
 
 .student-name {
+
   font-size: 17px;
-  font-weight: 600;
+
+  font-weight: 700;
 }
+
+
+/* ==========================================
+   STUDENT BUTTONS
+========================================== */
 
 .student-actions {
+
   display: flex;
-  gap: 8px;
+
+  gap: 9px;
 }
+
 
 .student-actions button {
+
   border: none;
-  padding: 10px 13px;
-  border-radius: 8px;
+
+  padding: 11px 14px;
+
+  border-radius: 9px;
+
   cursor: pointer;
+
   font-weight: bold;
+
+  transition:
+    transform .15s ease;
 }
 
+
+.student-actions button:hover {
+
+  transform:
+    translateY(-2px);
+}
+
+
 .positive-btn {
+
   background: #dcfce7;
+
   color: #166534;
 }
 
+
 .negative-btn {
+
   background: #fee2e2;
+
   color: #991b1b;
 }
 
+
 .homework-btn {
+
   background: #fef3c7;
+
   color: #92400e;
 }
 
 
-/* MOBILE */
+/* ==========================================
+   MOBILE
+========================================== */
 
 @media (max-width: 750px) {
 
-  .app {
-    padding: 18px;
+  body {
+
+    background-attachment:
+      scroll;
+
   }
+
+
+  .app {
+
+    padding: 15px;
+
+  }
+
 
   header h1 {
-    font-size: 30px;
+
+    font-size: 29px;
+
   }
+
+
+  header p {
+
+    font-size: 15px;
+
+  }
+
+
+  .dashboard-header {
+
+    align-items:
+      flex-start;
+
+    gap: 15px;
+
+  }
+
 
   .class-grid {
-    grid-template-columns: 1fr;
+
+    grid-template-columns:
+      1fr;
+
   }
+
 
   .student-card {
-    grid-template-columns: 40px 1fr;
+
+    grid-template-columns:
+      40px 1fr;
+
   }
+
 
   .student-actions {
-    grid-column: 1 / -1;
+
+    grid-column:
+      1 / -1;
+
     margin-top: 8px;
+
   }
 
+
   .student-actions button {
+
     flex: 1;
+
   }
 
 }
