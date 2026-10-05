@@ -18,10 +18,8 @@ const supabaseClient = window.supabase.createClient(
 // LOGIN DATA
 // ==========================================
 
-const ADMIN_EMAIL = "test";
-const ADMIN_PASSWORD = "1234";
-
-alert("NEW APP.JS IS RUNNING");
+const ADMIN_EMAIL = "elsayedramadan500@gmail.com";
+const ADMIN_PASSWORD = "Sara9112*";
 
 
 // ==========================================
