@@ -11,15 +11,17 @@
 
   <title>Class Behavior Tracker</title>
 
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=20">
 </head>
-
 
 <body>
 
   <div class="app">
 
-    <!-- HEADER -->
+    <!-- =========================
+         HEADER
+    ========================== -->
+
     <header>
 
       <h1>Class Behavior Tracker</h1>
@@ -43,14 +45,14 @@
 
 
         <label for="email">
-          Username
+          Email
         </label>
 
         <input
-          type="text"
+          type="email"
           id="email"
-          placeholder="Enter your username"
-          autocomplete="username"
+          placeholder="Enter your email"
+          autocomplete="email"
         >
 
 
@@ -66,7 +68,10 @@
         >
 
 
-        <button id="login-btn">
+        <button
+          type="button"
+          id="login-btn"
+        >
           Login
         </button>
 
@@ -76,13 +81,14 @@
       </div>
 
 
-
       <!-- =========================
-           TEACHER DASHBOARD
+           DASHBOARD
       ========================== -->
 
-      <div id="dashboard" class="hidden">
-
+      <div
+        id="dashboard"
+        class="hidden"
+      >
 
         <div class="dashboard-header">
 
@@ -101,12 +107,14 @@
           </div>
 
 
-          <button id="logout-btn">
+          <button
+            type="button"
+            id="logout-btn"
+          >
             Logout
           </button>
 
         </div>
-
 
 
         <!-- =========================
@@ -119,6 +127,7 @@
           <!-- CLASS 7/A -->
 
           <button
+            type="button"
             class="class-card"
             data-class="7/A"
           >
@@ -134,10 +143,10 @@
           </button>
 
 
-
           <!-- CLASS 7/B -->
 
           <button
+            type="button"
             class="class-card"
             data-class="7/B"
           >
@@ -162,18 +171,22 @@
   </div>
 
 
-
-  <!-- SUPABASE -->
+  <!-- =========================
+       SUPABASE
+  ========================== -->
 
   <script
     src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
   </script>
 
 
-  <!-- APPLICATION -->
+  <!-- =========================
+       APPLICATION
+       v=20 forces browser to load
+       the newest app.js
+  ========================== -->
 
-  <script src="app.js?v=10"></script>
-
+  <script src="./app.js?v=20"></script>
 
 </body>
 
