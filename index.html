@@ -1,39 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>Class Behavior Tracker</title>
 
   <link rel="stylesheet" href="style.css">
 </head>
 
+
 <body>
 
   <div class="app">
 
+    <!-- HEADER -->
     <header>
+
       <h1>Class Behavior Tracker</h1>
-      <p>Student Behavior & Performance Management</p>
+
+      <p>
+        Student Behavior & Performance Management
+      </p>
+
     </header>
+
 
     <main>
 
-      <!-- LOGIN -->
+      <!-- =========================
+           LOGIN SCREEN
+      ========================== -->
+
       <div id="login-screen" class="card">
 
         <h2>Teacher Login</h2>
 
-        <label for="email">Email</label>
+
+        <label for="email">
+          Username
+        </label>
+
         <input
-          type="email"
+          type="text"
           id="email"
-          placeholder="Enter your email"
-          autocomplete="email"
+          placeholder="Enter your username"
+          autocomplete="username"
         >
 
-        <label for="password">Password</label>
+
+        <label for="password">
+          Password
+        </label>
+
         <input
           type="password"
           id="password"
@@ -41,25 +65,41 @@
           autocomplete="current-password"
         >
 
+
         <button id="login-btn">
           Login
         </button>
+
 
         <p id="login-message"></p>
 
       </div>
 
 
-      <!-- DASHBOARD -->
+
+      <!-- =========================
+           TEACHER DASHBOARD
+      ========================== -->
+
       <div id="dashboard" class="hidden">
+
 
         <div class="dashboard-header">
 
           <div>
-            <h2>Teacher Dashboard</h2>
+
+            <h2>
+              Teacher Dashboard
+            </h2>
+
             <p id="teacher-email"></p>
-            <p>Select a class to start.</p>
+
+            <p>
+              Select a class to start.
+            </p>
+
           </div>
+
 
           <button id="logout-btn">
             Logout
@@ -68,24 +108,50 @@
         </div>
 
 
+
+        <!-- =========================
+             CLASSES
+        ========================== -->
+
         <div class="class-grid">
+
+
+          <!-- CLASS 7/A -->
 
           <button
             class="class-card"
             data-class="7/A"
           >
-            <strong>7/A</strong>
-            <span>20 Students</span>
+
+            <strong>
+              7/A
+            </strong>
+
+            <span>
+              20 Students
+            </span>
+
           </button>
 
+
+
+          <!-- CLASS 7/B -->
 
           <button
             class="class-card"
             data-class="7/B"
           >
-            <strong>7/B</strong>
-            <span>24 Students</span>
+
+            <strong>
+              7/B
+            </strong>
+
+            <span>
+              24 Students
+            </span>
+
           </button>
+
 
         </div>
 
@@ -96,8 +162,19 @@
   </div>
 
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- SUPABASE -->
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+  </script>
+
+
+  <!-- APPLICATION -->
+
   <script src="app.js"></script>
 
+
 </body>
+
 </html>
