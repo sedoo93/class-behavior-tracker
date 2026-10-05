@@ -1,5 +1,11 @@
 // ==========================================
 // CLASS BEHAVIOR TRACKER
+// VERSION 40
+// ==========================================
+
+
+// ==========================================
+// SUPABASE
 // ==========================================
 
 const SUPABASE_URL =
@@ -15,7 +21,7 @@ const supabaseClient = window.supabase.createClient(
 
 
 // ==========================================
-// LOGIN
+// LOGIN DATA
 // ==========================================
 
 const ADMIN_EMAIL =
@@ -54,7 +60,6 @@ const students = {
 
   ],
 
-
   "7/B": [
 
     "WASEEM OMAR S LABANI",
@@ -85,6 +90,42 @@ const students = {
   ]
 
 };
+
+
+// ==========================================
+// VIOLATIONS
+// ==========================================
+
+const violations = [
+
+  "Missed homework",
+
+  "Didn't bring his sheet",
+
+  "Didn't bring his notebook",
+
+  "Eating in the session",
+
+  "Late for the session",
+
+  "Making noise",
+
+  "Other..."
+
+];
+
+
+// ==========================================
+// BONUS
+// ==========================================
+
+const bonuses = [
+
+  "Remaining quiet all the day",
+
+  "Participating actively"
+
+];
 
 
 // ==========================================
@@ -132,6 +173,13 @@ const studentsList =
 
 
 // ==========================================
+// CURRENT CLASS
+// ==========================================
+
+let currentClass = null;
+
+
+// ==========================================
 // LOGIN
 // ==========================================
 
@@ -170,31 +218,40 @@ function login() {
 }
 
 
-loginBtn.addEventListener(
-  "click",
-  login
-);
+if (loginBtn) {
+
+  loginBtn.addEventListener(
+    "click",
+    login
+  );
+
+}
 
 
-passwordInput.addEventListener(
-  "keydown",
-  function(event) {
+if (passwordInput) {
 
-    if (event.key === "Enter") {
-      login();
+  passwordInput.addEventListener(
+    "keydown",
+    function(event) {
+
+      if (event.key === "Enter") {
+        login();
+      }
+
     }
+  );
 
-  }
-);
+}
 
 
 // ==========================================
-// DASHBOARD
+// SHOW DASHBOARD
 // ==========================================
 
 function showDashboard() {
 
   loginScreen.classList.add("hidden");
+
   classScreen.classList.add("hidden");
 
   dashboard.classList.remove("hidden");
@@ -205,9 +262,14 @@ function showDashboard() {
 }
 
 
+// ==========================================
+// SHOW LOGIN
+// ==========================================
+
 function showLogin() {
 
   dashboard.classList.add("hidden");
+
   classScreen.classList.add("hidden");
 
   loginScreen.classList.remove("hidden");
@@ -221,11 +283,16 @@ function showLogin() {
 
 function openClass(className) {
 
+  currentClass = className;
+
   const classStudents =
     students[className];
 
+
   dashboard.classList.add("hidden");
+
   classScreen.classList.remove("hidden");
+
 
   classTitle.textContent =
     "Class " + className;
@@ -233,104 +300,16 @@ function openClass(className) {
   classCount.textContent =
     classStudents.length + " Students";
 
+
   studentsList.innerHTML = "";
 
 
   classStudents.forEach(
     function(studentName, index) {
 
-      const card =
-        document.createElement("div");
-
-      card.className =
-        "student-card";
-
-
-      const number =
-        document.createElement("div");
-
-      number.className =
-        "student-number";
-
-      number.textContent =
-        index + 1;
-
-
-      const name =
-        document.createElement("div");
-
-      name.className =
-        "student-name";
-
-      name.textContent =
-        studentName;
-
-
-      const actions =
-        document.createElement("div");
-
-      actions.className =
-        "student-actions";
-
-
-      const positiveBtn =
-        document.createElement("button");
-
-      positiveBtn.className =
-        "positive-btn";
-
-      positiveBtn.textContent =
-        "+ Positive";
-
-
-      const behaviorBtn =
-        document.createElement("button");
-
-      behaviorBtn.className =
-        "negative-btn";
-
-      behaviorBtn.textContent =
-        "− Behavior";
-
-
-      const homeworkBtn =
-        document.createElement("button");
-
-      homeworkBtn.className =
-        "homework-btn";
-
-      homeworkBtn.textContent =
-        "Homework";
-
-
-      actions.appendChild(
-        positiveBtn
-      );
-
-      actions.appendChild(
-        behaviorBtn
-      );
-
-      actions.appendChild(
-        homeworkBtn
-      );
-
-
-      card.appendChild(
-        number
-      );
-
-      card.appendChild(
-        name
-      );
-
-      card.appendChild(
-        actions
-      );
-
-
-      studentsList.appendChild(
-        card
+      createStudentCard(
+        studentName,
+        index
       );
 
     }
@@ -340,60 +319,490 @@ function openClass(className) {
 
 
 // ==========================================
+// CREATE STUDENT CARD
+// ==========================================
+
+function createStudentCard(
+  studentName,
+  index
+) {
+
+  const card =
+    document.createElement("div");
+
+  card.className =
+    "student-card";
+
+
+  // NUMBER
+
+  const number =
+    document.createElement("div");
+
+  number.className =
+    "student-number";
+
+  number.textContent =
+    index + 1;
+
+
+  // NAME
+
+  const name =
+    document.createElement("div");
+
+  name.className =
+    "student-name";
+
+  name.textContent =
+    studentName;
+
+
+  // ACTIONS
+
+  const actions =
+    document.createElement("div");
+
+  actions.className =
+    "student-actions";
+
+
+  // VIOLATION BUTTON
+
+  const violationButton =
+    document.createElement("button");
+
+  violationButton.className =
+    "negative-btn";
+
+  violationButton.textContent =
+    "⚠ Violation";
+
+
+  violationButton.addEventListener(
+    "click",
+    function() {
+
+      showViolationMenu(
+        studentName
+      );
+
+    }
+  );
+
+
+  // BONUS BUTTON
+
+  const bonusButton =
+    document.createElement("button");
+
+  bonusButton.className =
+    "positive-btn";
+
+  bonusButton.textContent =
+    "★ Bonus";
+
+
+  bonusButton.addEventListener(
+    "click",
+    function() {
+
+      showBonusMenu(
+        studentName
+      );
+
+    }
+  );
+
+
+  actions.appendChild(
+    violationButton
+  );
+
+  actions.appendChild(
+    bonusButton
+  );
+
+
+  card.appendChild(
+    number
+  );
+
+  card.appendChild(
+    name
+  );
+
+  card.appendChild(
+    actions
+  );
+
+
+  studentsList.appendChild(
+    card
+  );
+
+}
+
+
+// ==========================================
+// VIOLATION MENU
+// ==========================================
+
+function showViolationMenu(
+  studentName
+) {
+
+  let menuText =
+    "Select Violation for:\n" +
+    studentName +
+    "\n\n";
+
+
+  violations.forEach(
+    function(item, index) {
+
+      menuText +=
+        (index + 1) +
+        ". " +
+        item +
+        "\n";
+
+    }
+  );
+
+
+  const choice =
+    prompt(menuText);
+
+
+  if (choice === null) {
+    return;
+  }
+
+
+  const choiceNumber =
+    parseInt(choice);
+
+
+  if (
+    isNaN(choiceNumber) ||
+    choiceNumber < 1 ||
+    choiceNumber > violations.length
+  ) {
+
+    alert(
+      "Please select a valid number."
+    );
+
+    return;
+  }
+
+
+  let selectedViolation =
+    violations[
+      choiceNumber - 1
+    ];
+
+
+  // OTHER
+
+  if (
+    selectedViolation ===
+    "Other..."
+  ) {
+
+    const customViolation =
+      prompt(
+        "Write the violation:"
+      );
+
+
+    if (
+      customViolation === null ||
+      customViolation.trim() === ""
+    ) {
+
+      return;
+
+    }
+
+
+    selectedViolation =
+      customViolation.trim();
+
+  }
+
+
+  saveBehaviorRecord(
+    studentName,
+    "Violation",
+    selectedViolation,
+    -1
+  );
+
+}
+
+
+// ==========================================
+// BONUS MENU
+// ==========================================
+
+function showBonusMenu(
+  studentName
+) {
+
+  let menuText =
+    "Select Bonus for:\n" +
+    studentName +
+    "\n\n";
+
+
+  bonuses.forEach(
+    function(item, index) {
+
+      menuText +=
+        (index + 1) +
+        ". " +
+        item +
+        "\n";
+
+    }
+  );
+
+
+  const choice =
+    prompt(menuText);
+
+
+  if (choice === null) {
+    return;
+  }
+
+
+  const choiceNumber =
+    parseInt(choice);
+
+
+  if (
+    isNaN(choiceNumber) ||
+    choiceNumber < 1 ||
+    choiceNumber > bonuses.length
+  ) {
+
+    alert(
+      "Please select a valid number."
+    );
+
+    return;
+  }
+
+
+  const selectedBonus =
+    bonuses[
+      choiceNumber - 1
+    ];
+
+
+  saveBehaviorRecord(
+    studentName,
+    "Bonus",
+    selectedBonus,
+    1
+  );
+
+}
+
+
+// ==========================================
+// SAVE RECORD TO SUPABASE
+// ==========================================
+
+async function saveBehaviorRecord(
+  studentName,
+  category,
+  actionName,
+  points
+) {
+
+  try {
+
+    const { error } =
+      await supabaseClient
+        .from("behavior_records")
+        .insert([
+          {
+
+            student_name:
+              studentName,
+
+            class_name:
+              currentClass,
+
+            category:
+              category,
+
+            action_name:
+              actionName,
+
+            points:
+              points
+
+          }
+        ]);
+
+
+    if (error) {
+
+      console.error(
+        "Save error:",
+        error
+      );
+
+
+      alert(
+        "Could not save the record."
+      );
+
+      return;
+
+    }
+
+
+    // DATE FOR DISPLAY ONLY
+    // Supabase also saves created_at automatically
+
+    const now =
+      new Date();
+
+
+    const date =
+      now.toLocaleDateString(
+        "en-GB"
+      );
+
+
+    const time =
+      now.toLocaleTimeString(
+        "en-US",
+        {
+          hour: "2-digit",
+          minute: "2-digit"
+        }
+      );
+
+
+    alert(
+      "Saved successfully ✓\n\n" +
+
+      "Student: " +
+      studentName +
+
+      "\nClass: " +
+      currentClass +
+
+      "\nType: " +
+      category +
+
+      "\nReason: " +
+      actionName +
+
+      "\nPoints: " +
+      (points > 0 ? "+" : "") +
+      points +
+
+      "\nDate: " +
+      date +
+
+      "\nTime: " +
+      time
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Save error:",
+      error
+    );
+
+
+    alert(
+      "Could not save the record."
+    );
+
+  }
+
+}
+
+
+// ==========================================
 // CLASS BUTTONS
 // ==========================================
 
 document
-  .querySelectorAll(".class-card")
-  .forEach(function(button) {
+  .querySelectorAll(
+    ".class-card"
+  )
+  .forEach(
+    function(button) {
 
-    button.addEventListener(
-      "click",
-      function() {
+      button.addEventListener(
+        "click",
+        function() {
 
-        openClass(
-          button.dataset.class
-        );
+          openClass(
+            button.dataset.class
+          );
 
-      }
-    );
+        }
+      );
 
-  });
+    }
+  );
 
 
 // ==========================================
 // BACK
 // ==========================================
 
-backBtn.addEventListener(
-  "click",
-  showDashboard
-);
+if (backBtn) {
+
+  backBtn.addEventListener(
+    "click",
+    showDashboard
+  );
+
+}
 
 
 // ==========================================
 // LOGOUT
 // ==========================================
 
-logoutBtn.addEventListener(
-  "click",
-  function() {
+if (logoutBtn) {
 
-    sessionStorage.removeItem(
-      "teacherLoggedIn"
-    );
+  logoutBtn.addEventListener(
+    "click",
+    function() {
 
-    emailInput.value = "";
-    passwordInput.value = "";
+      sessionStorage.removeItem(
+        "teacherLoggedIn"
+      );
 
-    showLogin();
+      emailInput.value = "";
 
-  }
-);
+      passwordInput.value = "";
+
+      showLogin();
+
+    }
+  );
+
+}
 
 
 // ==========================================
-// SESSION
+// CHECK LOGIN
 // ==========================================
 
 if (
@@ -409,3 +818,12 @@ if (
   showLogin();
 
 }
+
+
+// ==========================================
+// VERSION
+// ==========================================
+
+console.log(
+  "Class Behavior Tracker - Version 40"
+);
