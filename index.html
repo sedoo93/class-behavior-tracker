@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,218 @@
   <title>Class Behavior Tracker</title>
 
   <link rel="stylesheet" href="style.css?v=40">
+
+  <style>
+    /* REPORT BUTTON */
+    .report-btn {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    /* REPORT SCREEN */
+    #report-screen {
+      background: rgba(255,255,255,.96);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 35px rgba(0,0,0,.12);
+    }
+
+    .report-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+
+    .report-top-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .report-top-actions button {
+      border: none;
+      padding: 12px 18px;
+      border-radius: 9px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #report-back-btn {
+      background: #e2e8f0;
+    }
+
+    #print-report-btn {
+      background: #2563eb;
+      color: white;
+    }
+
+    .report-title {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .report-title h2 {
+      margin-bottom: 5px;
+      font-size: 30px;
+      color: #173f91;
+    }
+
+    .report-student-info {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 20px;
+    }
+
+    .report-student-info p {
+      margin: 7px 0;
+      font-size: 17px;
+    }
+
+    .report-summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .summary-box {
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .summary-box strong {
+      display: block;
+      font-size: 30px;
+      margin-top: 5px;
+    }
+
+    .bonus-summary {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .violation-summary {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .score-summary {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .report-table-wrap {
+      overflow-x: auto;
+    }
+
+    .report-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+
+    .report-table th,
+    .report-table td {
+      border: 1px solid #dbe2ea;
+      padding: 12px;
+      text-align: left;
+    }
+
+    .report-table th {
+      background: #173f91;
+      color: white;
+    }
+
+    .positive-points {
+      color: #15803d;
+      font-weight: bold;
+    }
+
+    .negative-points {
+      color: #dc2626;
+      font-weight: bold;
+    }
+
+    #report-status {
+      text-align: center;
+      padding: 25px;
+      font-weight: bold;
+    }
+
+    .report-footer {
+      margin-top: 25px;
+      color: #64748b;
+      font-size: 14px;
+    }
+
+    @media (max-width: 750px) {
+      .report-summary {
+        grid-template-columns: 1fr;
+      }
+
+      .report-top {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .report-top-actions {
+        width: 100%;
+      }
+
+      .report-top-actions button {
+        flex: 1;
+      }
+    }
+
+    /* PDF / PRINT */
+    @media print {
+
+      @page {
+        size: A4;
+        margin: 15mm;
+      }
+
+      body {
+        background: white !important;
+      }
+
+      body * {
+        visibility: hidden;
+      }
+
+      #report-screen,
+      #report-screen * {
+        visibility: visible;
+      }
+
+      #report-screen {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        box-shadow: none;
+        background: white;
+      }
+
+      .report-top-actions {
+        display: none !important;
+      }
+
+      .report-table th {
+        background: #eee !important;
+        color: #000 !important;
+      }
+
+      .report-summary {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+  </style>
 </head>
 
 <body>
@@ -21,11 +234,13 @@
   <main>
 
     <!-- LOGIN -->
+
     <div id="login-screen" class="card">
 
       <h2>Teacher Login</h2>
 
       <label for="email">Email</label>
+
       <input
         type="email"
         id="email"
@@ -33,13 +248,17 @@
       >
 
       <label for="password">Password</label>
+
       <input
         type="password"
         id="password"
         placeholder="Enter your password"
       >
 
-      <button type="button" id="login-btn">
+      <button
+        type="button"
+        id="login-btn"
+      >
         Login
       </button>
 
@@ -49,6 +268,7 @@
 
 
     <!-- DASHBOARD -->
+
     <div id="dashboard" class="hidden">
 
       <div class="dashboard-header">
@@ -59,7 +279,10 @@
           <p>Select a class to start.</p>
         </div>
 
-        <button type="button" id="logout-btn">
+        <button
+          type="button"
+          id="logout-btn"
+        >
           Logout
         </button>
 
@@ -77,6 +300,7 @@
           <span>18 Students</span>
         </button>
 
+
         <button
           type="button"
           class="class-card"
@@ -91,8 +315,12 @@
     </div>
 
 
-    <!-- CLASS SCREEN -->
-    <div id="class-screen" class="hidden">
+    <!-- CLASS -->
+
+    <div
+      id="class-screen"
+      class="hidden"
+    >
 
       <div class="class-header">
 
@@ -110,8 +338,131 @@
 
       </div>
 
-
       <div id="students-list"></div>
+
+    </div>
+
+
+    <!-- STUDENT REPORT -->
+
+    <div
+      id="report-screen"
+      class="hidden"
+    >
+
+      <div class="report-top">
+
+        <div>
+          <strong>Student Behavior Report</strong>
+        </div>
+
+        <div class="report-top-actions">
+
+          <button
+            type="button"
+            id="report-back-btn"
+          >
+            ← Back
+          </button>
+
+          <button
+            type="button"
+            id="print-report-btn"
+          >
+            📄 Save as PDF
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div class="report-title">
+
+        <h2>
+          Mr. Sayed's Class
+        </h2>
+
+        <p>
+          Student Behavior & Performance Report
+        </p>
+
+      </div>
+
+
+      <div class="report-student-info">
+
+        <p>
+          <strong>Student:</strong>
+          <span id="report-student-name"></span>
+        </p>
+
+        <p>
+          <strong>Class:</strong>
+          <span id="report-class-name"></span>
+        </p>
+
+        <p>
+          <strong>Teacher:</strong>
+          Mr. Sayed Ramadan
+        </p>
+
+      </div>
+
+
+      <div class="report-summary">
+
+        <div class="summary-box bonus-summary">
+          Bonus
+          <strong id="report-bonus-count">0</strong>
+        </div>
+
+        <div class="summary-box violation-summary">
+          Violations
+          <strong id="report-violation-count">0</strong>
+        </div>
+
+        <div class="summary-box score-summary">
+          Total Score
+          <strong id="report-total-score">0</strong>
+        </div>
+
+      </div>
+
+
+      <p id="report-status"></p>
+
+
+      <div
+        id="report-table-container"
+        class="report-table-wrap"
+      >
+
+        <table class="report-table">
+
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Type</th>
+              <th>Details</th>
+              <th>Points</th>
+            </tr>
+          </thead>
+
+          <tbody id="report-table-body"></tbody>
+
+        </table>
+
+      </div>
+
+
+      <div class="report-footer">
+
+        Generated:
+        <span id="report-generated-date"></span>
+
+      </div>
 
     </div>
 
@@ -122,7 +473,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script src="./app.js?v=40"></script>
+<script src="./app.js?v=50"></script>
 
 </body>
 </html>
