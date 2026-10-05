@@ -19,7 +19,7 @@ const supabaseClient = window.supabase.createClient(
 // ==========================================
 
 const ADMIN_EMAIL = "elsayedramadan500@gmail.com";
-const ADMIN_PASSWORD = "Sara9112";
+const ADMIN_PASSWORD = "Sara9112*";
 
 
 // ==========================================
