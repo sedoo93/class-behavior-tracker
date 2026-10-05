@@ -6,6 +6,12 @@ const supabaseClient = window.supabase.createClient(
   SUPABASE_KEY
 );
 
+// ==========================
+// LOGIN DETAILS
+// ==========================
+
+const ADMIN_USERNAME = "Mr. Sayed Ramadan";
+const ADMIN_PASSWORD = "Sara9112**";
 
 // ==========================
 // ELEMENTS
@@ -23,85 +29,46 @@ const logoutBtn = document.getElementById("logout-btn");
 const loginMessage = document.getElementById("login-message");
 const teacherEmail = document.getElementById("teacher-email");
 
-
-// ==========================
-// SHOW DASHBOARD
-// ==========================
-
-function showDashboard(user) {
-
-  loginScreen.classList.add("hidden");
-  dashboard.classList.remove("hidden");
-
-  if (user && user.email) {
-    teacherEmail.textContent = "Logged in as: " + user.email;
-  }
-}
-
-
-// ==========================
-// SHOW LOGIN
-// ==========================
-
-function showLogin() {
-
-  dashboard.classList.add("hidden");
-  loginScreen.classList.remove("hidden");
-
-  teacherEmail.textContent = "";
-}
-
-
 // ==========================
 // LOGIN
 // ==========================
 
-loginBtn.addEventListener("click", async () => {
+loginBtn.addEventListener("click", function () {
 
-  const email = emailInput.value.trim();
+  const username = emailInput.value.trim();
   const password = passwordInput.value;
 
   loginMessage.textContent = "";
 
-  if (!email || !password) {
-    loginMessage.textContent =
-      "Please enter your email and password.";
-    return;
-  }
+  if (
+    username === ADMIN_USERNAME &&
+    password === ADMIN_PASSWORD
+  ) {
 
-  loginBtn.disabled = true;
-  loginBtn.textContent = "Logging in...";
+    sessionStorage.setItem("teacherLoggedIn", "true");
 
-  const { data, error } =
-    await supabaseClient.auth.signInWithPassword({
-      email: email,
-      password: password
-    });
+    loginScreen.classList.add("hidden");
+    dashboard.classList.remove("hidden");
 
-  loginBtn.disabled = false;
-  loginBtn.textContent = "Login";
+    if (teacherEmail) {
+      teacherEmail.textContent = ADMIN_USERNAME;
+    }
 
-  if (error) {
+    passwordInput.value = "";
 
-    console.error(error);
+  } else {
 
     loginMessage.textContent =
-      "Incorrect email or password.";
+      "Incorrect username or password.";
 
-    return;
   }
-
-  passwordInput.value = "";
-
-  showDashboard(data.user);
 });
 
-
 // ==========================
-// ENTER KEY LOGIN
+// ENTER KEY
 // ==========================
 
-passwordInput.addEventListener("keydown", (event) => {
+passwordInput.addEventListener("keydown", function (event) {
 
   if (event.key === "Enter") {
     loginBtn.click();
@@ -109,56 +76,51 @@ passwordInput.addEventListener("keydown", (event) => {
 
 });
 
-
 // ==========================
 // LOGOUT
 // ==========================
 
-logoutBtn.addEventListener("click", async () => {
+logoutBtn.addEventListener("click", function () {
 
-  await supabaseClient.auth.signOut();
+  sessionStorage.removeItem("teacherLoggedIn");
+
+  dashboard.classList.add("hidden");
+  loginScreen.classList.remove("hidden");
 
   emailInput.value = "";
   passwordInput.value = "";
-
-  showLogin();
 });
 
-
 // ==========================
-// CHECK EXISTING SESSION
+// KEEP LOGIN DURING SESSION
 // ==========================
 
-async function checkSession() {
+if (sessionStorage.getItem("teacherLoggedIn") === "true") {
 
-  const {
-    data: { session }
-  } = await supabaseClient.auth.getSession();
+  loginScreen.classList.add("hidden");
+  dashboard.classList.remove("hidden");
 
-  if (session && session.user) {
-    showDashboard(session.user);
-  } else {
-    showLogin();
+  if (teacherEmail) {
+    teacherEmail.textContent = ADMIN_USERNAME;
   }
 }
 
-checkSession();
-
-
 // ==========================
-// AUTH STATE CHANGES
+// TEST SUPABASE CONNECTION
 // ==========================
 
-supabaseClient.auth.onAuthStateChange(
-  (event, session) => {
+async function testConnection() {
 
-    if (session && session.user) {
-      showDashboard(session.user);
-    }
+  const { data, error } = await supabaseClient
+    .from("students")
+    .select("*")
+    .limit(5);
 
-    if (event === "SIGNED_OUT") {
-      showLogin();
-    }
-
+  if (error) {
+    console.error("Supabase error:", error);
+  } else {
+    console.log("Students loaded:", data);
   }
-);
+}
+
+testConnection();
