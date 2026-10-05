@@ -1,756 +1,1446 @@
-<!DOCTYPE html>
-<html lang="en">
+// ==========================================
+// CLASS BEHAVIOR TRACKER
+// VERSION 62
+// ==========================================
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Class Behavior Tracker</title>
+// ==========================================
+// SUPABASE
+// ==========================================
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="./style.css?v=60">
+const SUPABASE_URL =
+  "https://vhsiojpolntabqfogglu.supabase.co";
 
-  <style>
-    /* HISTORY BUTTON */
-    .history-btn {
-      background: #f3e8ff;
-      color: #7e22ce;
-    }
+const SUPABASE_KEY =
+  "sb_publishable_yIT1oGw3YRyiYypxlmETwg_foN3Yk3u";
 
-    /* REPORT BUTTON */
-    .report-btn {
-      background: #dbeafe;
-      color: #1d4ed8;
-    }
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
-    /* HISTORY + REPORT */
-    #history-screen,
-    #report-screen {
-      background: rgba(255, 255, 255, 0.96);
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 10px 35px rgba(0,0,0,.12);
-    }
 
-    .screen-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 20px;
-      margin-bottom: 25px;
-    }
+// ==========================================
+// LOGIN DATA
+// ==========================================
 
-    .screen-actions {
-      display: flex;
-      gap: 10px;
-    }
+const ADMIN_EMAIL =
+  "elsayedramadan500@gmail.com";
 
-    .screen-actions button {
-      border: none;
-      padding: 12px 18px;
-      border-radius: 9px;
-      cursor: pointer;
-      font-weight: bold;
-    }
+const ADMIN_PASSWORD =
+  "Sara9112";
 
-    #history-back-btn,
-    #report-back-btn {
-      background: #e2e8f0;
-    }
 
-    #print-report-btn {
-      background: #2563eb;
-      color: white;
-    }
+// ==========================================
+// STUDENTS
+// ==========================================
 
-    .history-student-info,
-    .report-student-info {
-      background: #f8fafc;
-      padding: 18px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-    }
+const students = {
 
-    .history-student-info p,
-    .report-student-info p {
-      margin: 7px 0;
-      font-size: 17px;
-    }
+  "7/A": [
+    "AHMAD ABDULRAHIM AWADH ALZAHRANI",
+    "Ahmed Ehab Maged Mohamed Abdelrahman",
+    "ASSAF ABDULRAHMAN HIZAB ALSULAMI",
+    "Yassin Hani Othman Al Shaibi",
+    "Yassin Mahmoud Sharaf Al-Din",
+    "EYAD ELSAYED WAGIH FOUAD",
+    "Youssef Ziad Amjad Helmy",
+    "Abdulaziz Ahmed Abdulaziz Diab Shandi",
+    "Abdulrahman Amr Gaber Ismail Abulkassem",
+    "Baraa sameh zakaria awad",
+    "ABDALLAH YOUSSEF ABDULLAH YOUSSEF",
+    "Yassin Ali Youssef Ibrahim",
+    "ASER ALI MAHMOUD SHAHIN",
+    "Mazen BaSiM Mahmoud Mokhtar Gouda",
+    "Dan Ahmed Elhanafy",
+    "Elias Hatim Lahza",
+    "Malik Ahmed",
+    "Mohammed Khaled el sharawy"
+  ],
 
-    /* REPORT */
+  "7/B": [
+    "WASEEM OMAR S LABANI",
+    "Magdi MOAZ HARIRI",
+    "Abdul Rahman Awad Al-Maliki",
+    "MOWAFFAA MUHANNAD HARIRI",
+    "MOHAMMED Hossam Murad",
+    "Hamza Faisal Minshawi",
+    "Abdulrahman Ageel ALOgla",
+    "KENAN WASEEM ALZAMZAMI",
+    "Jasser Muhammad Hashim Al-Ansari",
+    "Elias Luai Zakariya Zamil",
+    "Noureldin Mohamed Ahmed Badr",
+    "hasan Abdulwahab shafei",
+    "Ahmed Raed Al-Ghamdi",
+    "Mohammed Hamad Al-Otaibi",
+    "Hashem Ahmed Essam Bajaber",
+    "Yazan Eyad Alhwsawi",
+    "EYAD MOHAMED IBRAHIM ESMAIL ELSAYED",
+    "Adham yasser mouhamed",
+    "Omar Ahmed salah eldefrawy",
+    "Anmar salman althagafi",
+    "Feras Muwaffaq Aljuaid",
+    "Mohammed Abdulmajeed Mohammed Alanqazi",
+    "Luai Imad Saeed Mohammed Ghaleb",
+    "AHMAD IHAB FAROUK ELMADANI"
+  ]
 
-    .report-title {
-      text-align: center;
-      margin-bottom: 25px;
-    }
+};
 
-    .report-title h2 {
-      margin-bottom: 5px;
-      font-size: 30px;
-      color: #173f91;
-    }
 
-    .report-summary {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
-      margin-bottom: 25px;
-    }
+// ==========================================
+// OPTIONS
+// ==========================================
 
-    .summary-box {
-      padding: 20px;
-      border-radius: 12px;
-      text-align: center;
-    }
+const violations = [
+  "Missed homework",
+  "Didn't bring his sheet",
+  "Didn't bring his notebook",
+  "Eating in the session",
+  "Late for the session",
+  "Making noise",
+  "Other..."
+];
 
-    .summary-box strong {
-      display: block;
-      font-size: 30px;
-      margin-top: 5px;
-    }
+const bonuses = [
+  "Remaining quiet all the day",
+  "Participating actively"
+];
 
-    .bonus-summary {
-      background: #dcfce7;
-      color: #166534;
-    }
 
-    .violation-summary {
-      background: #fee2e2;
-      color: #991b1b;
-    }
+// ==========================================
+// ELEMENTS
+// ==========================================
 
-    .score-summary {
-      background: #dbeafe;
-      color: #1d4ed8;
-    }
+const loginScreen =
+  document.getElementById("login-screen");
 
-    /* TABLES */
+const dashboard =
+  document.getElementById("dashboard");
 
-    .table-wrap {
-      overflow-x: auto;
-    }
+const classScreen =
+  document.getElementById("class-screen");
 
-    .data-table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
-    }
+const historyScreen =
+  document.getElementById("history-screen");
 
-    .data-table th,
-    .data-table td {
-      border: 1px solid #dbe2ea;
-      padding: 12px;
-      text-align: left;
-    }
+const reportScreen =
+  document.getElementById("report-screen");
 
-    .data-table th {
-      background: #173f91;
-      color: white;
-    }
 
-    .positive-points {
-      color: #15803d;
-      font-weight: bold;
-    }
+const emailInput =
+  document.getElementById("email");
 
-    .negative-points {
-      color: #dc2626;
-      font-weight: bold;
-    }
+const passwordInput =
+  document.getElementById("password");
 
-    /* FORGIVEN */
+const loginBtn =
+  document.getElementById("login-btn");
 
-    .forgiven-row {
-      background: #f1f5f9;
-      opacity: 0.7;
-    }
+const logoutBtn =
+  document.getElementById("logout-btn");
 
-    .forgive-btn {
-      border: none;
-      background: #fef3c7;
-      color: #92400e;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-    }
+const loginMessage =
+  document.getElementById("login-message");
 
-    .forgiven-badge {
-      display: inline-block;
-      background: #dcfce7;
-      color: #166534;
-      padding: 7px 10px;
-      border-radius: 8px;
-      font-weight: bold;
-    }
+const teacherEmail =
+  document.getElementById("teacher-email");
 
-    #history-status,
-    #report-status {
-      text-align: center;
-      padding: 20px;
-      font-weight: bold;
-    }
 
-    .report-footer {
-      margin-top: 25px;
-      color: #64748b;
-      font-size: 14px;
-    }
+const backBtn =
+  document.getElementById("back-btn");
 
-    /* MOBILE */
+const classTitle =
+  document.getElementById("class-title");
 
-    @media (max-width: 750px) {
-      .report-summary {
-        grid-template-columns: 1fr;
+const classCount =
+  document.getElementById("class-count");
+
+const studentsList =
+  document.getElementById("students-list");
+
+
+// HISTORY
+
+const historyBackBtn =
+  document.getElementById("history-back-btn");
+
+const historyStudentName =
+  document.getElementById("history-student-name");
+
+const historyClassName =
+  document.getElementById("history-class-name");
+
+const historyStatus =
+  document.getElementById("history-status");
+
+const historyTableContainer =
+  document.getElementById("history-table-container");
+
+const historyTableBody =
+  document.getElementById("history-table-body");
+
+
+// REPORT
+
+const reportBackBtn =
+  document.getElementById("report-back-btn");
+
+const printReportBtn =
+  document.getElementById("print-report-btn");
+
+const reportStudentName =
+  document.getElementById("report-student-name");
+
+const reportClassName =
+  document.getElementById("report-class-name");
+
+const reportBonusCount =
+  document.getElementById("report-bonus-count");
+
+const reportViolationCount =
+  document.getElementById("report-violation-count");
+
+const reportTotalScore =
+  document.getElementById("report-total-score");
+
+const reportStatus =
+  document.getElementById("report-status");
+
+const reportTableContainer =
+  document.getElementById("report-table-container");
+
+const reportTableBody =
+  document.getElementById("report-table-body");
+
+const reportGeneratedDate =
+  document.getElementById("report-generated-date");
+
+
+// ==========================================
+// CURRENT STATE
+// ==========================================
+
+let currentClass = null;
+let currentHistoryStudent = null;
+
+
+// ==========================================
+// SCREEN FUNCTIONS
+// ==========================================
+
+function hideAllScreens() {
+
+  if (loginScreen) {
+    loginScreen.classList.add("hidden");
+  }
+
+  if (dashboard) {
+    dashboard.classList.add("hidden");
+  }
+
+  if (classScreen) {
+    classScreen.classList.add("hidden");
+  }
+
+  if (historyScreen) {
+    historyScreen.classList.add("hidden");
+  }
+
+  if (reportScreen) {
+    reportScreen.classList.add("hidden");
+  }
+}
+
+
+function showDashboard() {
+
+  hideAllScreens();
+
+  dashboard.classList.remove("hidden");
+
+  if (teacherEmail) {
+    teacherEmail.textContent =
+      "Logged in as: " + ADMIN_EMAIL;
+  }
+}
+
+
+function showLogin() {
+
+  hideAllScreens();
+
+  loginScreen.classList.remove("hidden");
+
+  if (loginMessage) {
+    loginMessage.textContent = "";
+  }
+}
+
+
+// ==========================================
+// LOGIN
+// ==========================================
+
+function login() {
+
+  const enteredEmail =
+    emailInput.value.trim().toLowerCase();
+
+  const enteredPassword =
+    passwordInput.value.trim();
+
+  loginMessage.textContent = "";
+
+
+  if (
+    enteredEmail === ADMIN_EMAIL.toLowerCase() &&
+    enteredPassword === ADMIN_PASSWORD
+  ) {
+
+    sessionStorage.setItem(
+      "teacherLoggedIn",
+      "true"
+    );
+
+    passwordInput.value = "";
+
+    showDashboard();
+
+  } else {
+
+    loginMessage.textContent =
+      "Incorrect email or password.";
+
+  }
+}
+
+
+if (loginBtn) {
+
+  loginBtn.addEventListener(
+    "click",
+    login
+  );
+}
+
+
+if (emailInput) {
+
+  emailInput.addEventListener(
+    "keydown",
+    function(event) {
+
+      if (event.key === "Enter") {
+        login();
       }
+    }
+  );
+}
 
-      .screen-top {
-        flex-direction: column;
-        align-items: flex-start;
-      }
 
-      .screen-actions {
-        width: 100%;
-      }
+if (passwordInput) {
 
-      .screen-actions button {
-        flex: 1;
+  passwordInput.addEventListener(
+    "keydown",
+    function(event) {
+
+      if (event.key === "Enter") {
+        login();
       }
     }
+  );
+}
 
-    /* PRINT / PDF */
 
-    @media print {
-      @page {
-        size: A4;
-        margin: 15mm;
-      }
+// ==========================================
+// OPEN CLASS
+// ==========================================
 
-      body {
-        background: white !important;
-      }
+function openClass(className) {
 
-      body * {
-        visibility: hidden;
-      }
+  currentClass = className;
 
-      #report-screen,
-      #report-screen * {
-        visibility: visible;
-      }
+  const classStudents =
+    students[className] || [];
 
-      #report-screen {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        padding: 0;
-        margin: 0;
-        box-shadow: none;
-        background: white;
-      }
+  hideAllScreens();
 
-      .screen-actions {
-        display: none !important;
-      }
+  classScreen.classList.remove("hidden");
 
-      .data-table th {
-        background: #eee !important;
-        color: #000 !important;
-      }
+  classTitle.textContent =
+    "Class " + className;
 
-      .report-summary {
-        grid-template-columns: repeat(3, 1fr);
-      }
+  classCount.textContent =
+    classStudents.length + " Students";
+
+  studentsList.innerHTML = "";
+
+
+  classStudents.forEach(
+    function(studentName, index) {
+
+      createStudentCard(
+        studentName,
+        index
+      );
     }
-  </style>
+  );
+}
 
-</head>
 
-<body>
+// ==========================================
+// CREATE STUDENT CARD
+// ==========================================
 
-<div class="app">
+function createStudentCard(
+  studentName,
+  index
+) {
 
-  <!-- HEADER -->
+  const card =
+    document.createElement("div");
 
-  <header>
-    <h1>Class Behavior Tracker</h1>
-    <p>Student Behavior & Performance Management</p>
-  </header>
+  card.className = "student-card";
 
 
-  <main>
+  const number =
+    document.createElement("div");
 
-    <!-- ============================= -->
-    <!-- LOGIN -->
-    <!-- ============================= -->
+  number.className = "student-number";
+  number.textContent = index + 1;
 
-    <div id="login-screen" class="card">
 
-      <h2>Teacher Login</h2>
+  const name =
+    document.createElement("div");
 
-      <label for="email">
-        Email
-      </label>
+  name.className = "student-name";
+  name.textContent = studentName;
 
-      <input
-        type="email"
-        id="email"
-        placeholder="Enter your email"
-      >
 
-      <label for="password">
-        Password
-      </label>
+  const actions =
+    document.createElement("div");
 
-      <input
-        type="password"
-        id="password"
-        placeholder="Enter your password"
-      >
+  actions.className = "student-actions";
 
-      <button
-        type="button"
-        id="login-btn"
-      >
-        Login
-      </button>
 
-      <p id="login-message"></p>
+  // BONUS
 
-    </div>
+  const bonusButton =
+    document.createElement("button");
 
+  bonusButton.className =
+    "positive-btn";
 
-    <!-- ============================= -->
-    <!-- DASHBOARD -->
-    <!-- ============================= -->
+  bonusButton.textContent =
+    "★ Bonus";
 
-    <div
-      id="dashboard"
-      class="hidden"
-    >
+  bonusButton.addEventListener(
+    "click",
+    function() {
 
-      <div class="dashboard-header">
+      showBonusMenu(studentName);
+    }
+  );
 
-        <div>
 
-          <h2>
-            Teacher Dashboard
-          </h2>
+  // VIOLATION
 
-          <p id="teacher-email"></p>
+  const violationButton =
+    document.createElement("button");
 
-          <p>
-            Select a class to start.
-          </p>
+  violationButton.className =
+    "negative-btn";
 
-        </div>
+  violationButton.textContent =
+    "⚠ Violation";
 
-        <button
-          type="button"
-          id="logout-btn"
-        >
-          Logout
-        </button>
+  violationButton.addEventListener(
+    "click",
+    function() {
 
-      </div>
+      showViolationMenu(studentName);
+    }
+  );
 
 
-      <div class="class-grid">
+  // HISTORY
 
-        <button
-          type="button"
-          class="class-card"
-          data-class="7/A"
-        >
+  const historyButton =
+    document.createElement("button");
 
-          <strong>7/A</strong>
+  historyButton.className =
+    "history-btn";
 
-          <span>
-            18 Students
-          </span>
+  historyButton.textContent =
+    "🕘 History";
 
-        </button>
+  historyButton.addEventListener(
+    "click",
+    function() {
 
+      openStudentHistory(
+        studentName,
+        currentClass
+      );
+    }
+  );
 
-        <button
-          type="button"
-          class="class-card"
-          data-class="7/B"
-        >
 
-          <strong>7/B</strong>
+  // REPORT
 
-          <span>
-            24 Students
-          </span>
+  const reportButton =
+    document.createElement("button");
 
-        </button>
+  reportButton.className =
+    "report-btn";
 
-      </div>
+  reportButton.textContent =
+    "📋 Report";
 
-    </div>
+  reportButton.addEventListener(
+    "click",
+    function() {
 
+      openStudentReport(
+        studentName,
+        currentClass
+      );
+    }
+  );
 
-    <!-- ============================= -->
-    <!-- CLASS SCREEN -->
-    <!-- ============================= -->
 
-    <div
-      id="class-screen"
-      class="hidden"
-    >
+  // ORDER:
+  // BONUS → VIOLATION → HISTORY → REPORT
 
-      <div class="class-header">
+  actions.appendChild(bonusButton);
+  actions.appendChild(violationButton);
+  actions.appendChild(historyButton);
+  actions.appendChild(reportButton);
 
-        <button
-          type="button"
-          id="back-btn"
-        >
-          ← Back to Classes
-        </button>
+  card.appendChild(number);
+  card.appendChild(name);
+  card.appendChild(actions);
 
+  studentsList.appendChild(card);
+}
 
-        <div>
 
-          <h2 id="class-title">
-            Class
-          </h2>
+// ==========================================
+// BONUS
+// ==========================================
 
-          <p id="class-count"></p>
+function showBonusMenu(studentName) {
 
-        </div>
+  let message =
+    "Select Bonus for:\n" +
+    studentName +
+    "\n\n";
 
-      </div>
 
+  bonuses.forEach(
+    function(item, index) {
 
-      <div id="students-list"></div>
+      message +=
+        (index + 1) +
+        ". " +
+        item +
+        "\n";
+    }
+  );
 
-    </div>
 
+  const choice =
+    prompt(message);
 
-    <!-- ============================= -->
-    <!-- HISTORY SCREEN -->
-    <!-- ============================= -->
 
-    <div
-      id="history-screen"
-      class="hidden"
-    >
+  if (choice === null) {
+    return;
+  }
 
-      <div class="screen-top">
 
-        <div>
+  const number =
+    Number(choice);
 
-          <h2>
-            🕘 Student History
-          </h2>
 
-          <p>
-            Complete student behavior history
-          </p>
+  if (
+    !Number.isInteger(number) ||
+    number < 1 ||
+    number > bonuses.length
+  ) {
 
-        </div>
+    alert(
+      "Please select a valid number."
+    );
 
+    return;
+  }
 
-        <div class="screen-actions">
 
-          <button
-            type="button"
-            id="history-back-btn"
-          >
-            ← Back
-          </button>
+  const selectedBonus =
+    bonuses[number - 1];
 
-        </div>
 
-      </div>
+  saveBehaviorRecord(
+    studentName,
+    "Bonus",
+    selectedBonus,
+    1
+  );
+}
 
 
-      <div class="history-student-info">
+// ==========================================
+// VIOLATION
+// ==========================================
 
-        <p>
+function showViolationMenu(studentName) {
 
-          <strong>
-            Student:
-          </strong>
+  let message =
+    "Select Violation for:\n" +
+    studentName +
+    "\n\n";
 
-          <span
-            id="history-student-name"
-          ></span>
 
-        </p>
+  violations.forEach(
+    function(item, index) {
 
+      message +=
+        (index + 1) +
+        ". " +
+        item +
+        "\n";
+    }
+  );
 
-        <p>
 
-          <strong>
-            Class:
-          </strong>
+  const choice =
+    prompt(message);
 
-          <span
-            id="history-class-name"
-          ></span>
 
-        </p>
+  if (choice === null) {
+    return;
+  }
 
-      </div>
 
+  const number =
+    Number(choice);
 
-      <p id="history-status"></p>
 
+  if (
+    !Number.isInteger(number) ||
+    number < 1 ||
+    number > violations.length
+  ) {
 
-      <div
-        id="history-table-container"
-        class="table-wrap"
-      >
+    alert(
+      "Please select a valid number."
+    );
 
-        <table class="data-table">
+    return;
+  }
 
-          <thead>
 
-            <tr>
+  let selectedViolation =
+    violations[number - 1];
 
-              <th>Date</th>
 
-              <th>Time</th>
+  if (selectedViolation === "Other...") {
 
-              <th>Type</th>
+    const otherViolation =
+      prompt(
+        "Write the violation:"
+      );
 
-              <th>Details</th>
 
-              <th>Points</th>
+    if (
+      otherViolation === null ||
+      otherViolation.trim() === ""
+    ) {
 
-              <th>Status / Action</th>
+      return;
+    }
 
-            </tr>
 
-          </thead>
+    selectedViolation =
+      otherViolation.trim();
+  }
 
 
-          <tbody
-            id="history-table-body"
-          ></tbody>
+  saveBehaviorRecord(
+    studentName,
+    "Violation",
+    selectedViolation,
+    -1
+  );
+}
 
-        </table>
 
-      </div>
+// ==========================================
+// SAVE RECORD
+// ==========================================
 
-    </div>
+async function saveBehaviorRecord(
+  studentName,
+  category,
+  actionName,
+  points
+) {
 
+  try {
 
-    <!-- ============================= -->
-    <!-- REPORT SCREEN -->
-    <!-- ============================= -->
+    const { error } =
+      await supabaseClient
+        .from("behavior_records")
+        .insert([
+          {
+            student_name: studentName,
+            class_name: currentClass,
+            category: category,
+            action_name: actionName,
+            points: points,
+            forgiven: false
+          }
+        ]);
 
-    <div
-      id="report-screen"
-      class="hidden"
-    >
 
-      <div class="screen-top">
+    if (error) {
 
-        <strong>
-          Student Behavior Report
-        </strong>
+      console.error(
+        "Save error:",
+        error
+      );
 
+      alert(
+        "Could not save the record."
+      );
 
-        <div class="screen-actions">
+      return;
+    }
 
-          <button
-            type="button"
-            id="report-back-btn"
-          >
-            ← Back
-          </button>
 
+    alert(
+      "Saved successfully ✓\n\n" +
+      "Student: " +
+      studentName +
+      "\n" +
+      "Class: " +
+      currentClass +
+      "\n" +
+      actionName
+    );
 
-          <button
-            type="button"
-            id="print-report-btn"
-          >
-            📄 Save as PDF
-          </button>
+  } catch (error) {
 
-        </div>
+    console.error(
+      "Unexpected save error:",
+      error
+    );
 
-      </div>
+    alert(
+      "Could not save the record."
+    );
+  }
+}
 
 
-      <div class="report-title">
+// ==========================================
+// HISTORY
+// ==========================================
 
-        <h2>
-          Mr. Sayed's Class
-        </h2>
+async function openStudentHistory(
+  studentName,
+  className
+) {
 
-        <p>
-          Student Behavior & Performance Report
-        </p>
+  currentHistoryStudent =
+    studentName;
 
-      </div>
+  currentClass =
+    className;
 
 
-      <div class="report-student-info">
+  hideAllScreens();
 
-        <p>
+  historyScreen.classList.remove(
+    "hidden"
+  );
 
-          <strong>
-            Student:
-          </strong>
 
-          <span
-            id="report-student-name"
-          ></span>
+  historyStudentName.textContent =
+    studentName;
 
-        </p>
+  historyClassName.textContent =
+    className;
 
+  historyStatus.textContent =
+    "Loading history...";
 
-        <p>
+  historyTableBody.innerHTML =
+    "";
 
-          <strong>
-            Class:
-          </strong>
+  historyTableContainer.style.display =
+    "none";
 
-          <span
-            id="report-class-name"
-          ></span>
 
-        </p>
+  try {
 
+    const { data, error } =
+      await supabaseClient
+        .from("behavior_records")
+        .select(
+          "id, student_name, class_name, category, action_name, points, created_at, forgiven, forgiven_at"
+        )
+        .eq(
+          "student_name",
+          studentName
+        )
+        .eq(
+          "class_name",
+          className
+        )
+        .order(
+          "created_at",
+          {
+            ascending: false
+          }
+        );
 
-        <p>
 
-          <strong>
-            Teacher:
-          </strong>
+    if (error) {
 
-          Mr. Sayed Ramadan
+      console.error(
+        "History error:",
+        error
+      );
 
-        </p>
+      historyStatus.textContent =
+        "Could not load history.";
 
-      </div>
+      return;
+    }
 
 
-      <!-- SUMMARY -->
+    const records =
+      data || [];
 
-      <div class="report-summary">
 
-        <div
-          class="summary-box bonus-summary"
-        >
+    if (records.length === 0) {
 
-          Bonus
+      historyStatus.textContent =
+        "No records for this student yet.";
 
-          <strong
-            id="report-bonus-count"
-          >
-            0
-          </strong>
+      return;
+    }
 
-        </div>
 
+    historyStatus.textContent = "";
 
-        <div
-          class="summary-box violation-summary"
-        >
+    historyTableContainer.style.display =
+      "block";
 
-          Violations
 
-          <strong
-            id="report-violation-count"
-          >
-            0
-          </strong>
+    records.forEach(
+      function(record) {
 
-        </div>
+        createHistoryRow(record);
+      }
+    );
 
+  } catch (error) {
 
-        <div
-          class="summary-box score-summary"
-        >
+    console.error(
+      "History error:",
+      error
+    );
 
-          Total Score
+    historyStatus.textContent =
+      "Could not load history.";
+  }
+}
 
-          <strong
-            id="report-total-score"
-          >
-            0
-          </strong>
 
-        </div>
+// ==========================================
+// CREATE HISTORY ROW
+// ==========================================
 
-      </div>
+function createHistoryRow(record) {
 
+  const row =
+    document.createElement("tr");
 
-      <p id="report-status"></p>
 
+  if (record.forgiven === true) {
 
-      <!-- REPORT TABLE -->
+    row.classList.add(
+      "forgiven-row"
+    );
+  }
 
-      <div
-        id="report-table-container"
-        class="table-wrap"
-      >
 
-        <table class="data-table">
+  const dateObject =
+    new Date(record.created_at);
 
-          <thead>
 
-            <tr>
+  const date =
+    dateObject.toLocaleDateString(
+      "en-GB"
+    );
 
-              <th>Date</th>
 
-              <th>Time</th>
+  const time =
+    dateObject.toLocaleTimeString(
+      "en-US",
+      {
+        hour: "2-digit",
+        minute: "2-digit"
+      }
+    );
 
-              <th>Type</th>
 
-              <th>Details</th>
+  addCell(row, date);
+  addCell(row, time);
+  addCell(row, record.category);
+  addCell(row, record.action_name);
 
-              <th>Points</th>
 
-            </tr>
+  const pointsCell =
+    document.createElement("td");
 
-          </thead>
 
+  pointsCell.textContent =
+    (
+      Number(record.points) > 0
+        ? "+"
+        : ""
+    ) +
+    Number(record.points);
 
-          <tbody
-            id="report-table-body"
-          ></tbody>
 
-        </table>
+  pointsCell.className =
+    Number(record.points) >= 0
+      ? "positive-points"
+      : "negative-points";
 
-      </div>
 
+  row.appendChild(pointsCell);
 
-      <div class="report-footer">
 
-        Generated:
+  // STATUS / ACTION
 
-        <span
-          id="report-generated-date"
-        ></span>
+  const actionCell =
+    document.createElement("td");
 
-      </div>
 
-    </div>
+  if (record.forgiven === true) {
 
-  </main>
+    const badge =
+      document.createElement("span");
 
-</div>
+    badge.className =
+      "forgiven-badge";
 
+    badge.textContent =
+      "✓ Forgiven";
 
-<!-- SUPABASE -->
+    actionCell.appendChild(badge);
 
-<script
-  src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-></script>
+  } else if (
+    record.category === "Violation"
+  ) {
 
+    const forgiveButton =
+      document.createElement("button");
 
-<!-- APPLICATION - NEW VERSION -->
+    forgiveButton.type =
+      "button";
 
-<script src="./app.js?v=61"></script>
+    forgiveButton.className =
+      "forgive-btn";
 
+    forgiveButton.textContent =
+      "🤝 Forgive";
 
-</body>
 
-</html>
+    forgiveButton.addEventListener(
+      "click",
+      function() {
+
+        forgiveRecord(
+          record.id,
+          record.action_name
+        );
+      }
+    );
+
+
+    actionCell.appendChild(
+      forgiveButton
+    );
+
+  } else {
+
+    actionCell.textContent =
+      "Active";
+  }
+
+
+  row.appendChild(actionCell);
+
+  historyTableBody.appendChild(row);
+}
+
+
+// ==========================================
+// FORGIVE VIOLATION
+// ==========================================
+
+async function forgiveRecord(
+  recordId,
+  actionName
+) {
+
+  const confirmed =
+    confirm(
+      "Forgive this violation?\n\n" +
+      actionName +
+      "\n\n" +
+      "The record will remain in History, " +
+      "but it will not appear in the report " +
+      "or affect the student's score."
+    );
+
+
+  if (!confirmed) {
+    return;
+  }
+
+
+  try {
+
+    const { error } =
+      await supabaseClient
+        .from("behavior_records")
+        .update({
+          forgiven: true,
+          forgiven_at:
+            new Date().toISOString()
+        })
+        .eq(
+          "id",
+          recordId
+        );
+
+
+    if (error) {
+
+      console.error(
+        "Forgive error:",
+        error
+      );
+
+      alert(
+        "Could not forgive this record."
+      );
+
+      return;
+    }
+
+
+    alert(
+      "Violation forgiven successfully ✓"
+    );
+
+
+    await openStudentHistory(
+      currentHistoryStudent,
+      currentClass
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Forgive error:",
+      error
+    );
+
+    alert(
+      "Could not forgive this record."
+    );
+  }
+}
+
+
+// ==========================================
+// REPORT
+// ==========================================
+
+async function openStudentReport(
+  studentName,
+  className
+) {
+
+  currentClass =
+    className;
+
+
+  hideAllScreens();
+
+  reportScreen.classList.remove(
+    "hidden"
+  );
+
+
+  reportStudentName.textContent =
+    studentName;
+
+  reportClassName.textContent =
+    className;
+
+
+  reportBonusCount.textContent =
+    "0";
+
+  reportViolationCount.textContent =
+    "0";
+
+  reportTotalScore.textContent =
+    "0";
+
+
+  reportTableBody.innerHTML =
+    "";
+
+  reportTableContainer.style.display =
+    "none";
+
+  reportStatus.textContent =
+    "Loading student report...";
+
+
+  try {
+
+    const { data, error } =
+      await supabaseClient
+        .from("behavior_records")
+        .select(
+          "id, category, action_name, points, created_at, forgiven"
+        )
+        .eq(
+          "student_name",
+          studentName
+        )
+        .eq(
+          "class_name",
+          className
+        )
+        .eq(
+          "forgiven",
+          false
+        )
+        .order(
+          "created_at",
+          {
+            ascending: false
+          }
+        );
+
+
+    if (error) {
+
+      console.error(
+        "Report error:",
+        error
+      );
+
+      reportStatus.textContent =
+        "Could not load the student report.";
+
+      return;
+    }
+
+
+    const records =
+      data || [];
+
+
+    let bonusCount = 0;
+    let violationCount = 0;
+    let totalScore = 0;
+
+
+    records.forEach(
+      function(record) {
+
+        if (
+          record.category === "Bonus"
+        ) {
+
+          bonusCount++;
+        }
+
+
+        if (
+          record.category === "Violation"
+        ) {
+
+          violationCount++;
+        }
+
+
+        totalScore +=
+          Number(record.points) || 0;
+
+
+        createReportRow(record);
+      }
+    );
+
+
+    reportBonusCount.textContent =
+      bonusCount;
+
+    reportViolationCount.textContent =
+      violationCount;
+
+    reportTotalScore.textContent =
+      (
+        totalScore > 0
+          ? "+"
+          : ""
+      ) +
+      totalScore;
+
+
+    reportGeneratedDate.textContent =
+      new Date().toLocaleString(
+        "en-GB"
+      );
+
+
+    if (records.length === 0) {
+
+      reportStatus.textContent =
+        "No active behavior records for this student.";
+
+      reportTableContainer.style.display =
+        "none";
+
+    } else {
+
+      reportStatus.textContent = "";
+
+      reportTableContainer.style.display =
+        "block";
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Report error:",
+      error
+    );
+
+    reportStatus.textContent =
+      "Could not load the student report.";
+  }
+}
+
+
+// ==========================================
+// CREATE REPORT ROW
+// ==========================================
+
+function createReportRow(record) {
+
+  const row =
+    document.createElement("tr");
+
+
+  const dateObject =
+    new Date(record.created_at);
+
+
+  const date =
+    dateObject.toLocaleDateString(
+      "en-GB"
+    );
+
+
+  const time =
+    dateObject.toLocaleTimeString(
+      "en-US",
+      {
+        hour: "2-digit",
+        minute: "2-digit"
+      }
+    );
+
+
+  addCell(row, date);
+  addCell(row, time);
+  addCell(row, record.category);
+  addCell(row, record.action_name);
+
+
+  const pointsCell =
+    document.createElement("td");
+
+
+  pointsCell.textContent =
+    (
+      Number(record.points) > 0
+        ? "+"
+        : ""
+    ) +
+    Number(record.points);
+
+
+  pointsCell.className =
+    Number(record.points) >= 0
+      ? "positive-points"
+      : "negative-points";
+
+
+  row.appendChild(pointsCell);
+
+  reportTableBody.appendChild(row);
+}
+
+
+// ==========================================
+// SAFE TABLE CELL
+// ==========================================
+
+function addCell(row, value) {
+
+  const cell =
+    document.createElement("td");
+
+  cell.textContent =
+    value ?? "";
+
+  row.appendChild(cell);
+}
+
+
+// ==========================================
+// CLASS BUTTONS
+// ==========================================
+
+document
+  .querySelectorAll(".class-card")
+  .forEach(
+    function(button) {
+
+      button.addEventListener(
+        "click",
+        function() {
+
+          openClass(
+            button.dataset.class
+          );
+        }
+      );
+    }
+  );
+
+
+// ==========================================
+// BACK BUTTONS
+// ==========================================
+
+if (backBtn) {
+
+  backBtn.addEventListener(
+    "click",
+    showDashboard
+  );
+}
+
+
+if (historyBackBtn) {
+
+  historyBackBtn.addEventListener(
+    "click",
+    function() {
+
+      openClass(currentClass);
+    }
+  );
+}
+
+
+if (reportBackBtn) {
+
+  reportBackBtn.addEventListener(
+    "click",
+    function() {
+
+      openClass(currentClass);
+    }
+  );
+}
+
+
+// ==========================================
+// PDF
+// ==========================================
+
+if (printReportBtn) {
+
+  printReportBtn.addEventListener(
+    "click",
+    function() {
+
+      window.print();
+    }
+  );
+}
+
+
+// ==========================================
+// LOGOUT
+// ==========================================
+
+if (logoutBtn) {
+
+  logoutBtn.addEventListener(
+    "click",
+    function() {
+
+      sessionStorage.removeItem(
+        "teacherLoggedIn"
+      );
+
+      emailInput.value = "";
+      passwordInput.value = "";
+
+      showLogin();
+    }
+  );
+}
+
+
+// ==========================================
+// START APP
+// ==========================================
+
+if (
+  sessionStorage.getItem(
+    "teacherLoggedIn"
+  ) === "true"
+) {
+
+  showDashboard();
+
+} else {
+
+  showLogin();
+}
+
+
+console.log(
+  "Class Behavior Tracker - Version 62"
+);
