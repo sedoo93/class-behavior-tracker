@@ -1,6 +1,6 @@
 // ==========================================
 // CLASS BEHAVIOR TRACKER
-// VERSION 40
+// VERSION 50
 // ==========================================
 
 
@@ -14,10 +14,11 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
   "sb_publishable_yIT1oGw3YRyiYypxlmETwg_foN3Yk3u";
 
-const supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
 
 // ==========================================
@@ -60,6 +61,7 @@ const students = {
 
   ],
 
+
   "7/B": [
 
     "WASEEM OMAR S LABANI",
@@ -93,7 +95,7 @@ const students = {
 
 
 // ==========================================
-// VIOLATIONS
+// OPTIONS
 // ==========================================
 
 const violations = [
@@ -114,10 +116,6 @@ const violations = [
 
 ];
 
-
-// ==========================================
-// BONUS
-// ==========================================
 
 const bonuses = [
 
@@ -140,6 +138,9 @@ const dashboard =
 
 const classScreen =
   document.getElementById("class-screen");
+
+const reportScreen =
+  document.getElementById("report-screen");
 
 const emailInput =
   document.getElementById("email");
@@ -171,6 +172,39 @@ const classCount =
 const studentsList =
   document.getElementById("students-list");
 
+const reportBackBtn =
+  document.getElementById("report-back-btn");
+
+const printReportBtn =
+  document.getElementById("print-report-btn");
+
+const reportStudentName =
+  document.getElementById("report-student-name");
+
+const reportClassName =
+  document.getElementById("report-class-name");
+
+const reportBonusCount =
+  document.getElementById("report-bonus-count");
+
+const reportViolationCount =
+  document.getElementById("report-violation-count");
+
+const reportTotalScore =
+  document.getElementById("report-total-score");
+
+const reportStatus =
+  document.getElementById("report-status");
+
+const reportTableContainer =
+  document.getElementById("report-table-container");
+
+const reportTableBody =
+  document.getElementById("report-table-body");
+
+const reportGeneratedDate =
+  document.getElementById("report-generated-date");
+
 
 // ==========================================
 // CURRENT CLASS
@@ -186,10 +220,13 @@ let currentClass = null;
 function login() {
 
   const email =
-    emailInput.value.trim().toLowerCase();
+    emailInput.value
+      .trim()
+      .toLowerCase();
 
   const password =
     passwordInput.value.trim();
+
 
   loginMessage.textContent = "";
 
@@ -245,14 +282,25 @@ if (passwordInput) {
 
 
 // ==========================================
-// SHOW DASHBOARD
+// SCREENS
 // ==========================================
 
-function showDashboard() {
+function hideAllScreens() {
 
   loginScreen.classList.add("hidden");
 
+  dashboard.classList.add("hidden");
+
   classScreen.classList.add("hidden");
+
+  reportScreen.classList.add("hidden");
+
+}
+
+
+function showDashboard() {
+
+  hideAllScreens();
 
   dashboard.classList.remove("hidden");
 
@@ -262,15 +310,9 @@ function showDashboard() {
 }
 
 
-// ==========================================
-// SHOW LOGIN
-// ==========================================
-
 function showLogin() {
 
-  dashboard.classList.add("hidden");
-
-  classScreen.classList.add("hidden");
+  hideAllScreens();
 
   loginScreen.classList.remove("hidden");
 
@@ -289,7 +331,7 @@ function openClass(className) {
     students[className];
 
 
-  dashboard.classList.add("hidden");
+  hideAllScreens();
 
   classScreen.classList.remove("hidden");
 
@@ -298,7 +340,8 @@ function openClass(className) {
     "Class " + className;
 
   classCount.textContent =
-    classStudents.length + " Students";
+    classStudents.length +
+    " Students";
 
 
   studentsList.innerHTML = "";
@@ -319,7 +362,7 @@ function openClass(className) {
 
 
 // ==========================================
-// CREATE STUDENT CARD
+// STUDENT CARD
 // ==========================================
 
 function createStudentCard(
@@ -334,8 +377,6 @@ function createStudentCard(
     "student-card";
 
 
-  // NUMBER
-
   const number =
     document.createElement("div");
 
@@ -345,8 +386,6 @@ function createStudentCard(
   number.textContent =
     index + 1;
 
-
-  // NAME
 
   const name =
     document.createElement("div");
@@ -358,8 +397,6 @@ function createStudentCard(
     studentName;
 
 
-  // ACTIONS
-
   const actions =
     document.createElement("div");
 
@@ -367,7 +404,7 @@ function createStudentCard(
     "student-actions";
 
 
-  // VIOLATION BUTTON
+  // VIOLATION
 
   const violationButton =
     document.createElement("button");
@@ -377,7 +414,6 @@ function createStudentCard(
 
   violationButton.textContent =
     "⚠ Violation";
-
 
   violationButton.addEventListener(
     "click",
@@ -391,7 +427,7 @@ function createStudentCard(
   );
 
 
-  // BONUS BUTTON
+  // BONUS
 
   const bonusButton =
     document.createElement("button");
@@ -401,7 +437,6 @@ function createStudentCard(
 
   bonusButton.textContent =
     "★ Bonus";
-
 
   bonusButton.addEventListener(
     "click",
@@ -415,12 +450,40 @@ function createStudentCard(
   );
 
 
+  // REPORT
+
+  const reportButton =
+    document.createElement("button");
+
+  reportButton.className =
+    "report-btn";
+
+  reportButton.textContent =
+    "📋 Report";
+
+  reportButton.addEventListener(
+    "click",
+    function() {
+
+      openStudentReport(
+        studentName,
+        currentClass
+      );
+
+    }
+  );
+
+
   actions.appendChild(
     violationButton
   );
 
   actions.appendChild(
     bonusButton
+  );
+
+  actions.appendChild(
+    reportButton
   );
 
 
@@ -445,14 +508,14 @@ function createStudentCard(
 
 
 // ==========================================
-// VIOLATION MENU
+// VIOLATION
 // ==========================================
 
 function showViolationMenu(
   studentName
 ) {
 
-  let menuText =
+  let text =
     "Select Violation for:\n" +
     studentName +
     "\n\n";
@@ -461,7 +524,7 @@ function showViolationMenu(
   violations.forEach(
     function(item, index) {
 
-      menuText +=
+      text +=
         (index + 1) +
         ". " +
         item +
@@ -472,7 +535,7 @@ function showViolationMenu(
 
 
   const choice =
-    prompt(menuText);
+    prompt(text);
 
 
   if (choice === null) {
@@ -480,14 +543,14 @@ function showViolationMenu(
   }
 
 
-  const choiceNumber =
+  const number =
     parseInt(choice);
 
 
   if (
-    isNaN(choiceNumber) ||
-    choiceNumber < 1 ||
-    choiceNumber > violations.length
+    isNaN(number) ||
+    number < 1 ||
+    number > violations.length
   ) {
 
     alert(
@@ -498,28 +561,21 @@ function showViolationMenu(
   }
 
 
-  let selectedViolation =
-    violations[
-      choiceNumber - 1
-    ];
+  let action =
+    violations[number - 1];
 
 
-  // OTHER
+  if (action === "Other...") {
 
-  if (
-    selectedViolation ===
-    "Other..."
-  ) {
-
-    const customViolation =
+    const other =
       prompt(
         "Write the violation:"
       );
 
 
     if (
-      customViolation === null ||
-      customViolation.trim() === ""
+      other === null ||
+      other.trim() === ""
     ) {
 
       return;
@@ -527,8 +583,8 @@ function showViolationMenu(
     }
 
 
-    selectedViolation =
-      customViolation.trim();
+    action =
+      other.trim();
 
   }
 
@@ -536,7 +592,7 @@ function showViolationMenu(
   saveBehaviorRecord(
     studentName,
     "Violation",
-    selectedViolation,
+    action,
     -1
   );
 
@@ -544,14 +600,14 @@ function showViolationMenu(
 
 
 // ==========================================
-// BONUS MENU
+// BONUS
 // ==========================================
 
 function showBonusMenu(
   studentName
 ) {
 
-  let menuText =
+  let text =
     "Select Bonus for:\n" +
     studentName +
     "\n\n";
@@ -560,7 +616,7 @@ function showBonusMenu(
   bonuses.forEach(
     function(item, index) {
 
-      menuText +=
+      text +=
         (index + 1) +
         ". " +
         item +
@@ -571,7 +627,7 @@ function showBonusMenu(
 
 
   const choice =
-    prompt(menuText);
+    prompt(text);
 
 
   if (choice === null) {
@@ -579,14 +635,14 @@ function showBonusMenu(
   }
 
 
-  const choiceNumber =
+  const number =
     parseInt(choice);
 
 
   if (
-    isNaN(choiceNumber) ||
-    choiceNumber < 1 ||
-    choiceNumber > bonuses.length
+    isNaN(number) ||
+    number < 1 ||
+    number > bonuses.length
   ) {
 
     alert(
@@ -597,16 +653,14 @@ function showBonusMenu(
   }
 
 
-  const selectedBonus =
-    bonuses[
-      choiceNumber - 1
-    ];
+  const action =
+    bonuses[number - 1];
 
 
   saveBehaviorRecord(
     studentName,
     "Bonus",
-    selectedBonus,
+    action,
     1
   );
 
@@ -614,7 +668,7 @@ function showBonusMenu(
 
 
 // ==========================================
-// SAVE RECORD TO SUPABASE
+// SAVE RECORD
 // ==========================================
 
 async function saveBehaviorRecord(
@@ -624,113 +678,289 @@ async function saveBehaviorRecord(
   points
 ) {
 
-  try {
-
-    const { error } =
-      await supabaseClient
-        .from("behavior_records")
-        .insert([
-          {
-
-            student_name:
-              studentName,
-
-            class_name:
-              currentClass,
-
-            category:
-              category,
-
-            action_name:
-              actionName,
-
-            points:
-              points
-
-          }
-        ]);
-
-
-    if (error) {
-
-      console.error(
-        "Save error:",
-        error
-      );
-
-
-      alert(
-        "Could not save the record."
-      );
-
-      return;
-
-    }
-
-
-    // DATE FOR DISPLAY ONLY
-    // Supabase also saves created_at automatically
-
-    const now =
-      new Date();
-
-
-    const date =
-      now.toLocaleDateString(
-        "en-GB"
-      );
-
-
-    const time =
-      now.toLocaleTimeString(
-        "en-US",
+  const { error } =
+    await supabaseClient
+      .from("behavior_records")
+      .insert([
         {
-          hour: "2-digit",
-          minute: "2-digit"
+
+          student_name:
+            studentName,
+
+          class_name:
+            currentClass,
+
+          category:
+            category,
+
+          action_name:
+            actionName,
+
+          points:
+            points
+
         }
-      );
+      ]);
 
 
-    alert(
-      "Saved successfully ✓\n\n" +
-
-      "Student: " +
-      studentName +
-
-      "\nClass: " +
-      currentClass +
-
-      "\nType: " +
-      category +
-
-      "\nReason: " +
-      actionName +
-
-      "\nPoints: " +
-      (points > 0 ? "+" : "") +
-      points +
-
-      "\nDate: " +
-      date +
-
-      "\nTime: " +
-      time
-    );
-
-
-  } catch (error) {
+  if (error) {
 
     console.error(
       "Save error:",
       error
     );
 
-
     alert(
       "Could not save the record."
     );
 
+    return;
+
   }
+
+
+  alert(
+    "Saved successfully ✓\n\n" +
+    studentName +
+    "\n" +
+    currentClass +
+    "\n" +
+    actionName
+  );
+
+}
+
+
+// ==========================================
+// STUDENT REPORT
+// ==========================================
+
+async function openStudentReport(
+  studentName,
+  className
+) {
+
+  hideAllScreens();
+
+  reportScreen.classList.remove(
+    "hidden"
+  );
+
+
+  reportStudentName.textContent =
+    studentName;
+
+  reportClassName.textContent =
+    className;
+
+
+  reportBonusCount.textContent =
+    "0";
+
+  reportViolationCount.textContent =
+    "0";
+
+  reportTotalScore.textContent =
+    "0";
+
+
+  reportTableBody.innerHTML =
+    "";
+
+
+  reportTableContainer.style.display =
+    "none";
+
+
+  reportStatus.textContent =
+    "Loading student report...";
+
+
+  const { data, error } =
+    await supabaseClient
+      .from("behavior_records")
+      .select(
+        "id, student_name, class_name, category, action_name, points, created_at"
+      )
+      .eq(
+        "student_name",
+        studentName
+      )
+      .eq(
+        "class_name",
+        className
+      )
+      .order(
+        "created_at",
+        {
+          ascending: false
+        }
+      );
+
+
+  if (error) {
+
+    console.error(
+      "Report error:",
+      error
+    );
+
+    reportStatus.textContent =
+      "Could not load the student report.";
+
+    return;
+
+  }
+
+
+  const records =
+    data || [];
+
+
+  let bonusCount = 0;
+
+  let violationCount = 0;
+
+  let totalScore = 0;
+
+
+  records.forEach(
+    function(record) {
+
+      if (
+        record.category ===
+        "Bonus"
+      ) {
+
+        bonusCount++;
+
+      }
+
+
+      if (
+        record.category ===
+        "Violation"
+      ) {
+
+        violationCount++;
+
+      }
+
+
+      totalScore +=
+        Number(record.points) || 0;
+
+
+      const row =
+        document.createElement("tr");
+
+
+      const dateObject =
+        new Date(
+          record.created_at
+        );
+
+
+      const date =
+        dateObject.toLocaleDateString(
+          "en-GB"
+        );
+
+
+      const time =
+        dateObject.toLocaleTimeString(
+          "en-US",
+          {
+            hour: "2-digit",
+            minute: "2-digit"
+          }
+        );
+
+
+      const pointClass =
+        record.points >= 0
+          ? "positive-points"
+          : "negative-points";
+
+
+      row.innerHTML = `
+        <td>${escapeHTML(date)}</td>
+
+        <td>${escapeHTML(time)}</td>
+
+        <td>${escapeHTML(record.category)}</td>
+
+        <td>${escapeHTML(record.action_name)}</td>
+
+        <td class="${pointClass}">
+          ${record.points > 0 ? "+" : ""}
+          ${record.points}
+        </td>
+      `;
+
+
+      reportTableBody.appendChild(
+        row
+      );
+
+    }
+  );
+
+
+  reportBonusCount.textContent =
+    bonusCount;
+
+  reportViolationCount.textContent =
+    violationCount;
+
+  reportTotalScore.textContent =
+    (totalScore > 0 ? "+" : "") +
+    totalScore;
+
+
+  const now =
+    new Date();
+
+
+  reportGeneratedDate.textContent =
+    now.toLocaleString(
+      "en-GB"
+    );
+
+
+  if (records.length === 0) {
+
+    reportStatus.textContent =
+      "No behavior records have been recorded for this student yet.";
+
+    reportTableContainer.style.display =
+      "none";
+
+  } else {
+
+    reportStatus.textContent =
+      "";
+
+    reportTableContainer.style.display =
+      "block";
+
+  }
+
+}
+
+
+// ==========================================
+// SAFE TABLE TEXT
+// ==========================================
+
+function escapeHTML(value) {
+
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 
 }
 
@@ -762,7 +992,7 @@ document
 
 
 // ==========================================
-// BACK
+// BACK FROM CLASS
 // ==========================================
 
 if (backBtn) {
@@ -770,6 +1000,44 @@ if (backBtn) {
   backBtn.addEventListener(
     "click",
     showDashboard
+  );
+
+}
+
+
+// ==========================================
+// BACK FROM REPORT
+// ==========================================
+
+if (reportBackBtn) {
+
+  reportBackBtn.addEventListener(
+    "click",
+    function() {
+
+      openClass(
+        currentClass
+      );
+
+    }
+  );
+
+}
+
+
+// ==========================================
+// SAVE PDF
+// ==========================================
+
+if (printReportBtn) {
+
+  printReportBtn.addEventListener(
+    "click",
+    function() {
+
+      window.print();
+
+    }
   );
 
 }
@@ -802,7 +1070,7 @@ if (logoutBtn) {
 
 
 // ==========================================
-// CHECK LOGIN
+// SESSION
 // ==========================================
 
 if (
@@ -820,10 +1088,6 @@ if (
 }
 
 
-// ==========================================
-// VERSION
-// ==========================================
-
 console.log(
-  "Class Behavior Tracker - Version 40"
+  "Class Behavior Tracker - Version 50"
 );
