@@ -7,3 +7,17 @@ const supabaseClient = window.supabase.createClient(
 );
 
 console.log("Supabase connected successfully");
+async function testConnection() {
+  const { data, error } = await supabaseClient
+    .from("students")
+    .select("*")
+    .limit(5);
+
+  if (error) {
+    console.error("Supabase error:", error);
+  } else {
+    console.log("Students loaded:", data);
+  }
+}
+
+testConnection();
