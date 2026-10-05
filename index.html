@@ -10,21 +10,35 @@
   <link rel="stylesheet" href="style.css?v=40">
 
   <style>
-    /* REPORT BUTTON */
+
+    /* =========================
+       ACTION BUTTONS
+    ========================= */
+
+    .history-btn {
+      background: #f3e8ff;
+      color: #7e22ce;
+    }
+
     .report-btn {
       background: #dbeafe;
       color: #1d4ed8;
     }
 
-    /* REPORT SCREEN */
-    #report-screen {
+
+    /* =========================
+       REPORT + HISTORY SCREENS
+    ========================= */
+
+    #report-screen,
+    #history-screen {
       background: rgba(255,255,255,.96);
       padding: 30px;
       border-radius: 20px;
       box-shadow: 0 10px 35px rgba(0,0,0,.12);
     }
 
-    .report-top {
+    .screen-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -32,12 +46,12 @@
       margin-bottom: 25px;
     }
 
-    .report-top-actions {
+    .screen-actions {
       display: flex;
       gap: 10px;
     }
 
-    .report-top-actions button {
+    .screen-actions button {
       border: none;
       padding: 12px 18px;
       border-radius: 9px;
@@ -45,7 +59,8 @@
       font-weight: bold;
     }
 
-    #report-back-btn {
+    #report-back-btn,
+    #history-back-btn {
       background: #e2e8f0;
     }
 
@@ -53,6 +68,11 @@
       background: #2563eb;
       color: white;
     }
+
+
+    /* =========================
+       REPORT
+    ========================= */
 
     .report-title {
       text-align: center;
@@ -65,21 +85,23 @@
       color: #173f91;
     }
 
-    .report-student-info {
+    .report-student-info,
+    .history-student-info {
       background: #f8fafc;
       border-radius: 12px;
       padding: 18px;
       margin-bottom: 20px;
     }
 
-    .report-student-info p {
+    .report-student-info p,
+    .history-student-info p {
       margin: 7px 0;
       font-size: 17px;
     }
 
     .report-summary {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(3,1fr);
       gap: 15px;
       margin-bottom: 25px;
     }
@@ -111,24 +133,29 @@
       color: #1d4ed8;
     }
 
-    .report-table-wrap {
+
+    /* =========================
+       TABLES
+    ========================= */
+
+    .table-wrap {
       overflow-x: auto;
     }
 
-    .report-table {
+    .data-table {
       width: 100%;
       border-collapse: collapse;
       background: white;
     }
 
-    .report-table th,
-    .report-table td {
+    .data-table th,
+    .data-table td {
       border: 1px solid #dbe2ea;
       padding: 12px;
       text-align: left;
     }
 
-    .report-table th {
+    .data-table th {
       background: #173f91;
       color: white;
     }
@@ -143,9 +170,39 @@
       font-weight: bold;
     }
 
-    #report-status {
+    .forgiven-row {
+      background: #f1f5f9;
+      opacity: .7;
+    }
+
+    .forgiven-text {
+      color: #64748b;
+      font-weight: bold;
+    }
+
+    .forgive-btn {
+      border: none;
+      background: #fef3c7;
+      color: #92400e;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .forgiven-badge {
+      display: inline-block;
+      background: #dcfce7;
+      color: #166534;
+      padding: 7px 10px;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    #report-status,
+    #history-status {
       text-align: center;
-      padding: 25px;
+      padding: 20px;
       font-weight: bold;
     }
 
@@ -155,26 +212,37 @@
       font-size: 14px;
     }
 
+
+    /* =========================
+       MOBILE
+    ========================= */
+
     @media (max-width: 750px) {
+
       .report-summary {
         grid-template-columns: 1fr;
       }
 
-      .report-top {
-        align-items: flex-start;
+      .screen-top {
         flex-direction: column;
+        align-items: flex-start;
       }
 
-      .report-top-actions {
+      .screen-actions {
         width: 100%;
       }
 
-      .report-top-actions button {
+      .screen-actions button {
         flex: 1;
       }
+
     }
 
-    /* PDF / PRINT */
+
+    /* =========================
+       PRINT / PDF
+    ========================= */
+
     @media print {
 
       @page {
@@ -206,21 +274,24 @@
         background: white;
       }
 
-      .report-top-actions {
+      .screen-actions {
         display: none !important;
       }
 
-      .report-table th {
+      .data-table th {
         background: #eee !important;
         color: #000 !important;
       }
 
       .report-summary {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(3,1fr);
       }
+
     }
+
   </style>
 </head>
+
 
 <body>
 
@@ -230,6 +301,7 @@
     <h1>Class Behavior Tracker</h1>
     <p>Student Behavior & Performance Management</p>
   </header>
+
 
   <main>
 
@@ -255,10 +327,7 @@
         placeholder="Enter your password"
       >
 
-      <button
-        type="button"
-        id="login-btn"
-      >
+      <button type="button" id="login-btn">
         Login
       </button>
 
@@ -274,15 +343,16 @@
       <div class="dashboard-header">
 
         <div>
+
           <h2>Teacher Dashboard</h2>
+
           <p id="teacher-email"></p>
+
           <p>Select a class to start.</p>
+
         </div>
 
-        <button
-          type="button"
-          id="logout-btn"
-        >
+        <button type="button" id="logout-btn">
           Logout
         </button>
 
@@ -296,8 +366,10 @@
           class="class-card"
           data-class="7/A"
         >
+
           <strong>7/A</strong>
           <span>18 Students</span>
+
         </button>
 
 
@@ -306,8 +378,10 @@
           class="class-card"
           data-class="7/B"
         >
+
           <strong>7/B</strong>
           <span>24 Students</span>
+
         </button>
 
       </div>
@@ -317,23 +391,20 @@
 
     <!-- CLASS -->
 
-    <div
-      id="class-screen"
-      class="hidden"
-    >
+    <div id="class-screen" class="hidden">
 
       <div class="class-header">
 
-        <button
-          type="button"
-          id="back-btn"
-        >
+        <button type="button" id="back-btn">
           ← Back to Classes
         </button>
 
         <div>
+
           <h2 id="class-title">Class</h2>
+
           <p id="class-count"></p>
+
         </div>
 
       </div>
@@ -343,20 +414,88 @@
     </div>
 
 
-    <!-- STUDENT REPORT -->
+    <!-- HISTORY -->
 
-    <div
-      id="report-screen"
-      class="hidden"
-    >
+    <div id="history-screen" class="hidden">
 
-      <div class="report-top">
+      <div class="screen-top">
 
         <div>
-          <strong>Student Behavior Report</strong>
+          <h2>🕘 Student History</h2>
         </div>
 
-        <div class="report-top-actions">
+        <div class="screen-actions">
+
+          <button
+            type="button"
+            id="history-back-btn"
+          >
+            ← Back
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div class="history-student-info">
+
+        <p>
+          <strong>Student:</strong>
+          <span id="history-student-name"></span>
+        </p>
+
+        <p>
+          <strong>Class:</strong>
+          <span id="history-class-name"></span>
+        </p>
+
+      </div>
+
+
+      <p id="history-status"></p>
+
+
+      <div
+        id="history-table-container"
+        class="table-wrap"
+      >
+
+        <table class="data-table">
+
+          <thead>
+
+            <tr>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Type</th>
+              <th>Details</th>
+              <th>Points</th>
+              <th>Status / Action</th>
+            </tr>
+
+          </thead>
+
+          <tbody id="history-table-body"></tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+
+    <!-- REPORT -->
+
+    <div id="report-screen" class="hidden">
+
+      <div class="screen-top">
+
+        <strong>
+          Student Behavior Report
+        </strong>
+
+        <div class="screen-actions">
 
           <button
             type="button"
@@ -379,9 +518,7 @@
 
       <div class="report-title">
 
-        <h2>
-          Mr. Sayed's Class
-        </h2>
+        <h2>Mr. Sayed's Class</h2>
 
         <p>
           Student Behavior & Performance Report
@@ -413,18 +550,35 @@
       <div class="report-summary">
 
         <div class="summary-box bonus-summary">
+
           Bonus
-          <strong id="report-bonus-count">0</strong>
+
+          <strong id="report-bonus-count">
+            0
+          </strong>
+
         </div>
+
 
         <div class="summary-box violation-summary">
+
           Violations
-          <strong id="report-violation-count">0</strong>
+
+          <strong id="report-violation-count">
+            0
+          </strong>
+
         </div>
 
+
         <div class="summary-box score-summary">
+
           Total Score
-          <strong id="report-total-score">0</strong>
+
+          <strong id="report-total-score">
+            0
+          </strong>
+
         </div>
 
       </div>
@@ -435,12 +589,13 @@
 
       <div
         id="report-table-container"
-        class="report-table-wrap"
+        class="table-wrap"
       >
 
-        <table class="report-table">
+        <table class="data-table">
 
           <thead>
+
             <tr>
               <th>Date</th>
               <th>Time</th>
@@ -448,6 +603,7 @@
               <th>Details</th>
               <th>Points</th>
             </tr>
+
           </thead>
 
           <tbody id="report-table-body"></tbody>
@@ -473,7 +629,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script src="./app.js?v=50"></script>
+<script src="./app.js?v=60"></script>
 
 </body>
+
 </html>
