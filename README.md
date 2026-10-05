@@ -1,2 +1,2 @@
 # class-behavior-tracker
-Student behavior, violations and bonus tracking system وخلي الإعدادات كالتالي:
+Student behavior, violations and bonus tracking system 
