@@ -1077,3 +1077,47 @@ input {
   font-weight: 700;
   white-space: nowrap;
 }
+/* FORCE HISTORY BUTTON STYLES */
+
+#history-screen .edit-record-btn {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  background: #fff3cd !important;
+  color: #8a5a00 !important;
+  border: none !important;
+  border-radius: 10px !important;
+  padding: 9px 13px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+}
+
+#history-screen .delete-record-btn {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  background: #fee2e2 !important;
+  color: #b42318 !important;
+  border: none !important;
+  border-radius: 10px !important;
+  padding: 9px 13px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+}
+
+#history-screen .edit-record-btn:hover {
+  background: #ffe69c !important;
+}
+
+#history-screen .delete-record-btn:hover {
+  background: #fecaca !important;
+}
+
+#history-screen .history-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  flex-wrap: wrap !important;
+}
