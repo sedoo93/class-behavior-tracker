@@ -811,150 +811,103 @@
 
       <!-- REPORT SCREEN -->
 
-      <div
-        id="report-screen"
-        class="hidden"
-      >
+<div id="report-screen" class="hidden">
 
-        <div class="screen-top">
+  <div class="screen-top">
 
-          <div>
+    <button type="button" id="report-back-btn">
+      ← Back
+    </button>
 
-            <h2>
-              📋 Student Behavior Report
-            </h2>
+    <button type="button" id="print-report-btn">
+      📄 Save as PDF
+    </button>
 
-            <p>
-              Active behavior records
-            </p>
-
-          </div>
+  </div>
 
 
-          <div class="screen-actions">
+  <div class="report-title">
 
-            <button
-              type="button"
-              id="report-back-btn"
-            >
-              ← Back
-            </button>
+    <h2>Mr. Sayed's Class</h2>
 
+    <p>Student Behavior & Performance Report</p>
 
-            <button
-              type="button"
-              id="print-report-btn"
-            >
-              📄 Save as PDF
-            </button>
-
-          </div>
-
-        </div>
+  </div>
 
 
-        <div class="report-student-info">
+  <div class="report-student-info">
 
-          <p>
-            <strong>Student:</strong>
-            <span id="report-student-name"></span>
-          </p>
+    <p>
+      <strong>Student:</strong>
+      <span id="report-student-name"></span>
+    </p>
 
-          <p>
-            <strong>Class:</strong>
-            <span id="report-class-name"></span>
-          </p>
+    <p>
+      <strong>Class:</strong>
+      <span id="report-class-name"></span>
+    </p>
 
-          <p>
-            <strong>Teacher:</strong>
-            Mr. Sayed Ramadan
-          </p>
+    <p>
+      <strong>Teacher:</strong>
+      Mr. Sayed Ramadan
+    </p>
 
-        </div>
-
-
-        <div class="report-summary">
-
-          <div class="report-card">
-
-            Bonuses
-
-            <strong id="report-bonus-count">
-              0
-            </strong>
-
-          </div>
+  </div>
 
 
-          <div class="report-card">
+  <div class="report-summary">
 
-            Violations
+    <div class="report-card bonus-report-card">
+      Bonus
+      <strong id="report-bonus-count">0</strong>
+    </div>
 
-            <strong id="report-violation-count">
-              0
-            </strong>
+    <div class="report-card violation-report-card">
+      Violations
+      <strong id="report-violation-count">0</strong>
+    </div>
 
-          </div>
+    <div class="report-card score-report-card">
+      Total Score
+      <strong id="report-total-score">0</strong>
+    </div>
 
-
-          <div class="report-card">
-
-            Total Score
-
-            <strong id="report-total-score">
-              0
-            </strong>
-
-          </div>
-
-        </div>
+  </div>
 
 
-        <p id="report-status"></p>
+  <p id="report-status"></p>
 
 
-        <div
-          id="report-table-container"
-          class="table-wrapper hidden"
-        >
+  <div
+    id="report-table-container"
+    class="table-wrapper hidden"
+  >
 
-          <table class="records-table">
+    <table class="records-table">
 
-            <thead>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Type</th>
+          <th>Details</th>
+          <th>Points</th>
+        </tr>
+      </thead>
 
-              <tr>
+      <tbody id="report-table-body"></tbody>
 
-                <th>Date</th>
+    </table>
 
-                <th>Type</th>
-
-                <th>Details</th>
-
-                <th>Points</th>
-
-              </tr>
-
-            </thead>
-
-
-            <tbody id="report-table-body"></tbody>
-
-          </table>
-
-        </div>
+  </div>
 
 
-        <div class="report-footer">
+  <div class="report-footer">
+    Generated:
+    <span id="report-generated-date"></span>
+  </div>
 
-          Generated:
-
-          <span id="report-generated-date"></span>
-
-        </div>
-
-      </div>
-
-
+</div>
       <!-- ANALYSIS SCREEN -->
 
       <div
