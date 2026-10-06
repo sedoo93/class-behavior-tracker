@@ -1733,17 +1733,11 @@ async function deleteBehaviorRecord(
 
   try {
 
-    console.log(
-      "Trying to delete record ID:",
-      recordId
-    );
-
-    const { data, error } =
+    const { error } =
       await supabaseClient
         .from("behavior_records")
         .delete()
-        .eq("id", recordId)
-        .select("id");
+        .eq("id", Number(recordId));
 
     if (error) {
 
@@ -1754,24 +1748,8 @@ async function deleteBehaviorRecord(
 
       alert(
         "Could not delete this record.\n\n" +
+        "Error: " +
         error.message
-      );
-
-      return;
-    }
-
-    console.log(
-      "Deleted data:",
-      data
-    );
-
-    if (!data || data.length === 0) {
-
-      alert(
-        "Delete was not completed.\n\n" +
-        "Supabase returned 0 deleted records.\n" +
-        "Record ID: " +
-        recordId
       );
 
       return;
@@ -1795,7 +1773,8 @@ async function deleteBehaviorRecord(
 
     alert(
       "Could not delete this record.\n\n" +
-      error.message
+      "Error: " +
+      (error.message || error)
     );
 
   }
