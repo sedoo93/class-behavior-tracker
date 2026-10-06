@@ -1004,3 +1004,76 @@ input {
   }
 
 }
+/* ==========================================
+   HISTORY ACTION BUTTONS
+   ========================================== */
+
+.history-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+/* FORGIVE */
+.forgive-btn {
+  border: none;
+  background: #dcfce7;
+  color: #067647;
+  padding: 9px 13px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.forgive-btn:hover {
+  background: #bbf7d0;
+}
+
+/* EDIT */
+.edit-record-btn {
+  border: none;
+  background: #fff3cd;
+  color: #8a5a00;
+  padding: 9px 13px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.edit-record-btn:hover {
+  background: #ffe69c;
+}
+
+/* DELETE */
+.delete-record-btn {
+  border: none;
+  background: #fee2e2;
+  color: #b42318;
+  padding: 9px 13px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.delete-record-btn:hover {
+  background: #fecaca;
+}
+
+/* FORGIVEN BADGE */
+.forgiven-badge {
+  display: inline-block;
+  background: #e8f5e9;
+  color: #166534;
+  padding: 9px 13px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+}
