@@ -1392,7 +1392,7 @@ async function openStudentReport(
     "";
 
   reportTableContainer.classList.add("hidden");
-    "none";
+    
 
 
   try {
@@ -1538,7 +1538,7 @@ async function openStudentReport(
 
 
     reportTableContainer.classList.remove("hidden");
-      "block";
+      
 
 
   } catch (error) {
