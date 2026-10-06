@@ -1,6 +1,6 @@
 // ==========================================
 // CLASS BEHAVIOR TRACKER
-// VERSION 62
+// VERSION 63
 // ==========================================
 
 
@@ -128,6 +128,9 @@ const historyScreen =
 const reportScreen =
   document.getElementById("report-screen");
 
+const analysisScreen =
+  document.getElementById("analysis-screen");
+
 
 const emailInput =
   document.getElementById("email");
@@ -218,12 +221,65 @@ const reportGeneratedDate =
   document.getElementById("report-generated-date");
 
 
+// ANALYSIS
+
+const analysisBackBtn =
+  document.getElementById("analysis-back-btn");
+
+const translateAnalysisBtn =
+  document.getElementById("translate-analysis-btn");
+
+const printAnalysisBtn =
+  document.getElementById("print-analysis-btn");
+
+const analysisStudentName =
+  document.getElementById("analysis-student-name");
+
+const analysisClassName =
+  document.getElementById("analysis-class-name");
+
+const analysisBonusCount =
+  document.getElementById("analysis-bonus-count");
+
+const analysisViolationCount =
+  document.getElementById("analysis-violation-count");
+
+const analysisTotalScore =
+  document.getElementById("analysis-total-score");
+
+const analysisTopViolation =
+  document.getElementById("analysis-top-violation");
+
+const analysisStatus =
+  document.getElementById("analysis-status");
+
+const analysisChart =
+  document.getElementById("analysis-chart");
+
+const analysisDescription =
+  document.getElementById("analysis-description");
+
+const analysisSummaryTitle =
+  document.getElementById("analysis-summary-title");
+
+const analysisGeneratedDate =
+  document.getElementById("analysis-generated-date");
+
+
 // ==========================================
 // CURRENT STATE
 // ==========================================
 
 let currentClass = null;
+
 let currentHistoryStudent = null;
+
+let currentAnalysisLanguage = "en";
+
+let currentAnalysisText = {
+  en: "",
+  ar: ""
+};
 
 
 // ==========================================
@@ -251,6 +307,10 @@ function hideAllScreens() {
   if (reportScreen) {
     reportScreen.classList.add("hidden");
   }
+
+  if (analysisScreen) {
+    analysisScreen.classList.add("hidden");
+  }
 }
 
 
@@ -261,8 +321,11 @@ function showDashboard() {
   dashboard.classList.remove("hidden");
 
   if (teacherEmail) {
+
     teacherEmail.textContent =
-      "Logged in as: " + ADMIN_EMAIL;
+      "Logged in as: " +
+      ADMIN_EMAIL;
+
   }
 }
 
@@ -286,7 +349,9 @@ function showLogin() {
 function login() {
 
   const enteredEmail =
-    emailInput.value.trim().toLowerCase();
+    emailInput.value
+      .trim()
+      .toLowerCase();
 
   const enteredPassword =
     passwordInput.value.trim();
@@ -295,8 +360,10 @@ function login() {
 
 
   if (
-    enteredEmail === ADMIN_EMAIL.toLowerCase() &&
-    enteredPassword === ADMIN_PASSWORD
+    enteredEmail ===
+      ADMIN_EMAIL.toLowerCase() &&
+    enteredPassword ===
+      ADMIN_PASSWORD
   ) {
 
     sessionStorage.setItem(
@@ -323,6 +390,7 @@ if (loginBtn) {
     "click",
     login
   );
+
 }
 
 
@@ -335,8 +403,10 @@ if (emailInput) {
       if (event.key === "Enter") {
         login();
       }
+
     }
   );
+
 }
 
 
@@ -349,8 +419,10 @@ if (passwordInput) {
       if (event.key === "Enter") {
         login();
       }
+
     }
   );
+
 }
 
 
@@ -367,26 +439,34 @@ function openClass(className) {
 
   hideAllScreens();
 
-  classScreen.classList.remove("hidden");
+  classScreen.classList.remove(
+    "hidden"
+  );
 
   classTitle.textContent =
     "Class " + className;
 
   classCount.textContent =
-    classStudents.length + " Students";
+    classStudents.length +
+    " Students";
 
   studentsList.innerHTML = "";
 
 
   classStudents.forEach(
-    function(studentName, index) {
+    function(
+      studentName,
+      index
+    ) {
 
       createStudentCard(
         studentName,
         index
       );
+
     }
   );
+
 }
 
 
@@ -402,33 +482,43 @@ function createStudentCard(
   const card =
     document.createElement("div");
 
-  card.className = "student-card";
+  card.className =
+    "student-card";
 
 
   const number =
     document.createElement("div");
 
-  number.className = "student-number";
-  number.textContent = index + 1;
+  number.className =
+    "student-number";
+
+  number.textContent =
+    index + 1;
 
 
   const name =
     document.createElement("div");
 
-  name.className = "student-name";
-  name.textContent = studentName;
+  name.className =
+    "student-name";
+
+  name.textContent =
+    studentName;
 
 
   const actions =
     document.createElement("div");
 
-  actions.className = "student-actions";
+  actions.className =
+    "student-actions";
 
 
   // BONUS
 
   const bonusButton =
-    document.createElement("button");
+    document.createElement(
+      "button"
+    );
 
   bonusButton.className =
     "positive-btn";
@@ -440,7 +530,10 @@ function createStudentCard(
     "click",
     function() {
 
-      showBonusMenu(studentName);
+      showBonusMenu(
+        studentName
+      );
+
     }
   );
 
@@ -448,7 +541,9 @@ function createStudentCard(
   // VIOLATION
 
   const violationButton =
-    document.createElement("button");
+    document.createElement(
+      "button"
+    );
 
   violationButton.className =
     "negative-btn";
@@ -460,7 +555,10 @@ function createStudentCard(
     "click",
     function() {
 
-      showViolationMenu(studentName);
+      showViolationMenu(
+        studentName
+      );
+
     }
   );
 
@@ -468,7 +566,9 @@ function createStudentCard(
   // HISTORY
 
   const historyButton =
-    document.createElement("button");
+    document.createElement(
+      "button"
+    );
 
   historyButton.className =
     "history-btn";
@@ -484,6 +584,7 @@ function createStudentCard(
         studentName,
         currentClass
       );
+
     }
   );
 
@@ -491,7 +592,9 @@ function createStudentCard(
   // REPORT
 
   const reportButton =
-    document.createElement("button");
+    document.createElement(
+      "button"
+    );
 
   reportButton.className =
     "report-btn";
@@ -507,23 +610,68 @@ function createStudentCard(
         studentName,
         currentClass
       );
+
     }
   );
 
 
-  // ORDER:
-  // BONUS → VIOLATION → HISTORY → REPORT
+  // ANALYSIS
 
-  actions.appendChild(bonusButton);
-  actions.appendChild(violationButton);
-  actions.appendChild(historyButton);
-  actions.appendChild(reportButton);
+  const analysisButton =
+    document.createElement(
+      "button"
+    );
+
+  analysisButton.className =
+    "analysis-btn";
+
+  analysisButton.textContent =
+    "📊 Analysis";
+
+  analysisButton.addEventListener(
+    "click",
+    function() {
+
+      openStudentAnalysis(
+        studentName,
+        currentClass
+      );
+
+    }
+  );
+
+
+  // BUTTON ORDER
+
+  actions.appendChild(
+    bonusButton
+  );
+
+  actions.appendChild(
+    violationButton
+  );
+
+  actions.appendChild(
+    historyButton
+  );
+
+  actions.appendChild(
+    reportButton
+  );
+
+  actions.appendChild(
+    analysisButton
+  );
+
 
   card.appendChild(number);
+
   card.appendChild(name);
+
   card.appendChild(actions);
 
   studentsList.appendChild(card);
+
 }
 
 
@@ -531,7 +679,9 @@ function createStudentCard(
 // BONUS
 // ==========================================
 
-function showBonusMenu(studentName) {
+function showBonusMenu(
+  studentName
+) {
 
   let message =
     "Select Bonus for:\n" +
@@ -540,13 +690,17 @@ function showBonusMenu(studentName) {
 
 
   bonuses.forEach(
-    function(item, index) {
+    function(
+      item,
+      index
+    ) {
 
       message +=
         (index + 1) +
         ". " +
         item +
         "\n";
+
     }
   );
 
@@ -575,6 +729,7 @@ function showBonusMenu(studentName) {
     );
 
     return;
+
   }
 
 
@@ -588,6 +743,7 @@ function showBonusMenu(studentName) {
     selectedBonus,
     1
   );
+
 }
 
 
@@ -595,7 +751,9 @@ function showBonusMenu(studentName) {
 // VIOLATION
 // ==========================================
 
-function showViolationMenu(studentName) {
+function showViolationMenu(
+  studentName
+) {
 
   let message =
     "Select Violation for:\n" +
@@ -604,13 +762,17 @@ function showViolationMenu(studentName) {
 
 
   violations.forEach(
-    function(item, index) {
+    function(
+      item,
+      index
+    ) {
 
       message +=
         (index + 1) +
         ". " +
         item +
         "\n";
+
     }
   );
 
@@ -639,6 +801,7 @@ function showViolationMenu(studentName) {
     );
 
     return;
+
   }
 
 
@@ -646,7 +809,10 @@ function showViolationMenu(studentName) {
     violations[number - 1];
 
 
-  if (selectedViolation === "Other...") {
+  if (
+    selectedViolation ===
+    "Other..."
+  ) {
 
     const otherViolation =
       prompt(
@@ -660,11 +826,13 @@ function showViolationMenu(studentName) {
     ) {
 
       return;
+
     }
 
 
     selectedViolation =
       otherViolation.trim();
+
   }
 
 
@@ -674,6 +842,7 @@ function showViolationMenu(studentName) {
     selectedViolation,
     -1
   );
+
 }
 
 
@@ -692,15 +861,30 @@ async function saveBehaviorRecord(
 
     const { error } =
       await supabaseClient
-        .from("behavior_records")
+        .from(
+          "behavior_records"
+        )
         .insert([
           {
-            student_name: studentName,
-            class_name: currentClass,
-            category: category,
-            action_name: actionName,
-            points: points,
-            forgiven: false
+
+            student_name:
+              studentName,
+
+            class_name:
+              currentClass,
+
+            category:
+              category,
+
+            action_name:
+              actionName,
+
+            points:
+              points,
+
+            forgiven:
+              false
+
           }
         ]);
 
@@ -717,6 +901,7 @@ async function saveBehaviorRecord(
       );
 
       return;
+
     }
 
 
@@ -731,6 +916,7 @@ async function saveBehaviorRecord(
       actionName
     );
 
+
   } catch (error) {
 
     console.error(
@@ -741,7 +927,9 @@ async function saveBehaviorRecord(
     alert(
       "Could not save the record."
     );
+
   }
+
 }
 
 
@@ -763,6 +951,7 @@ async function openStudentHistory(
 
   hideAllScreens();
 
+
   historyScreen.classList.remove(
     "hidden"
   );
@@ -774,11 +963,14 @@ async function openStudentHistory(
   historyClassName.textContent =
     className;
 
+
   historyStatus.textContent =
     "Loading history...";
 
+
   historyTableBody.innerHTML =
     "";
+
 
   historyTableContainer.style.display =
     "none";
@@ -786,20 +978,30 @@ async function openStudentHistory(
 
   try {
 
-    const { data, error } =
+    const {
+      data,
+      error
+    } =
       await supabaseClient
-        .from("behavior_records")
+
+        .from(
+          "behavior_records"
+        )
+
         .select(
           "id, student_name, class_name, category, action_name, points, created_at, forgiven, forgiven_at"
         )
+
         .eq(
           "student_name",
           studentName
         )
+
         .eq(
           "class_name",
           className
         )
+
         .order(
           "created_at",
           {
@@ -819,6 +1021,7 @@ async function openStudentHistory(
         "Could not load history.";
 
       return;
+
     }
 
 
@@ -826,16 +1029,21 @@ async function openStudentHistory(
       data || [];
 
 
-    if (records.length === 0) {
+    if (
+      records.length === 0
+    ) {
 
       historyStatus.textContent =
         "No records for this student yet.";
 
       return;
+
     }
 
 
-    historyStatus.textContent = "";
+    historyStatus.textContent =
+      "";
+
 
     historyTableContainer.style.display =
       "block";
@@ -844,9 +1052,13 @@ async function openStudentHistory(
     records.forEach(
       function(record) {
 
-        createHistoryRow(record);
+        createHistoryRow(
+          record
+        );
+
       }
     );
+
 
   } catch (error) {
 
@@ -857,7 +1069,9 @@ async function openStudentHistory(
 
     historyStatus.textContent =
       "Could not load history.";
+
   }
+
 }
 
 
@@ -865,22 +1079,31 @@ async function openStudentHistory(
 // CREATE HISTORY ROW
 // ==========================================
 
-function createHistoryRow(record) {
+function createHistoryRow(
+  record
+) {
 
   const row =
-    document.createElement("tr");
+    document.createElement(
+      "tr"
+    );
 
 
-  if (record.forgiven === true) {
+  if (
+    record.forgiven === true
+  ) {
 
     row.classList.add(
       "forgiven-row"
     );
+
   }
 
 
   const dateObject =
-    new Date(record.created_at);
+    new Date(
+      record.created_at
+    );
 
 
   const date =
@@ -893,50 +1116,86 @@ function createHistoryRow(record) {
     dateObject.toLocaleTimeString(
       "en-US",
       {
-        hour: "2-digit",
-        minute: "2-digit"
+
+        hour:
+          "2-digit",
+
+        minute:
+          "2-digit"
+
       }
     );
 
 
-  addCell(row, date);
-  addCell(row, time);
-  addCell(row, record.category);
-  addCell(row, record.action_name);
+  addCell(
+    row,
+    date
+  );
+
+  addCell(
+    row,
+    time
+  );
+
+  addCell(
+    row,
+    record.category
+  );
+
+  addCell(
+    row,
+    record.action_name
+  );
 
 
   const pointsCell =
-    document.createElement("td");
+    document.createElement(
+      "td"
+    );
 
 
   pointsCell.textContent =
     (
-      Number(record.points) > 0
+      Number(
+        record.points
+      ) > 0
         ? "+"
         : ""
     ) +
-    Number(record.points);
+    Number(
+      record.points
+    );
 
 
   pointsCell.className =
-    Number(record.points) >= 0
+    Number(
+      record.points
+    ) >= 0
       ? "positive-points"
       : "negative-points";
 
 
-  row.appendChild(pointsCell);
+  row.appendChild(
+    pointsCell
+  );
 
 
   // STATUS / ACTION
 
   const actionCell =
-    document.createElement("td");
+    document.createElement(
+      "td"
+    );
 
 
-  if (record.forgiven === true) {
+  if (
+    record.forgiven === true
+  ) {
 
     const badge =
-      document.createElement("span");
+      document.createElement(
+        "span"
+      );
 
     badge.className =
       "forgiven-badge";
@@ -944,14 +1203,20 @@ function createHistoryRow(record) {
     badge.textContent =
       "✓ Forgiven";
 
-    actionCell.appendChild(badge);
+    actionCell.appendChild(
+      badge
+    );
+
 
   } else if (
-    record.category === "Violation"
+    record.category ===
+    "Violation"
   ) {
 
     const forgiveButton =
-      document.createElement("button");
+      document.createElement(
+        "button"
+      );
 
     forgiveButton.type =
       "button";
@@ -971,6 +1236,7 @@ function createHistoryRow(record) {
           record.id,
           record.action_name
         );
+
       }
     );
 
@@ -979,16 +1245,24 @@ function createHistoryRow(record) {
       forgiveButton
     );
 
+
   } else {
 
     actionCell.textContent =
       "Active";
+
   }
 
 
-  row.appendChild(actionCell);
+  row.appendChild(
+    actionCell
+  );
 
-  historyTableBody.appendChild(row);
+
+  historyTableBody.appendChild(
+    row
+  );
+
 }
 
 
@@ -1021,12 +1295,22 @@ async function forgiveRecord(
 
     const { error } =
       await supabaseClient
-        .from("behavior_records")
+
+        .from(
+          "behavior_records"
+        )
+
         .update({
-          forgiven: true,
+
+          forgiven:
+            true,
+
           forgiven_at:
-            new Date().toISOString()
+            new Date()
+              .toISOString()
+
         })
+
         .eq(
           "id",
           recordId
@@ -1045,6 +1329,7 @@ async function forgiveRecord(
       );
 
       return;
+
     }
 
 
@@ -1058,6 +1343,7 @@ async function forgiveRecord(
       currentClass
     );
 
+
   } catch (error) {
 
     console.error(
@@ -1068,11 +1354,10 @@ async function forgiveRecord(
     alert(
       "Could not forgive this record."
     );
+
   }
-}
 
-
-// ==========================================
+}// ==========================================
 // REPORT
 // ==========================================
 
@@ -1081,9 +1366,7 @@ async function openStudentReport(
   className
 ) {
 
-  currentClass =
-    className;
-
+  currentClass = className;
 
   hideAllScreens();
 
@@ -1091,13 +1374,11 @@ async function openStudentReport(
     "hidden"
   );
 
-
   reportStudentName.textContent =
     studentName;
 
   reportClassName.textContent =
     className;
-
 
   reportBonusCount.textContent =
     "0";
@@ -1108,6 +1389,8 @@ async function openStudentReport(
   reportTotalScore.textContent =
     "0";
 
+  reportStatus.textContent =
+    "Loading report...";
 
   reportTableBody.innerHTML =
     "";
@@ -1115,30 +1398,38 @@ async function openStudentReport(
   reportTableContainer.style.display =
     "none";
 
-  reportStatus.textContent =
-    "Loading student report...";
-
 
   try {
 
-    const { data, error } =
+    const {
+      data,
+      error
+    } =
       await supabaseClient
-        .from("behavior_records")
+
+        .from(
+          "behavior_records"
+        )
+
         .select(
           "id, category, action_name, points, created_at, forgiven"
         )
+
         .eq(
           "student_name",
           studentName
         )
+
         .eq(
           "class_name",
           className
         )
+
         .eq(
           "forgiven",
           false
         )
+
         .order(
           "created_at",
           {
@@ -1155,9 +1446,10 @@ async function openStudentReport(
       );
 
       reportStatus.textContent =
-        "Could not load the student report.";
+        "Could not load report.";
 
       return;
+
     }
 
 
@@ -1166,7 +1458,9 @@ async function openStudentReport(
 
 
     let bonusCount = 0;
+
     let violationCount = 0;
+
     let totalScore = 0;
 
 
@@ -1174,26 +1468,35 @@ async function openStudentReport(
       function(record) {
 
         if (
-          record.category === "Bonus"
+          record.category ===
+          "Bonus"
         ) {
 
           bonusCount++;
+
         }
 
 
         if (
-          record.category === "Violation"
+          record.category ===
+          "Violation"
         ) {
 
           violationCount++;
+
         }
 
 
         totalScore +=
-          Number(record.points) || 0;
+          Number(
+            record.points
+          ) || 0;
 
 
-        createReportRow(record);
+        createReportRow(
+          record
+        );
+
       }
     );
 
@@ -1201,8 +1504,10 @@ async function openStudentReport(
     reportBonusCount.textContent =
       bonusCount;
 
+
     reportViolationCount.textContent =
       violationCount;
+
 
     reportTotalScore.textContent =
       (
@@ -1214,26 +1519,31 @@ async function openStudentReport(
 
 
     reportGeneratedDate.textContent =
-      new Date().toLocaleString(
-        "en-GB"
-      );
+      new Date()
+        .toLocaleString(
+          "en-GB"
+        );
 
 
-    if (records.length === 0) {
+    if (
+      records.length === 0
+    ) {
 
       reportStatus.textContent =
         "No active behavior records for this student.";
 
-      reportTableContainer.style.display =
-        "none";
+      return;
 
-    } else {
-
-      reportStatus.textContent = "";
-
-      reportTableContainer.style.display =
-        "block";
     }
+
+
+    reportStatus.textContent =
+      "";
+
+
+    reportTableContainer.style.display =
+      "block";
+
 
   } catch (error) {
 
@@ -1242,9 +1552,12 @@ async function openStudentReport(
       error
     );
 
+
     reportStatus.textContent =
-      "Could not load the student report.";
+      "Could not load report.";
+
   }
+
 }
 
 
@@ -1252,14 +1565,38 @@ async function openStudentReport(
 // CREATE REPORT ROW
 // ==========================================
 
-function createReportRow(record) {
+function createReportRow(
+  record
+) {
 
   const row =
-    document.createElement("tr");
+    document.createElement(
+      "tr"
+    );
+
+
+  if (
+    record.category ===
+    "Bonus"
+  ) {
+
+    row.classList.add(
+      "positive-row"
+    );
+
+  } else {
+
+    row.classList.add(
+      "negative-row"
+    );
+
+  }
 
 
   const dateObject =
-    new Date(record.created_at);
+    new Date(
+      record.created_at
+    );
 
 
   const date =
@@ -1268,60 +1605,856 @@ function createReportRow(record) {
     );
 
 
-  const time =
-    dateObject.toLocaleTimeString(
-      "en-US",
-      {
-        hour: "2-digit",
-        minute: "2-digit"
-      }
-    );
+  addCell(
+    row,
+    date
+  );
 
 
-  addCell(row, date);
-  addCell(row, time);
-  addCell(row, record.category);
-  addCell(row, record.action_name);
+  addCell(
+    row,
+    record.category
+  );
 
 
-  const pointsCell =
-    document.createElement("td");
+  addCell(
+    row,
+    record.action_name
+  );
 
 
-  pointsCell.textContent =
+  const points =
+    Number(
+      record.points
+    ) || 0;
+
+
+  addCell(
+    row,
     (
-      Number(record.points) > 0
+      points > 0
         ? "+"
         : ""
     ) +
-    Number(record.points);
+    points
+  );
 
 
-  pointsCell.className =
-    Number(record.points) >= 0
-      ? "positive-points"
-      : "negative-points";
+  reportTableBody.appendChild(
+    row
+  );
 
-
-  row.appendChild(pointsCell);
-
-  reportTableBody.appendChild(row);
 }
 
 
 // ==========================================
-// SAFE TABLE CELL
+// ANALYSIS
 // ==========================================
 
-function addCell(row, value) {
+async function openStudentAnalysis(
+  studentName,
+  className
+) {
+
+  currentClass =
+    className;
+
+
+  currentAnalysisLanguage =
+    "en";
+
+
+  hideAllScreens();
+
+
+  analysisScreen.classList.remove(
+    "hidden"
+  );
+
+
+  analysisStudentName.textContent =
+    studentName;
+
+
+  analysisClassName.textContent =
+    className;
+
+
+  analysisBonusCount.textContent =
+    "0";
+
+
+  analysisViolationCount.textContent =
+    "0";
+
+
+  analysisTotalScore.textContent =
+    "0";
+
+
+  analysisTopViolation.textContent =
+    "None";
+
+
+  analysisChart.innerHTML =
+    "";
+
+
+  analysisDescription.textContent =
+    "";
+
+
+  analysisDescription.classList.remove(
+    "arabic"
+  );
+
+
+  analysisSummaryTitle.textContent =
+    "Behavior Summary";
+
+
+  translateAnalysisBtn.textContent =
+    "🌐 العربية";
+
+
+  analysisStatus.textContent =
+    "Loading behavior analysis...";
+
+
+  try {
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+
+        .from(
+          "behavior_records"
+        )
+
+        .select(
+          "category, action_name, points, created_at, forgiven"
+        )
+
+        .eq(
+          "student_name",
+          studentName
+        )
+
+        .eq(
+          "class_name",
+          className
+        )
+
+        .eq(
+          "forgiven",
+          false
+        )
+
+        .order(
+          "created_at",
+          {
+            ascending: true
+          }
+        );
+
+
+    if (error) {
+
+      console.error(
+        "Analysis error:",
+        error
+      );
+
+
+      analysisStatus.textContent =
+        "Could not load the behavior analysis.";
+
+
+      return;
+
+    }
+
+
+    const records =
+      data || [];
+
+
+    let bonusCount = 0;
+
+    let violationCount = 0;
+
+    let totalScore = 0;
+
+
+    const counts = {};
+
+    const violationCounts = {};
+
+
+    records.forEach(
+      function(record) {
+
+        const action =
+          record.action_name ||
+          "Other";
+
+
+        counts[action] =
+          (
+            counts[action] ||
+            0
+          ) + 1;
+
+
+        totalScore +=
+          Number(
+            record.points
+          ) || 0;
+
+
+        if (
+          record.category ===
+          "Bonus"
+        ) {
+
+          bonusCount++;
+
+        }
+
+
+        if (
+          record.category ===
+          "Violation"
+        ) {
+
+          violationCount++;
+
+
+          violationCounts[action] =
+            (
+              violationCounts[action] ||
+              0
+            ) + 1;
+
+        }
+
+      }
+    );
+
+
+    // FIND MOST FREQUENT VIOLATION
+
+    let topViolation =
+      "None";
+
+
+    let topViolationCount =
+      0;
+
+
+    Object.keys(
+      violationCounts
+    ).forEach(
+      function(action) {
+
+        if (
+          violationCounts[action] >
+          topViolationCount
+        ) {
+
+          topViolation =
+            action;
+
+
+          topViolationCount =
+            violationCounts[action];
+
+        }
+
+      }
+    );
+
+
+    // DISPLAY NUMBERS
+
+    analysisBonusCount.textContent =
+      bonusCount;
+
+
+    analysisViolationCount.textContent =
+      violationCount;
+
+
+    analysisTotalScore.textContent =
+      (
+        totalScore > 0
+          ? "+"
+          : ""
+      ) +
+      totalScore;
+
+
+    analysisTopViolation.textContent =
+      topViolation;
+
+
+    // DRAW BAR CHART
+
+    renderBehaviorChart(
+      counts,
+      records
+    );
+
+
+    // CREATE ENGLISH + ARABIC ANALYSIS
+
+    currentAnalysisText =
+      buildBehaviorSummary(
+        studentName,
+        bonusCount,
+        violationCount,
+        totalScore,
+        topViolation,
+        topViolationCount
+      );
+
+
+    analysisDescription.textContent =
+      currentAnalysisText.en;
+
+
+    analysisGeneratedDate.textContent =
+      new Date()
+        .toLocaleString(
+          "en-GB"
+        );
+
+
+    if (
+      records.length === 0
+    ) {
+
+      analysisStatus.textContent =
+        "No active behavior records for this student yet.";
+
+    } else {
+
+      analysisStatus.textContent =
+        "";
+
+    }
+
+
+  } catch (error) {
+
+    console.error(
+      "Analysis error:",
+      error
+    );
+
+
+    analysisStatus.textContent =
+      "Could not load the behavior analysis.";
+
+  }
+
+}
+
+
+// ==========================================
+// BAR CHART
+// ==========================================
+
+function renderBehaviorChart(
+  counts,
+  records
+) {
+
+  analysisChart.innerHTML =
+    "";
+
+
+  const categories =
+    Object.keys(
+      counts
+    )
+      .sort(
+        function(
+          a,
+          b
+        ) {
+
+          return (
+            counts[b] -
+            counts[a]
+          );
+
+        }
+      );
+
+
+  if (
+    categories.length === 0
+  ) {
+
+    analysisChart.textContent =
+      "No active records available for charting.";
+
+
+    return;
+
+  }
+
+
+  const maxCount =
+    Math.max(
+      ...categories.map(
+        function(name) {
+
+          return counts[name];
+
+        }
+      )
+    );
+
+
+  categories.forEach(
+    function(name) {
+
+      const row =
+        document.createElement(
+          "div"
+        );
+
+
+      row.className =
+        "chart-row";
+
+
+      // LABEL
+
+      const label =
+        document.createElement(
+          "div"
+        );
+
+
+      label.className =
+        "chart-label";
+
+
+      label.textContent =
+        name;
+
+
+      // TRACK
+
+      const track =
+        document.createElement(
+          "div"
+        );
+
+
+      track.className =
+        "chart-track";
+
+
+      // BAR
+
+      const bar =
+        document.createElement(
+          "div"
+        );
+
+
+      const matchingRecord =
+        records.find(
+          function(record) {
+
+            return (
+              record.action_name ===
+              name
+            );
+
+          }
+        );
+
+
+      if (
+        matchingRecord &&
+        matchingRecord.category ===
+          "Bonus"
+      ) {
+
+        bar.className =
+          "chart-bar bonus";
+
+      } else {
+
+        bar.className =
+          "chart-bar violation";
+
+      }
+
+
+      bar.style.width =
+        (
+          (
+            counts[name] /
+            maxCount
+          ) *
+          100
+        ) +
+        "%";
+
+
+      // NUMBER
+
+      const value =
+        document.createElement(
+          "div"
+        );
+
+
+      value.className =
+        "chart-value";
+
+
+      value.textContent =
+        counts[name];
+
+
+      track.appendChild(
+        bar
+      );
+
+
+      row.appendChild(
+        label
+      );
+
+
+      row.appendChild(
+        track
+      );
+
+
+      row.appendChild(
+        value
+      );
+
+
+      analysisChart.appendChild(
+        row
+      );
+
+    }
+  );
+
+}
+
+
+// ==========================================
+// BUILD BEHAVIOR SUMMARY
+// ==========================================
+
+function buildBehaviorSummary(
+  studentName,
+  bonusCount,
+  violationCount,
+  totalScore,
+  topViolation,
+  topViolationCount
+) {
+
+  let en = "";
+
+  let ar = "";
+
+
+  // NO RECORDS
+
+  if (
+    bonusCount === 0 &&
+    violationCount === 0
+  ) {
+
+    en =
+      studentName +
+      " currently has no active behavior records. " +
+      "There is not yet enough recorded information " +
+      "to provide a reliable behavior assessment.";
+
+
+    ar =
+      "لا توجد حاليًا سجلات سلوكية فعّالة للطالب " +
+      studentName +
+      "، ولذلك لا تتوفر معلومات مسجلة كافية " +
+      "لتقديم تقييم موثوق لمستوى السلوك.";
+
+  }
+
+
+  // EXCELLENT POSITIVE BEHAVIOR
+
+  else if (
+    violationCount === 0 &&
+    bonusCount > 0
+  ) {
+
+    en =
+      studentName +
+      " demonstrates very positive classroom behavior " +
+      "based on the available records. " +
+      "The student has received " +
+      bonusCount +
+      " positive recognition" +
+      (
+        bonusCount === 1
+          ? ""
+          : "s"
+      ) +
+      " and has no active violations. " +
+      "Continued positive participation and responsible " +
+      "classroom conduct are encouraged.";
+
+
+    ar =
+      "يُظهر الطالب " +
+      studentName +
+      " سلوكًا صفيًا إيجابيًا جدًا وفقًا للسجلات المتاحة. " +
+      "حصل الطالب على " +
+      bonusCount +
+      " من سجلات التعزيز الإيجابي، " +
+      "ولا توجد عليه مخالفات فعّالة حاليًا. " +
+      "يُنصح بالاستمرار في تعزيز المشاركة الإيجابية " +
+      "والالتزام بالسلوك المسؤول داخل الصف.";
+
+  }
+
+
+  // GENERALLY SATISFACTORY
+
+  else if (
+    violationCount <= 2 &&
+    totalScore >= -2
+  ) {
+
+    en =
+      studentName +
+      " generally demonstrates satisfactory classroom behavior. " +
+      "A small number of behavior concerns have been recorded" +
+      (
+        topViolation !== "None"
+          ? ", with " +
+            topViolation +
+            " being the most frequent concern"
+          : ""
+      ) +
+      ". Continued guidance and positive reinforcement " +
+      "are recommended to support consistent classroom conduct.";
+
+
+    ar =
+      "يُظهر الطالب " +
+      studentName +
+      " مستوى مُرضيًا من السلوك الصفي بشكل عام. " +
+      "تم تسجيل عدد محدود من الملاحظات السلوكية" +
+      (
+        topViolation !== "None"
+          ? "، وأكثرها تكرارًا هو: " +
+            topViolation
+          : ""
+      ) +
+      ". يُوصى بالاستمرار في التوجيه والتعزيز الإيجابي " +
+      "للمساعدة على ثبات السلوك الجيد داخل الصف.";
+
+  }
+
+
+  // NEEDS SOME IMPROVEMENT
+
+  else if (
+    violationCount <= 5
+  ) {
+
+    en =
+      studentName +
+      " shows a developing level of classroom behavior. " +
+      violationCount +
+      " active violations have been recorded" +
+      (
+        topViolation !== "None"
+          ? ", and the most frequent concern is " +
+            topViolation
+          : ""
+      ) +
+      ". Greater consistency with classroom expectations " +
+      "is recommended, while positive behavior should " +
+      "continue to be recognized and encouraged.";
+
+
+    ar =
+      "يُظهر الطالب " +
+      studentName +
+      " مستوى سلوكيًا يحتاج إلى مزيد من التطور. " +
+      "تم تسجيل " +
+      violationCount +
+      " مخالفات فعّالة" +
+      (
+        topViolation !== "None"
+          ? "، وأكثر الملاحظات تكرارًا هي: " +
+            topViolation
+          : ""
+      ) +
+      ". يُوصى بزيادة الالتزام بتوقعات الصف، " +
+      "مع الاستمرار في تعزيز السلوك الإيجابي وتشجيعه.";
+
+  }
+
+
+  // REQUIRES FOCUSED SUPPORT
+
+  else {
+
+    en =
+      studentName +
+      " requires focused support to improve consistency " +
+      "with classroom expectations. " +
+      violationCount +
+      " active violations have been recorded" +
+      (
+        topViolation !== "None"
+          ? ", with " +
+            topViolation +
+            " occurring most frequently"
+          : ""
+      ) +
+      ". Regular follow-up between the student, teacher, " +
+      "and family is recommended, together with clear " +
+      "expectations and recognition of positive improvement.";
+
+
+    ar =
+      "يحتاج الطالب " +
+      studentName +
+      " إلى متابعة مركزة لتحسين مستوى الالتزام بتوقعات الصف. " +
+      "تم تسجيل " +
+      violationCount +
+      " مخالفات فعّالة" +
+      (
+        topViolation !== "None"
+          ? "، وأكثرها تكرارًا هو: " +
+            topViolation
+          : ""
+      ) +
+      ". يُوصى بالمتابعة المنتظمة بين الطالب والمعلم والأسرة، " +
+      "مع توضيح التوقعات وتعزيز أي تحسن إيجابي في السلوك.";
+
+  }
+
+
+  return {
+    en: en,
+    ar: ar
+  };
+
+}
+
+
+// ==========================================
+// TRANSLATE ANALYSIS
+// ==========================================
+
+if (
+  translateAnalysisBtn
+) {
+
+  translateAnalysisBtn.addEventListener(
+    "click",
+    function() {
+
+      if (
+        currentAnalysisLanguage ===
+        "en"
+      ) {
+
+        currentAnalysisLanguage =
+          "ar";
+
+
+        analysisDescription.textContent =
+          currentAnalysisText.ar;
+
+
+        analysisDescription.classList.add(
+          "arabic"
+        );
+
+
+        analysisSummaryTitle.textContent =
+          "ملخص السلوك";
+
+
+        translateAnalysisBtn.textContent =
+          "🌐 English";
+
+
+      } else {
+
+        currentAnalysisLanguage =
+          "en";
+
+
+        analysisDescription.textContent =
+          currentAnalysisText.en;
+
+
+        analysisDescription.classList.remove(
+          "arabic"
+        );
+
+
+        analysisSummaryTitle.textContent =
+          "Behavior Summary";
+
+
+        translateAnalysisBtn.textContent =
+          "🌐 العربية";
+
+      }
+
+    }
+  );
+
+}
+
+
+// ==========================================
+// HELPER
+// ==========================================
+
+function addCell(
+  row,
+  value
+) {
 
   const cell =
-    document.createElement("td");
+    document.createElement(
+      "td"
+    );
+
 
   cell.textContent =
-    value ?? "";
+    value;
 
-  row.appendChild(cell);
+
+  row.appendChild(
+    cell
+  );
+
 }
 
 
@@ -1330,7 +2463,9 @@ function addCell(row, value) {
 // ==========================================
 
 document
-  .querySelectorAll(".class-card")
+  .querySelectorAll(
+    ".class-card"
+  )
   .forEach(
     function(button) {
 
@@ -1338,11 +2473,17 @@ document
         "click",
         function() {
 
+          const className =
+            button.dataset.class;
+
+
           openClass(
-            button.dataset.class
+            className
           );
+
         }
       );
+
     }
   );
 
@@ -1355,8 +2496,13 @@ if (backBtn) {
 
   backBtn.addEventListener(
     "click",
-    showDashboard
+    function() {
+
+      showDashboard();
+
+    }
   );
+
 }
 
 
@@ -1366,9 +2512,13 @@ if (historyBackBtn) {
     "click",
     function() {
 
-      openClass(currentClass);
+      openClass(
+        currentClass
+      );
+
     }
   );
+
 }
 
 
@@ -1378,14 +2528,34 @@ if (reportBackBtn) {
     "click",
     function() {
 
-      openClass(currentClass);
+      openClass(
+        currentClass
+      );
+
     }
   );
+
+}
+
+
+if (analysisBackBtn) {
+
+  analysisBackBtn.addEventListener(
+    "click",
+    function() {
+
+      openClass(
+        currentClass
+      );
+
+    }
+  );
+
 }
 
 
 // ==========================================
-// PDF
+// PRINT REPORT
 // ==========================================
 
 if (printReportBtn) {
@@ -1394,9 +2564,63 @@ if (printReportBtn) {
     "click",
     function() {
 
+      document.body.classList.add(
+        "print-report"
+      );
+
+
       window.print();
+
+
+      setTimeout(
+        function() {
+
+          document.body.classList.remove(
+            "print-report"
+          );
+
+        },
+        500
+      );
+
     }
   );
+
+}
+
+
+// ==========================================
+// PRINT ANALYSIS
+// ==========================================
+
+if (printAnalysisBtn) {
+
+  printAnalysisBtn.addEventListener(
+    "click",
+    function() {
+
+      document.body.classList.add(
+        "print-analysis"
+      );
+
+
+      window.print();
+
+
+      setTimeout(
+        function() {
+
+          document.body.classList.remove(
+            "print-analysis"
+          );
+
+        },
+        500
+      );
+
+    }
+  );
+
 }
 
 
@@ -1414,23 +2638,36 @@ if (logoutBtn) {
         "teacherLoggedIn"
       );
 
-      emailInput.value = "";
-      passwordInput.value = "";
+
+      emailInput.value =
+        "";
+
+
+      passwordInput.value =
+        "";
+
 
       showLogin();
+
     }
   );
+
 }
 
 
 // ==========================================
-// START APP
+// INITIAL LOAD
 // ==========================================
 
-if (
+const isLoggedIn =
   sessionStorage.getItem(
     "teacherLoggedIn"
-  ) === "true"
+  );
+
+
+if (
+  isLoggedIn ===
+  "true"
 ) {
 
   showDashboard();
@@ -1438,9 +2675,10 @@ if (
 } else {
 
   showLogin();
+
 }
 
 
 console.log(
-  "Class Behavior Tracker - Version 62"
+  "Mr. Sayed's Class Behavior Tracker - Version 63"
 );
