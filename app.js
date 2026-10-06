@@ -1561,20 +1561,13 @@ async function openStudentReport(
 // CREATE REPORT ROW
 // ==========================================
 
-function createReportRow(
-  record
-) {
+function createReportRow(record) {
 
   const row =
-    document.createElement(
-      "tr"
-    );
+    document.createElement("tr");
 
 
-  if (
-    record.category ===
-    "Bonus"
-  ) {
+  if (record.category === "Bonus") {
 
     row.classList.add(
       "positive-row"
@@ -1590,9 +1583,7 @@ function createReportRow(
 
 
   const dateObject =
-    new Date(
-      record.created_at
-    );
+    new Date(record.created_at);
 
 
   const date =
@@ -1601,9 +1592,25 @@ function createReportRow(
     );
 
 
+  const time =
+    dateObject.toLocaleTimeString(
+      "en-US",
+      {
+        hour: "2-digit",
+        minute: "2-digit"
+      }
+    );
+
+
   addCell(
     row,
     date
+  );
+
+
+  addCell(
+    row,
+    time
   );
 
 
@@ -1620,18 +1627,12 @@ function createReportRow(
 
 
   const points =
-    Number(
-      record.points
-    ) || 0;
+    Number(record.points) || 0;
 
 
   addCell(
     row,
-    (
-      points > 0
-        ? "+"
-        : ""
-    ) +
+    (points > 0 ? "+" : "") +
     points
   );
 
@@ -1641,7 +1642,6 @@ function createReportRow(
   );
 
 }
-
 
 // ==========================================
 // ANALYSIS
