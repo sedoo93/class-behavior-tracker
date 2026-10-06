@@ -310,29 +310,27 @@ function showBehaviorImage(imagePath) {
   const image =
     document.createElement("img");
 
-  image.src =
-    imagePath;
+  image.src = imagePath;
 
   image.alt =
     "Behavior feedback";
 
 
-  // OVERLAY
+  // ========================================
+  // FULL SCREEN OVERLAY
+  // ========================================
 
   overlay.style.position =
     "fixed";
 
-  overlay.style.top =
-    "0";
-
-  overlay.style.left =
+  overlay.style.inset =
     "0";
 
   overlay.style.width =
-    "100%";
+    "100vw";
 
   overlay.style.height =
-    "100%";
+    "100vh";
 
   overlay.style.display =
     "flex";
@@ -344,10 +342,10 @@ function showBehaviorImage(imagePath) {
     "center";
 
   overlay.style.background =
-    "rgba(255,255,255,0.25)";
+    "rgba(255,255,255,0.35)";
 
   overlay.style.backdropFilter =
-    "blur(2px)";
+    "blur(4px)";
 
   overlay.style.zIndex =
     "999999";
@@ -356,42 +354,56 @@ function showBehaviorImage(imagePath) {
     "0";
 
   overlay.style.transition =
-    "opacity 0.25s ease";
+    "opacity 0.35s ease";
 
 
-  // IMAGE
+  // ========================================
+  // BIG IMAGE
+  // ========================================
 
   image.style.width =
-    "min(430px, 82vw)";
+    "94vw";
+
+  image.style.height =
+    "94vh";
+
+  image.style.maxWidth =
+    "1200px";
 
   image.style.maxHeight =
-    "78vh";
+    "94vh";
 
   image.style.objectFit =
     "contain";
 
   image.style.borderRadius =
-    "28px";
+    "30px";
 
   image.style.filter =
-    "drop-shadow(0 18px 35px rgba(0,0,0,0.25))";
+    "drop-shadow(0 20px 45px rgba(0,0,0,0.30))";
 
   image.style.transform =
-    "scale(0.45)";
+    "scale(0.70)";
 
   image.style.opacity =
     "0";
 
   image.style.transition =
-    "transform 0.45s cubic-bezier(.2,1.4,.4,1), opacity 0.25s ease";
+    "transform 0.55s cubic-bezier(.2,1.4,.4,1), opacity 0.35s ease";
 
 
-  overlay.appendChild(image);
+  overlay.appendChild(
+    image
+  );
 
   document.body.appendChild(
     overlay
   );
 
+
+  // ========================================
+  // SHOW IMAGE
+  // ========================================
 
   requestAnimationFrame(
     function() {
@@ -409,6 +421,10 @@ function showBehaviorImage(imagePath) {
   );
 
 
+  // ========================================
+  // KEEP IT ON SCREEN FOR 4 SECONDS
+  // ========================================
+
   setTimeout(
     function() {
 
@@ -416,12 +432,16 @@ function showBehaviorImage(imagePath) {
         "0";
 
       image.style.transform =
-        "scale(1.08)";
+        "scale(1.03)";
 
     },
-    1800
+    4000
   );
 
+
+  // ========================================
+  // REMOVE AFTER FADE
+  // ========================================
 
   setTimeout(
     function() {
@@ -429,7 +449,7 @@ function showBehaviorImage(imagePath) {
       overlay.remove();
 
     },
-    2200
+    4500
   );
 
 }
