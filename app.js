@@ -1,6 +1,6 @@
 // ==========================================
 // CLASS BEHAVIOR TRACKER
-// VERSION 66
+// VERSION 67
 // ==========================================
 
 
@@ -102,12 +102,6 @@ const violations = [
   "Making noise",
   "Other..."
 ];
-
-
-// ==========================================
-// BONUS OPTIONS
-// NEW: OTHER BONUS ADDED
-// ==========================================
 
 const bonuses = [
   "Remaining quiet all the day",
@@ -278,15 +272,168 @@ const analysisGeneratedDate =
 // ==========================================
 
 let currentClass = null;
-
 let currentHistoryStudent = null;
-
 let currentAnalysisLanguage = "en";
 
 let currentAnalysisText = {
   en: "",
   ar: ""
 };
+
+
+// ==========================================
+// BONUS CELEBRATION
+// ==========================================
+
+function showBonusCelebration() {
+
+  // Remove an old celebration if it exists
+  const oldCelebration =
+    document.getElementById(
+      "bonus-celebration-overlay"
+    );
+
+  if (oldCelebration) {
+    oldCelebration.remove();
+  }
+
+
+  // Overlay
+  const overlay =
+    document.createElement("div");
+
+  overlay.id =
+    "bonus-celebration-overlay";
+
+
+  // Image
+  const image =
+    document.createElement("img");
+
+  image.src =
+    "./bonus-celebration.png?v=67";
+
+  image.alt =
+    "Bonus Celebration";
+
+
+  // Style the overlay
+  overlay.style.position =
+    "fixed";
+
+  overlay.style.top =
+    "0";
+
+  overlay.style.left =
+    "0";
+
+  overlay.style.width =
+    "100%";
+
+  overlay.style.height =
+    "100%";
+
+  overlay.style.display =
+    "flex";
+
+  overlay.style.alignItems =
+    "center";
+
+  overlay.style.justifyContent =
+    "center";
+
+  overlay.style.background =
+    "rgba(255,255,255,0.25)";
+
+  overlay.style.backdropFilter =
+    "blur(2px)";
+
+  overlay.style.zIndex =
+    "999999";
+
+  overlay.style.opacity =
+    "0";
+
+  overlay.style.transition =
+    "opacity 0.25s ease";
+
+
+  // Style the image
+  image.style.width =
+    "min(430px, 82vw)";
+
+  image.style.maxHeight =
+    "78vh";
+
+  image.style.objectFit =
+    "contain";
+
+  image.style.borderRadius =
+    "28px";
+
+  image.style.filter =
+    "drop-shadow(0 18px 35px rgba(0,0,0,0.25))";
+
+  image.style.transform =
+    "scale(0.45) rotate(-5deg)";
+
+  image.style.opacity =
+    "0";
+
+  image.style.transition =
+    "transform 0.45s cubic-bezier(.2,1.4,.4,1), opacity 0.25s ease";
+
+
+  overlay.appendChild(image);
+
+  document.body.appendChild(
+    overlay
+  );
+
+
+  // Animate in
+  requestAnimationFrame(
+    function() {
+
+      overlay.style.opacity =
+        "1";
+
+      image.style.opacity =
+        "1";
+
+      image.style.transform =
+        "scale(1) rotate(0deg)";
+
+    }
+  );
+
+
+  // Start disappearing
+  setTimeout(
+    function() {
+
+      overlay.style.opacity =
+        "0";
+
+      image.style.transform =
+        "scale(1.08)";
+
+    },
+    1800
+  );
+
+
+  // Remove completely
+  setTimeout(
+    function() {
+
+      overlay.remove();
+
+    },
+    2200
+  );
+
+}
 
 
 // ==========================================
@@ -326,7 +473,9 @@ function showDashboard() {
 
   hideAllScreens();
 
-  dashboard.classList.remove("hidden");
+  dashboard.classList.remove(
+    "hidden"
+  );
 
   if (teacherEmail) {
 
@@ -343,7 +492,9 @@ function showLogin() {
 
   hideAllScreens();
 
-  loginScreen.classList.remove("hidden");
+  loginScreen.classList.remove(
+    "hidden"
+  );
 
   if (loginMessage) {
     loginMessage.textContent = "";
@@ -701,10 +852,7 @@ function showBonusMenu(
 
 
   bonuses.forEach(
-    function(
-      item,
-      index
-    ) {
+    function(item, index) {
 
       message +=
         (index + 1) +
@@ -740,17 +888,12 @@ function showBonusMenu(
     );
 
     return;
-
   }
 
 
   let selectedBonus =
     bonuses[number - 1];
 
-
-  // ========================================
-  // OTHER BONUS
-  // ========================================
 
   if (
     selectedBonus ===
@@ -769,7 +912,6 @@ function showBonusMenu(
     ) {
 
       return;
-
     }
 
 
@@ -804,10 +946,7 @@ function showViolationMenu(
 
 
   violations.forEach(
-    function(
-      item,
-      index
-    ) {
+    function(item, index) {
 
       message +=
         (index + 1) +
@@ -843,7 +982,6 @@ function showViolationMenu(
     );
 
     return;
-
   }
 
 
@@ -868,7 +1006,6 @@ function showViolationMenu(
     ) {
 
       return;
-
     }
 
 
@@ -903,9 +1040,7 @@ async function saveBehaviorRecord(
 
     const { error } =
       await supabaseClient
-        .from(
-          "behavior_records"
-        )
+        .from("behavior_records")
         .insert([
           {
 
@@ -943,6 +1078,17 @@ async function saveBehaviorRecord(
       );
 
       return;
+    }
+
+
+    // ======================================
+    // BONUS CELEBRATION
+    // Only after successful save
+    // ======================================
+
+    if (category === "Bonus") {
+
+      showBonusCelebration();
 
     }
 
@@ -976,8 +1122,8 @@ async function saveBehaviorRecord(
 
 
 // ==========================================
-// END OF PART 1 - VERSION 66
-// PASTE PART 2 DIRECTLY BELOW THIS LINE
+// END OF PART 1 - VERSION 67
+// PASTE PART 2 DIRECTLY BELOW
 // ==========================================
 // ==========================================
 // HISTORY
@@ -1105,18 +1251,9 @@ function createHistoryRow(record) {
 
 
   addCell(row, date);
-
   addCell(row, time);
-
-  addCell(
-    row,
-    record.category
-  );
-
-  addCell(
-    row,
-    record.action_name
-  );
+  addCell(row, record.category);
+  addCell(row, record.action_name);
 
 
   // POINTS
@@ -1136,9 +1273,7 @@ function createHistoryRow(record) {
       ? "positive-points"
       : "negative-points";
 
-  row.appendChild(
-    pointsCell
-  );
+  row.appendChild(pointsCell);
 
 
   // ========================================
@@ -1165,9 +1300,7 @@ function createHistoryRow(record) {
     badge.textContent =
       "✓ Forgiven";
 
-    actionCell.appendChild(
-      badge
-    );
+    actionCell.appendChild(badge);
 
   } else if (
     record.category === "Violation"
@@ -1264,6 +1397,7 @@ function createHistoryRow(record) {
   actionCell.appendChild(
     deleteButton
   );
+
 
   row.appendChild(
     actionCell
@@ -1780,18 +1914,9 @@ function createReportRow(record) {
 
 
   addCell(row, date);
-
   addCell(row, time);
-
-  addCell(
-    row,
-    reportType
-  );
-
-  addCell(
-    row,
-    reportDetails
-  );
+  addCell(row, reportType);
+  addCell(row, reportDetails);
 
   addCell(
     row,
@@ -2196,9 +2321,7 @@ function renderBehaviorChart(
       track.appendChild(bar);
 
       row.appendChild(label);
-
       row.appendChild(track);
-
       row.appendChild(value);
 
       analysisChart.appendChild(
@@ -2475,9 +2598,7 @@ function addCell(
   cell.textContent =
     value;
 
-  row.appendChild(
-    cell
-  );
+  row.appendChild(cell);
 
 }
 
@@ -2658,7 +2779,6 @@ if (logoutBtn) {
       );
 
       emailInput.value = "";
-
       passwordInput.value = "";
 
       showLogin();
@@ -2691,5 +2811,5 @@ if (isLoggedIn === "true") {
 
 
 console.log(
-  "Mr. Sayed's Class Behavior Tracker - Version 66"
+  "Mr. Sayed's Class Behavior Tracker - Version 67"
 );
