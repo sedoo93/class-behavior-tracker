@@ -446,10 +446,6 @@ function openClass(className) {
   classTitle.textContent =
     "Class " + className;
 
-  classCount.textContent =
-    classStudents.length +
-    " Students";
-
   studentsList.innerHTML = "";
 
 
