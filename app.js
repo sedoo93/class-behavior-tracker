@@ -1,6 +1,6 @@
 // ==========================================
 // CLASS BEHAVIOR TRACKER
-// VERSION 65
+// VERSION 66
 // ==========================================
 
 
@@ -103,9 +103,16 @@ const violations = [
   "Other..."
 ];
 
+
+// ==========================================
+// BONUS OPTIONS
+// NEW: OTHER BONUS ADDED
+// ==========================================
+
 const bonuses = [
   "Remaining quiet all the day",
-  "Participating actively"
+  "Participating actively",
+  "Other..."
 ];
 
 
@@ -311,6 +318,7 @@ function hideAllScreens() {
   if (analysisScreen) {
     analysisScreen.classList.add("hidden");
   }
+
 }
 
 
@@ -327,6 +335,7 @@ function showDashboard() {
       ADMIN_EMAIL;
 
   }
+
 }
 
 
@@ -339,6 +348,7 @@ function showLogin() {
   if (loginMessage) {
     loginMessage.textContent = "";
   }
+
 }
 
 
@@ -381,6 +391,7 @@ function login() {
       "Incorrect email or password.";
 
   }
+
 }
 
 
@@ -733,8 +744,39 @@ function showBonusMenu(
   }
 
 
-  const selectedBonus =
+  let selectedBonus =
     bonuses[number - 1];
+
+
+  // ========================================
+  // OTHER BONUS
+  // ========================================
+
+  if (
+    selectedBonus ===
+    "Other..."
+  ) {
+
+    const otherBonus =
+      prompt(
+        "Write the bonus description:"
+      );
+
+
+    if (
+      otherBonus === null ||
+      otherBonus.trim() === ""
+    ) {
+
+      return;
+
+    }
+
+
+    selectedBonus =
+      otherBonus.trim();
+
+  }
 
 
   saveBehaviorRecord(
@@ -934,8 +976,8 @@ async function saveBehaviorRecord(
 
 
 // ==========================================
-// END OF PART 1
-// PASTE PART 2 DIRECTLY UNDER THIS
+// END OF PART 1 - VERSION 66
+// PASTE PART 2 DIRECTLY BELOW THIS LINE
 // ==========================================
 // ==========================================
 // HISTORY
@@ -950,26 +992,15 @@ async function openStudentHistory(
   currentClass = className;
 
   hideAllScreens();
+  historyScreen.classList.remove("hidden");
 
-  historyScreen.classList.remove(
-    "hidden"
-  );
+  historyStudentName.textContent = studentName;
+  historyClassName.textContent = className;
 
-  historyStudentName.textContent =
-    studentName;
-
-  historyClassName.textContent =
-    className;
-
-  historyStatus.textContent =
-    "Loading history...";
-
+  historyStatus.textContent = "Loading history...";
   historyTableBody.innerHTML = "";
 
-  historyTableContainer.classList.add(
-    "hidden"
-  );
-
+  historyTableContainer.classList.add("hidden");
 
   try {
 
@@ -979,21 +1010,11 @@ async function openStudentHistory(
         .select(
           "id, student_name, class_name, category, action_name, points, created_at, forgiven, forgiven_at"
         )
-        .eq(
-          "student_name",
-          studentName
-        )
-        .eq(
-          "class_name",
-          className
-        )
-        .order(
-          "created_at",
-          {
-            ascending: false
-          }
-        );
-
+        .eq("student_name", studentName)
+        .eq("class_name", className)
+        .order("created_at", {
+          ascending: false
+        });
 
     if (error) {
 
@@ -1008,14 +1029,9 @@ async function openStudentHistory(
       return;
     }
 
+    const records = data || [];
 
-    const records =
-      data || [];
-
-
-    if (
-      records.length === 0
-    ) {
+    if (records.length === 0) {
 
       historyStatus.textContent =
         "No records for this student yet.";
@@ -1023,24 +1039,19 @@ async function openStudentHistory(
       return;
     }
 
-
     historyStatus.textContent = "";
 
     historyTableContainer.classList.remove(
       "hidden"
     );
 
-
     records.forEach(
       function(record) {
 
-        createHistoryRow(
-          record
-        );
+        createHistoryRow(record);
 
       }
     );
-
 
   } catch (error) {
 
@@ -1061,19 +1072,12 @@ async function openStudentHistory(
 // CREATE HISTORY ROW
 // ==========================================
 
-function createHistoryRow(
-  record
-) {
+function createHistoryRow(record) {
 
   const row =
-    document.createElement(
-      "tr"
-    );
+    document.createElement("tr");
 
-
-  if (
-    record.forgiven === true
-  ) {
+  if (record.forgiven === true) {
 
     row.classList.add(
       "forgiven-row"
@@ -1081,18 +1085,13 @@ function createHistoryRow(
 
   }
 
-
   const dateObject =
-    new Date(
-      record.created_at
-    );
-
+    new Date(record.created_at);
 
   const date =
     dateObject.toLocaleDateString(
       "en-GB"
     );
-
 
   const time =
     dateObject.toLocaleTimeString(
@@ -1105,28 +1104,15 @@ function createHistoryRow(
     );
 
 
-  // DATE
-  addCell(
-    row,
-    date
-  );
+  addCell(row, date);
 
+  addCell(row, time);
 
-  // TIME
-  addCell(
-    row,
-    time
-  );
-
-
-  // TYPE
   addCell(
     row,
     record.category
   );
 
-
-  // DETAILS
   addCell(
     row,
     record.action_name
@@ -1136,31 +1122,19 @@ function createHistoryRow(
   // POINTS
 
   const pointsCell =
-    document.createElement(
-      "td"
-    );
-
+    document.createElement("td");
 
   const points =
-    Number(
-      record.points
-    ) || 0;
-
+    Number(record.points) || 0;
 
   pointsCell.textContent =
-    (
-      points > 0
-        ? "+"
-        : ""
-    ) +
+    (points > 0 ? "+" : "") +
     points;
-
 
   pointsCell.className =
     points >= 0
       ? "positive-points"
       : "negative-points";
-
 
   row.appendChild(
     pointsCell
@@ -1172,26 +1146,18 @@ function createHistoryRow(
   // ========================================
 
   const actionCell =
-    document.createElement(
-      "td"
-    );
+    document.createElement("td");
 
   actionCell.className =
     "history-actions";
 
 
-  // ========================================
-  // FORGIVE
-  // ========================================
+  // FORGIVE / FORGIVEN
 
-  if (
-    record.forgiven === true
-  ) {
+  if (record.forgiven === true) {
 
     const badge =
-      document.createElement(
-        "span"
-      );
+      document.createElement("span");
 
     badge.className =
       "forgiven-badge";
@@ -1204,14 +1170,11 @@ function createHistoryRow(
     );
 
   } else if (
-    record.category ===
-    "Violation"
+    record.category === "Violation"
   ) {
 
     const forgiveButton =
-      document.createElement(
-        "button"
-      );
+      document.createElement("button");
 
     forgiveButton.type =
       "button";
@@ -1221,7 +1184,6 @@ function createHistoryRow(
 
     forgiveButton.textContent =
       "🤝 Forgive";
-
 
     forgiveButton.addEventListener(
       "click",
@@ -1235,7 +1197,6 @@ function createHistoryRow(
       }
     );
 
-
     actionCell.appendChild(
       forgiveButton
     );
@@ -1243,14 +1204,10 @@ function createHistoryRow(
   }
 
 
-  // ========================================
-  // EDIT BUTTON
-  // ========================================
+  // EDIT
 
   const editButton =
-    document.createElement(
-      "button"
-    );
+    document.createElement("button");
 
   editButton.type =
     "button";
@@ -1260,7 +1217,6 @@ function createHistoryRow(
 
   editButton.textContent =
     "✏️ Edit";
-
 
   editButton.addEventListener(
     "click",
@@ -1274,20 +1230,15 @@ function createHistoryRow(
     }
   );
 
-
   actionCell.appendChild(
     editButton
   );
 
 
-  // ========================================
-  // DELETE BUTTON
-  // ========================================
+  // DELETE
 
   const deleteButton =
-    document.createElement(
-      "button"
-    );
+    document.createElement("button");
 
   deleteButton.type =
     "button";
@@ -1297,7 +1248,6 @@ function createHistoryRow(
 
   deleteButton.textContent =
     "🗑️ Delete";
-
 
   deleteButton.addEventListener(
     "click",
@@ -1311,16 +1261,13 @@ function createHistoryRow(
     }
   );
 
-
   actionCell.appendChild(
     deleteButton
   );
 
-
   row.appendChild(
     actionCell
   );
-
 
   historyTableBody.appendChild(
     row
@@ -1348,33 +1295,24 @@ async function forgiveRecord(
       "or affect the student's score."
     );
 
-
   if (!confirmed) {
     return;
   }
-
 
   try {
 
     const { error } =
       await supabaseClient
-        .from(
-          "behavior_records"
-        )
+        .from("behavior_records")
         .update({
 
           forgiven: true,
 
           forgiven_at:
-            new Date()
-              .toISOString()
+            new Date().toISOString()
 
         })
-        .eq(
-          "id",
-          recordId
-        );
-
+        .eq("id", recordId);
 
     if (error) {
 
@@ -1390,17 +1328,14 @@ async function forgiveRecord(
       return;
     }
 
-
     alert(
       "Violation forgiven successfully ✓"
     );
-
 
     await openStudentHistory(
       currentHistoryStudent,
       currentClass
     );
-
 
   } catch (error) {
 
@@ -1433,21 +1368,14 @@ async function editBehaviorRecord(
       currentDescription
     );
 
-
-  if (
-    newDescription === null
-  ) {
+  if (newDescription === null) {
     return;
   }
-
 
   const cleanedDescription =
     newDescription.trim();
 
-
-  if (
-    cleanedDescription === ""
-  ) {
+  if (cleanedDescription === "") {
 
     alert(
       "Description cannot be empty."
@@ -1456,15 +1384,12 @@ async function editBehaviorRecord(
     return;
   }
 
-
   if (
     cleanedDescription ===
     currentDescription
   ) {
-
     return;
   }
-
 
   const confirmed =
     confirm(
@@ -1476,30 +1401,20 @@ async function editBehaviorRecord(
       cleanedDescription
     );
 
-
   if (!confirmed) {
     return;
   }
-
 
   try {
 
     const { error } =
       await supabaseClient
-        .from(
-          "behavior_records"
-        )
+        .from("behavior_records")
         .update({
-
           action_name:
             cleanedDescription
-
         })
-        .eq(
-          "id",
-          recordId
-        );
-
+        .eq("id", recordId);
 
     if (error) {
 
@@ -1515,17 +1430,14 @@ async function editBehaviorRecord(
       return;
     }
 
-
     alert(
       "Record updated successfully ✓"
     );
-
 
     await openStudentHistory(
       currentHistoryStudent,
       currentClass
     );
-
 
   } catch (error) {
 
@@ -1560,25 +1472,17 @@ async function deleteBehaviorRecord(
       "This action cannot be undone."
     );
 
-
   if (!confirmed) {
     return;
   }
-
 
   try {
 
     const { error } =
       await supabaseClient
-        .from(
-          "behavior_records"
-        )
+        .from("behavior_records")
         .delete()
-        .eq(
-          "id",
-          recordId
-        );
-
+        .eq("id", recordId);
 
     if (error) {
 
@@ -1594,17 +1498,14 @@ async function deleteBehaviorRecord(
       return;
     }
 
-
     alert(
       "Record deleted successfully ✓"
     );
-
 
     await openStudentHistory(
       currentHistoryStudent,
       currentClass
     );
-
 
   } catch (error) {
 
@@ -1631,61 +1532,43 @@ async function openStudentReport(
   className
 ) {
 
-  currentClass =
-    className;
-
+  currentClass = className;
 
   hideAllScreens();
-
 
   reportScreen.classList.remove(
     "hidden"
   );
 
-
   reportStudentName.textContent =
     studentName;
-
 
   reportClassName.textContent =
     className;
 
-
   reportBonusCount.textContent =
     "0";
-
 
   reportViolationCount.textContent =
     "0";
 
-
   reportTotalScore.textContent =
     "0";
-
 
   reportStatus.textContent =
     "Loading report...";
 
-
-  reportTableBody.innerHTML =
-    "";
-
+  reportTableBody.innerHTML = "";
 
   reportTableContainer.classList.add(
     "hidden"
   );
 
-
   try {
 
-    const {
-      data,
-      error
-    } =
+    const { data, error } =
       await supabaseClient
-        .from(
-          "behavior_records"
-        )
+        .from("behavior_records")
         .select(
           "id, category, action_name, points, created_at, forgiven"
         )
@@ -1708,7 +1591,6 @@ async function openStudentReport(
           }
         );
 
-
     if (error) {
 
       console.error(
@@ -1722,15 +1604,12 @@ async function openStudentReport(
       return;
     }
 
-
     const records =
       data || [];
-
 
     let bonusCount = 0;
     let violationCount = 0;
     let totalScore = 0;
-
 
     records.forEach(
       function(record) {
@@ -1739,63 +1618,40 @@ async function openStudentReport(
           record.category ===
           "Bonus"
         ) {
-
           bonusCount++;
-
         }
-
 
         if (
           record.category ===
           "Violation"
         ) {
-
           violationCount++;
-
         }
 
-
         totalScore +=
-          Number(
-            record.points
-          ) || 0;
+          Number(record.points) || 0;
 
-
-        createReportRow(
-          record
-        );
+        createReportRow(record);
 
       }
     );
 
-
     reportBonusCount.textContent =
       bonusCount;
-
 
     reportViolationCount.textContent =
       violationCount;
 
-
     reportTotalScore.textContent =
-      (
-        totalScore > 0
-          ? "+"
-          : ""
-      ) +
+      (totalScore > 0 ? "+" : "") +
       totalScore;
 
-
     reportGeneratedDate.textContent =
-      new Date()
-        .toLocaleString(
-          "en-GB"
-        );
+      new Date().toLocaleString(
+        "en-GB"
+      );
 
-
-    if (
-      records.length === 0
-    ) {
+    if (records.length === 0) {
 
       reportStatus.textContent =
         "No active behavior records for this student.";
@@ -1803,15 +1659,11 @@ async function openStudentReport(
       return;
     }
 
-
-    reportStatus.textContent =
-      "";
-
+    reportStatus.textContent = "";
 
     reportTableContainer.classList.remove(
       "hidden"
     );
-
 
   } catch (error) {
 
@@ -1819,7 +1671,6 @@ async function openStudentReport(
       "Report error:",
       error
     );
-
 
     reportStatus.textContent =
       "Could not load report.";
@@ -1833,19 +1684,13 @@ async function openStudentReport(
 // CREATE REPORT ROW
 // ==========================================
 
-function createReportRow(
-  record
-) {
+function createReportRow(record) {
 
   const row =
-    document.createElement(
-      "tr"
-    );
-
+    document.createElement("tr");
 
   if (
-    record.category ===
-    "Bonus"
+    record.category === "Bonus"
   ) {
 
     row.classList.add(
@@ -1860,18 +1705,13 @@ function createReportRow(
 
   }
 
-
   const dateObject =
-    new Date(
-      record.created_at
-    );
-
+    new Date(record.created_at);
 
   const date =
     dateObject.toLocaleDateString(
       "en-GB"
     );
-
 
   const time =
     dateObject.toLocaleTimeString(
@@ -1884,11 +1724,6 @@ function createReportRow(
     );
 
 
-  // ========================================
-  // ✏️ EDIT HERE
-  // TYPE NAMES SHOWN IN REPORT
-  // ========================================
-
   const typeNames = {
 
     "Violation":
@@ -1899,14 +1734,6 @@ function createReportRow(
 
   };
 
-
-  // ========================================
-  // ✏️ EDIT HERE
-  // DETAILS NAMES SHOWN IN REPORT
-  //
-  // LEFT  = database value
-  // RIGHT = name shown in report
-  // ========================================
 
   const reportNames = {
 
@@ -1941,64 +1768,36 @@ function createReportRow(
 
 
   const reportType =
-    typeNames[
-      record.category
-    ] ||
+    typeNames[record.category] ||
     record.category;
 
-
   const reportDetails =
-    reportNames[
-      record.action_name
-    ] ||
+    reportNames[record.action_name] ||
     record.action_name;
 
-
   const points =
-    Number(
-      record.points
-    ) || 0;
+    Number(record.points) || 0;
 
 
-  // DATE
-  addCell(
-    row,
-    date
-  );
+  addCell(row, date);
 
+  addCell(row, time);
 
-  // TIME
-  addCell(
-    row,
-    time
-  );
-
-
-  // TYPE
   addCell(
     row,
     reportType
   );
 
-
-  // DETAILS
   addCell(
     row,
     reportDetails
   );
 
-
-  // POINTS
   addCell(
     row,
-    (
-      points > 0
-        ? "+"
-        : ""
-    ) +
+    (points > 0 ? "+" : "") +
     points
   );
-
 
   reportTableBody.appendChild(
     row
@@ -2016,66 +1815,49 @@ async function openStudentAnalysis(
   className
 ) {
 
-  currentClass =
-    className;
-
+  currentClass = className;
 
   currentAnalysisLanguage =
     "en";
 
-
   hideAllScreens();
-
 
   analysisScreen.classList.remove(
     "hidden"
   );
 
-
   analysisStudentName.textContent =
     studentName;
-
 
   analysisClassName.textContent =
     className;
 
-
   analysisBonusCount.textContent =
     "0";
-
 
   analysisViolationCount.textContent =
     "0";
 
-
   analysisTotalScore.textContent =
     "0";
-
 
   analysisTopViolation.textContent =
     "None";
 
-
-  analysisChart.innerHTML =
-    "";
-
+  analysisChart.innerHTML = "";
 
   analysisDescription.textContent =
     "";
-
 
   analysisDescription.classList.remove(
     "arabic"
   );
 
-
   analysisSummaryTitle.textContent =
     "Behavior Summary";
 
-
   translateAnalysisBtn.textContent =
     "🌐 العربية";
-
 
   analysisStatus.textContent =
     "Loading behavior analysis...";
@@ -2083,14 +1865,9 @@ async function openStudentAnalysis(
 
   try {
 
-    const {
-      data,
-      error
-    } =
+    const { data, error } =
       await supabaseClient
-        .from(
-          "behavior_records"
-        )
+        .from("behavior_records")
         .select(
           "category, action_name, points, created_at, forgiven"
         )
@@ -2113,7 +1890,6 @@ async function openStudentAnalysis(
           }
         );
 
-
     if (error) {
 
       console.error(
@@ -2121,24 +1897,18 @@ async function openStudentAnalysis(
         error
       );
 
-
       analysisStatus.textContent =
         "Could not load the behavior analysis.";
 
-
       return;
-
     }
-
 
     const records =
       data || [];
 
-
     let bonusCount = 0;
     let violationCount = 0;
     let totalScore = 0;
-
 
     const counts = {};
     const violationCounts = {};
@@ -2151,19 +1921,12 @@ async function openStudentAnalysis(
           record.action_name ||
           "Other";
 
-
         counts[action] =
-          (
-            counts[action] ||
-            0
-          ) + 1;
-
+          (counts[action] || 0) +
+          1;
 
         totalScore +=
-          Number(
-            record.points
-          ) || 0;
-
+          Number(record.points) || 0;
 
         if (
           record.category ===
@@ -2174,14 +1937,12 @@ async function openStudentAnalysis(
 
         }
 
-
         if (
           record.category ===
           "Violation"
         ) {
 
           violationCount++;
-
 
           violationCounts[action] =
             (
@@ -2197,7 +1958,6 @@ async function openStudentAnalysis(
 
     let topViolation =
       "None";
-
 
     let topViolationCount =
       0;
@@ -2216,7 +1976,6 @@ async function openStudentAnalysis(
           topViolation =
             action;
 
-
           topViolationCount =
             violationCounts[action];
 
@@ -2229,19 +1988,12 @@ async function openStudentAnalysis(
     analysisBonusCount.textContent =
       bonusCount;
 
-
     analysisViolationCount.textContent =
       violationCount;
 
-
     analysisTotalScore.textContent =
-      (
-        totalScore > 0
-          ? "+"
-          : ""
-      ) +
+      (totalScore > 0 ? "+" : "") +
       totalScore;
-
 
     analysisTopViolation.textContent =
       topViolation;
@@ -2269,15 +2021,12 @@ async function openStudentAnalysis(
 
 
     analysisGeneratedDate.textContent =
-      new Date()
-        .toLocaleString(
-          "en-GB"
-        );
+      new Date().toLocaleString(
+        "en-GB"
+      );
 
 
-    if (
-      records.length === 0
-    ) {
+    if (records.length === 0) {
 
       analysisStatus.textContent =
         "No active behavior records for this student yet.";
@@ -2289,14 +2038,12 @@ async function openStudentAnalysis(
 
     }
 
-
   } catch (error) {
 
     console.error(
       "Analysis error:",
       error
     );
-
 
     analysisStatus.textContent =
       "Could not load the behavior analysis.";
@@ -2315,19 +2062,12 @@ function renderBehaviorChart(
   records
 ) {
 
-  analysisChart.innerHTML =
-    "";
-
+  analysisChart.innerHTML = "";
 
   const categories =
-    Object.keys(
-      counts
-    )
+    Object.keys(counts)
       .sort(
-        function(
-          a,
-          b
-        ) {
+        function(a, b) {
 
           return (
             counts[b] -
@@ -2345,9 +2085,7 @@ function renderBehaviorChart(
     analysisChart.textContent =
       "No active records available for charting.";
 
-
     return;
-
   }
 
 
@@ -2371,7 +2109,6 @@ function renderBehaviorChart(
           "div"
         );
 
-
       row.className =
         "chart-row";
 
@@ -2381,10 +2118,8 @@ function renderBehaviorChart(
           "div"
         );
 
-
       label.className =
         "chart-label";
-
 
       label.textContent =
         name;
@@ -2394,7 +2129,6 @@ function renderBehaviorChart(
         document.createElement(
           "div"
         );
-
 
       track.className =
         "chart-track";
@@ -2452,34 +2186,20 @@ function renderBehaviorChart(
           "div"
         );
 
-
       value.className =
         "chart-value";
-
 
       value.textContent =
         counts[name];
 
 
-      track.appendChild(
-        bar
-      );
+      track.appendChild(bar);
 
+      row.appendChild(label);
 
-      row.appendChild(
-        label
-      );
+      row.appendChild(track);
 
-
-      row.appendChild(
-        track
-      );
-
-
-      row.appendChild(
-        value
-      );
-
+      row.appendChild(value);
 
       analysisChart.appendChild(
         row
@@ -2519,7 +2239,6 @@ function buildBehaviorSummary(
       "There is not yet enough recorded information " +
       "to provide a reliable behavior assessment.";
 
-
     ar =
       "لا توجد حاليًا سجلات سلوكية فعّالة للطالب " +
       studentName +
@@ -2549,7 +2268,6 @@ function buildBehaviorSummary(
       " and has no active violations. " +
       "Continued positive participation and responsible " +
       "classroom conduct are encouraged.";
-
 
     ar =
       "يُظهر الطالب " +
@@ -2583,7 +2301,6 @@ function buildBehaviorSummary(
       ) +
       ". Continued guidance and positive reinforcement " +
       "are recommended to support consistent classroom conduct.";
-
 
     ar =
       "يُظهر الطالب " +
@@ -2620,7 +2337,6 @@ function buildBehaviorSummary(
       ". Greater consistency with classroom expectations " +
       "is recommended, while positive behavior should " +
       "continue to be recognized and encouraged.";
-
 
     ar =
       "يُظهر الطالب " +
@@ -2660,7 +2376,6 @@ function buildBehaviorSummary(
       "and family is recommended, together with clear " +
       "expectations and recognition of positive improvement.";
 
-
     ar =
       "يحتاج الطالب " +
       studentName +
@@ -2692,9 +2407,7 @@ function buildBehaviorSummary(
 // TRANSLATE ANALYSIS
 // ==========================================
 
-if (
-  translateAnalysisBtn
-) {
+if (translateAnalysisBtn) {
 
   translateAnalysisBtn.addEventListener(
     "click",
@@ -2708,42 +2421,33 @@ if (
         currentAnalysisLanguage =
           "ar";
 
-
         analysisDescription.textContent =
           currentAnalysisText.ar;
-
 
         analysisDescription.classList.add(
           "arabic"
         );
 
-
         analysisSummaryTitle.textContent =
           "ملخص السلوك";
 
-
         translateAnalysisBtn.textContent =
           "🌐 English";
-
 
       } else {
 
         currentAnalysisLanguage =
           "en";
 
-
         analysisDescription.textContent =
           currentAnalysisText.en;
-
 
         analysisDescription.classList.remove(
           "arabic"
         );
 
-
         analysisSummaryTitle.textContent =
           "Behavior Summary";
-
 
         translateAnalysisBtn.textContent =
           "🌐 العربية";
@@ -2766,14 +2470,10 @@ function addCell(
 ) {
 
   const cell =
-    document.createElement(
-      "td"
-    );
-
+    document.createElement("td");
 
   cell.textContent =
     value;
-
 
   row.appendChild(
     cell
@@ -2799,7 +2499,6 @@ document
 
           const className =
             button.dataset.class;
-
 
           openClass(
             className
@@ -2892,9 +2591,7 @@ if (printReportBtn) {
         "print-report"
       );
 
-
       window.print();
-
 
       setTimeout(
         function() {
@@ -2927,9 +2624,7 @@ if (printAnalysisBtn) {
         "print-analysis"
       );
 
-
       window.print();
-
 
       setTimeout(
         function() {
@@ -2962,14 +2657,9 @@ if (logoutBtn) {
         "teacherLoggedIn"
       );
 
+      emailInput.value = "";
 
-      emailInput.value =
-        "";
-
-
-      passwordInput.value =
-        "";
-
+      passwordInput.value = "";
 
       showLogin();
 
@@ -2989,10 +2679,7 @@ const isLoggedIn =
   );
 
 
-if (
-  isLoggedIn ===
-  "true"
-) {
+if (isLoggedIn === "true") {
 
   showDashboard();
 
@@ -3004,5 +2691,5 @@ if (
 
 
 console.log(
-  "Mr. Sayed's Class Behavior Tracker - Version 65"
+  "Mr. Sayed's Class Behavior Tracker - Version 66"
 );
