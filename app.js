@@ -1537,7 +1537,7 @@ async function openStudentReport(
       "";
 
 
-    reportTableContainer.style.display =
+    reportTableContainer.classList.remove("hidden");
       "block";
 
 
