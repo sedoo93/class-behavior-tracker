@@ -1721,28 +1721,29 @@ async function deleteBehaviorRecord(
   actionName
 ) {
 
-  const confirmed =
-    confirm(
-      "DELETE this record permanently?\n\n" +
-      actionName +
-      "\n\n" +
-      "This action cannot be undone."
-    );
-
+  const confirmed = confirm(
+    "DELETE this record permanently?\n\n" +
+    actionName +
+    "\n\nThis action cannot be undone."
+  );
 
   if (!confirmed) {
     return;
   }
 
-
   try {
 
-    const { error } =
+    console.log(
+      "Trying to delete record ID:",
+      recordId
+    );
+
+    const { data, error } =
       await supabaseClient
         .from("behavior_records")
         .delete()
-        .eq("id", recordId);
-
+        .eq("id", recordId)
+        .select("id");
 
     if (error) {
 
@@ -1752,23 +1753,38 @@ async function deleteBehaviorRecord(
       );
 
       alert(
-        "Could not delete this record."
+        "Could not delete this record.\n\n" +
+        error.message
       );
 
       return;
     }
 
+    console.log(
+      "Deleted data:",
+      data
+    );
+
+    if (!data || data.length === 0) {
+
+      alert(
+        "Delete was not completed.\n\n" +
+        "Supabase returned 0 deleted records.\n" +
+        "Record ID: " +
+        recordId
+      );
+
+      return;
+    }
 
     alert(
       "Record deleted successfully ✓"
     );
 
-
     await openStudentHistory(
       currentHistoryStudent,
       currentClass
     );
-
 
   } catch (error) {
 
@@ -1778,13 +1794,13 @@ async function deleteBehaviorRecord(
     );
 
     alert(
-      "Could not delete this record."
+      "Could not delete this record.\n\n" +
+      error.message
     );
 
   }
 
 }
-
 
 // ==========================================
 // REPORT
