@@ -1051,7 +1051,9 @@ if (!loaded) {
 const pdfContainer = document.createElement("div");
 
 pdfContainer.style.position = "fixed";
-pdfContainer.style.left = "-10000px";
+pdfContainer.style.left = "0";
+pdfContainer.style.zIndex = "-9999";
+pdfContainer.style.pointerEvents = "none";
 pdfContainer.style.top = "0";
 pdfContainer.style.width = "794px";
 pdfContainer.style.background = "#ffffff";
