@@ -1101,7 +1101,7 @@ document.body.appendChild(pdfContainer);
 
     const pdfBlob = await html2pdf()
       .set(options)
-      .from(reportElement)
+      .from(pdfReport)
       .outputPdf("blob");
 
     const pdfFile = new File(
