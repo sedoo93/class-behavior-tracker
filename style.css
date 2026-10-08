@@ -1293,3 +1293,81 @@ input {
     width: 100% !important;
   }
 }
+/* ==========================================
+   REPORT HEADER WITH SCHOOL & COGNIA LOGOS
+   ========================================== */
+
+.report-header-with-logos {
+  display: grid !important;
+  grid-template-columns: 110px minmax(0, 1fr) 110px;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  margin: 18px auto 28px;
+}
+
+.report-header-with-logos .report-heading {
+  text-align: center;
+  min-width: 0;
+}
+
+.report-header-with-logos .report-heading h2 {
+  margin: 0 0 6px;
+}
+
+.report-header-with-logos .report-heading p {
+  margin: 0;
+}
+
+.report-header-with-logos .report-logo {
+  display: block;
+  width: 100%;
+  height: 100px;
+  object-fit: contain;
+}
+
+.report-header-with-logos .school-logo {
+  justify-self: start;
+}
+
+.report-header-with-logos .cognia-logo {
+  justify-self: end;
+}
+
+/* Keep logos in the printed report */
+@media print {
+  .report-header-with-logos {
+    grid-template-columns: 95px minmax(0, 1fr) 95px !important;
+    gap: 12px !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .report-header-with-logos .report-logo {
+    height: 90px !important;
+  }
+
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+}
+
+@media (max-width: 600px) {
+  .report-header-with-logos {
+    grid-template-columns: 65px minmax(0, 1fr) 65px;
+    gap: 8px;
+  }
+
+  .report-header-with-logos .report-logo {
+    height: 65px;
+  }
+
+  .report-header-with-logos .report-heading h2 {
+    font-size: 20px;
+  }
+
+  .report-header-with-logos .report-heading p {
+    font-size: 12px;
+  }
+}
