@@ -1047,7 +1047,35 @@ if (!loaded) {
   alert("Could not load the student's report.");
   return;
 }
-    // Temporarily prepare the report for PDF generation
+    // Create a temporary report copy for PDF export
+const pdfContainer = document.createElement("div");
+
+pdfContainer.style.position = "fixed";
+pdfContainer.style.left = "-10000px";
+pdfContainer.style.top = "0";
+pdfContainer.style.width = "794px";
+pdfContainer.style.background = "#ffffff";
+pdfContainer.style.padding = "20px";
+pdfContainer.style.boxSizing = "border-box";
+
+const pdfReport = reportElement.cloneNode(true);
+
+pdfReport.classList.remove("hidden");
+pdfReport.style.display = "block";
+pdfReport.style.width = "100%";
+pdfReport.style.maxWidth = "none";
+pdfReport.style.margin = "0";
+pdfReport.style.boxShadow = "none";
+
+// Remove buttons from the PDF copy only
+pdfReport.querySelectorAll(
+  ".screen-top, #report-back-btn, #print-report-btn"
+).forEach(function(element) {
+  element.remove();
+});
+
+pdfContainer.appendChild(pdfReport);
+document.body.appendChild(pdfContainer);
     // Keep the report screen hidden during PDF preparation
 
     const options = {
