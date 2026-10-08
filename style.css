@@ -23,7 +23,7 @@ body {
       rgba(244, 247, 251, 0.72),
       rgba(244, 247, 251, 0.82)
     ),
-    background-image: url("classroom-bg-new.png");
+    background-image: url("./classroom-bg-new.png") !important;
 
   background-size: cover;
   background-position: center;
