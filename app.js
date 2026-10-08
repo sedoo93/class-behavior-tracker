@@ -1048,7 +1048,7 @@ if (!loaded) {
   return;
 }
     // Temporarily prepare the report for PDF generation
-    reportElement.classList.remove("hidden");
+    // Keep the report screen hidden during PDF preparation
 
     const options = {
       margin: 8,
