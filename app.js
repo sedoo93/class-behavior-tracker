@@ -1010,201 +1010,37 @@ async function saveBehaviorRecord(
 
 
 // ==========================================
-// WHATSAPP REPORT
+// WHATSAPP PDF REPORT
 // ==========================================
 
-async function sendStudentWhatsAppReport(
-  studentName,
-  className
-) {
+async function sendStudentWhatsAppReport(studentName, className) {
 
-  const enteredPhone = prompt(
-    "Enter the verified parent WhatsApp number for:\n" +
-    studentName +
-    " (" +
-    className +
-    ")\n\n" +
-    "Example: +9665XXXXXXXX"
+  const confirmed = confirm(
+    "Prepare the PDF behavior report for:\n\n" +
+    "Student: " + studentName + "\n" +
+    "Class: " + className + "\n\n" +
+    "The report will open in the website.\n" +
+    "Save it as PDF, then attach it in WhatsApp."
   );
 
-  if (enteredPhone === null) {
+  if (!confirmed) {
     return;
   }
 
-  let phone =
-    enteredPhone.replace(/[^\d+]/g, "");
+  // Open the existing report with its original design
+  await openStudentReport(studentName, className);
 
-  if (phone.startsWith("00")) {
-    phone = phone.slice(2);
-  }
-
-  if (phone.startsWith("+")) {
-    phone = phone.slice(1);
-  }
-
-  if (/^05\d{8}$/.test(phone)) {
-    phone = "966" + phone.slice(1);
-  }
-
-  if (/^5\d{8}$/.test(phone)) {
-    phone = "966" + phone;
-  }
-
-  if (!/^9665\d{8}$/.test(phone)) {
-
-    alert(
-      "Please enter a valid Saudi mobile number."
-    );
-
-    return;
-  }
-
-  try {
-
-    const { data, error } =
-      await supabaseClient
-        .from("behavior_records")
-        .select(
-          "category, action_name, points, created_at"
-        )
-        .eq("student_name", studentName)
-        .eq("class_name", className)
-        .eq("forgiven", false)
-        .order(
-          "created_at",
-          { ascending: false }
-        );
-
-    if (error) {
-      throw error;
-    }
-
-    const records = data || [];
-
-    const bonusCount =
-      records.filter(function(record) {
-        return record.category === "Bonus";
-      }).length;
-
-    const violationCount =
-      records.filter(function(record) {
-        return record.category === "Violation";
-      }).length;
-
-    const totalScore =
-      records.reduce(
-        function(sum, record) {
-
-          return sum +
-            (Number(record.points) || 0);
-
-        },
-        0
-      );
-
-    const details =
-      records.slice(0, 10).map(
-        function(record) {
-
-          const date =
-            new Date(
-              record.created_at
-            ).toLocaleDateString("en-GB");
-
-          return (
-            "- " +
-            date +
-            ": " +
-            record.category +
-            " — " +
-            record.action_name
-          );
-
-        }
-      );
-
-    const message = [
-
-      "Student Behavior Report",
-
-      "",
-
-      "Dear Parent/Guardian,",
-
-      "",
-
-      "Student: " + studentName,
-
-      "Class: " + className,
-
-      "Date: " +
-        new Date().toLocaleDateString("en-GB"),
-
-      "",
-
-      "Bonuses: " + bonusCount,
-
-      "Active violations: " + violationCount,
-
-      "Total score: " +
-        (totalScore > 0 ? "+" : "") +
-        totalScore,
-
-      "",
-
-      "Recent behavior records (up to 10):",
-
-      details.length
-        ? details.join("\n")
-        : "No active behavior records.",
-
-      "",
-
-      "Thank you for your cooperation.",
-
-      "Mr. Sayed"
-
-    ].join("\n");
-
-    const confirmed = confirm(
-      "Open WhatsApp for the verified parent number ending in " +
-      phone.slice(-4) +
-      "?\n\n" +
-      message
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
-    const whatsappURL =
-      "https://wa.me/" +
-      phone +
-      "?text=" +
-      encodeURIComponent(message);
-
-    window.open(
-      whatsappURL,
-      "_blank",
-      "noopener,noreferrer"
-    );
-
-  } catch (error) {
-
-    console.error(
-      "WhatsApp report error:",
-      error
-    );
-
-    alert(
-      "Could not prepare the report. Please try again."
-    );
-
-  }
+  // Inform the teacher about the next step
+  alert(
+    "Your report is ready!\n\n" +
+    "1. Click Save as PDF.\n" +
+    "2. Choose Save as PDF in the print window.\n" +
+    "3. Open WhatsApp.\n" +
+    "4. Attach the saved PDF to the correct parent chat.\n" +
+    "5. Review the recipient before sending."
+  );
 
 }
-
-
 // ==========================================
 // END OF PART 3
 // ==========================================
