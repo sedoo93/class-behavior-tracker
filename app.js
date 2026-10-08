@@ -778,6 +778,7 @@ function createStudentCard(studentName, index) {
   actions.appendChild(historyButton);
   actions.appendChild(reportButton);
   actions.appendChild(analysisButton);
+  actions.appendChild(whatsappButton);
 
 
   // ========================================
@@ -2480,7 +2481,7 @@ window.addEventListener("afterprint", function() {
 // WHATSAPP PDF SHARING - FINAL OVERRIDE
 // ==========================================
 
-sendStudentWhatsAppReport = async function(studentName, className) {
+async function sendStudentWhatsAppReport(studentName, className) {
 
   if (typeof html2pdf !== "function") {
     alert("PDF library is missing. Please refresh the page.");
@@ -2500,6 +2501,8 @@ sendStudentWhatsAppReport = async function(studentName, className) {
     button.classList &&
     button.classList.contains("whatsapp-btn");
 
+  if (isWhatsAppButton && button.disabled) return;
+
   let pdfContainer = null;
 
   if (isWhatsAppButton) {
@@ -2511,10 +2514,7 @@ sendStudentWhatsAppReport = async function(studentName, className) {
 
     // Get the student's latest report from Supabase.
     // This does not open the Report screen.
-    const loaded = !reportScreen.classList.contains("hidden") &&
-      reportStudentName.textContent.trim() === studentName &&
-      reportClassName.textContent.trim() === className
-      ? true : await loadStudentReportData(studentName, className);
+    const loaded = await loadStudentReportData(studentName, className);
 
     if (!loaded) {
       throw new Error("Could not load student report.");
@@ -2720,7 +2720,7 @@ sendStudentWhatsAppReport = async function(studentName, className) {
 
   }
 
-};
+}
 
 // ==========================================
 // END OF WHATSAPP PDF SHARING OVERRIDE
