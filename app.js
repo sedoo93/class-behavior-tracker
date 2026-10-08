@@ -1013,32 +1013,123 @@ async function saveBehaviorRecord(
 // WHATSAPP PDF REPORT
 // ==========================================
 
+// ==========================================
+// WHATSAPP - SHARE STUDENT REPORT AS PDF
+// ==========================================
+
 async function sendStudentWhatsAppReport(studentName, className) {
 
-  const confirmed = confirm(
-    "Prepare the PDF behavior report for:\n\n" +
-    "Student: " + studentName + "\n" +
-    "Class: " + className + "\n\n" +
-    "The report will open in the website.\n" +
-    "Save it as PDF, then attach it in WhatsApp."
-  );
-
-  if (!confirmed) {
+  if (typeof html2pdf === "undefined") {
+    alert("PDF library is not loaded. Please refresh the page.");
     return;
   }
 
-  // Open the existing report with its original design
-  await openStudentReport(studentName, className);
+  const reportElement = document.getElementById("report-screen");
 
-  // Inform the teacher about the next step
-  alert(
-    "Your report is ready!\n\n" +
-    "1. Click Save as PDF.\n" +
-    "2. Choose Save as PDF in the print window.\n" +
-    "3. Open WhatsApp.\n" +
-    "4. Attach the saved PDF to the correct parent chat.\n" +
-    "5. Review the recipient before sending."
-  );
+  if (!reportElement) {
+    alert("Report template was not found.");
+    return;
+  }
+
+  const safeName = studentName
+    .replace(/[^a-zA-Z0-9 ]/g, "")
+    .trim()
+    .replace(/\s+/g, "_");
+
+  const fileName = safeName + "_Behavior_Report.pdf";
+
+  try {
+
+    // Load the student's real report data
+    await openStudentReport(studentName, className);
+
+    // Temporarily prepare the report for PDF generation
+    reportElement.classList.remove("hidden");
+
+    const options = {
+      margin: 8,
+      filename: fileName,
+      image: {
+        type: "jpeg",
+        quality: 0.98
+      },
+      html2canvas: {
+        scale: 2,
+        useCORS: true
+      },
+      jsPDF: {
+        unit: "mm",
+        format: "a4",
+        orientation: "portrait"
+      },
+      pagebreak: {
+        mode: ["css", "legacy"]
+      }
+    };
+
+    const pdfBlob = await html2pdf()
+      .set(options)
+      .from(reportElement)
+      .outputPdf("blob");
+
+    const pdfFile = new File(
+      [pdfBlob],
+      fileName,
+      { type: "application/pdf" }
+    );
+
+    // Share the PDF using the device's native share menu
+    if (
+      navigator.canShare &&
+      navigator.canShare({ files: [pdfFile] }) &&
+      navigator.share
+    ) {
+
+      await navigator.share({
+        files: [pdfFile],
+        title: "Student Behavior Report",
+        text: "Student Behavior Report - " + studentName
+      });
+
+    } else {
+
+      // Fallback when PDF file sharing is unsupported
+      const downloadUrl = URL.createObjectURL(pdfBlob);
+
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = fileName;
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      setTimeout(function() {
+        URL.revokeObjectURL(downloadUrl);
+      }, 60000);
+
+      alert(
+        "Your PDF has been downloaded.\n\n" +
+        "Your browser does not support direct PDF sharing.\n" +
+        "Open WhatsApp and attach the downloaded PDF."
+      );
+
+    }
+
+  } catch (error) {
+
+    if (error.name === "AbortError") {
+      return;
+    }
+
+    console.error("WhatsApp PDF sharing error:", error);
+
+    alert(
+      "Could not prepare or share the PDF report. " +
+      "Please try again."
+    );
+
+  }
 
 }
 // ==========================================
