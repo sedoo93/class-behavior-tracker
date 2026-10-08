@@ -1,541 +1,547 @@
-// ==========================================
-// MR. SAYED'S CLASS BEHAVIOR TRACKER
-// VERSION 73 - WHATSAPP UPDATE
-// PART 1
-// ==========================================
 
+  // SECURITY NOTE: The legacy browser-side password is visible to visitors.
+  // Migrate login to Supabase Auth and enable RLS before using real student data.
+  // ==========================================
+  // MR. SAYED'S CLASS BEHAVIOR TRACKER
+  // VERSION 73 - WHATSAPP UPDATE
+  // PART 1
+  // ==========================================
 
-// ==========================================
-// SUPABASE
-// ==========================================
 
-const SUPABASE_URL =
-  "https://vhsiojpolntabqfogglu.supabase.co";
+  // ==========================================
+  // SUPABASE
+  // ==========================================
 
-const SUPABASE_KEY =
-  "sb_publishable_yIT1oGw3YRyiYypxlmETwg_foN3Yk3u";
+  const SUPABASE_URL =
+    "https://vhsiojpolntabqfogglu.supabase.co";
 
-const supabaseClient =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
+  const SUPABASE_KEY =
+    "sb_publishable_yIT1oGw3YRyiYypxlmETwg_foN3Yk3u";
 
-
-// ==========================================
-// LOGIN DATA
-// ==========================================
-
-const ADMIN_EMAIL =
-  "elsayedramadan500@gmail.com";
-
-const ADMIN_PASSWORD =
-  "Sara9112";
-
-
-// ==========================================
-// STUDENTS
-// ==========================================
-
-const students = {
-
-  "7/A": [
-    "AHMAD ABDULRAHIM AWADH ALZAHRANI",
-    "Ahmed Ehab Maged Mohamed Abdelrahman",
-    "ASSAF ABDULRAHMAN HIZAB ALSULAMI",
-    "Muhammad Ahmad Mahmoud Al-Bar",
-    "Yassin Mahmoud Sharaf Al-Din",
-    "EYAD ELSAYED WAGIH FOUAD",
-    "Youssef Ziad Amjad Helmy",
-    "Abdulaziz Ahmed Abdulaziz Diab Shandi",
-    "Abdulrahman Amr Gaber Ismail Abulkassem",
-    "Baraa sameh zakaria awad",
-    "ABDALLAH YOUSSEF ABDULLAH YOUSSEF",
-    "Yassin Ali Youssef Ibrahim",
-    "ASER ALI MAHMOUD SHAHIN",
-    "Mazen BaSiM Mahmoud Mokhtar Gouda",
-    "Dan Ahmed Elhanafy",
-    "Elias Hatim Lahza",
-    "Malik Ahmed",
-    "Mohammed Khaled el sharawy",
-    "Firas Mohammed Bakr Malibari"
-  ],
-
-  "7/B": [
-    "WASEEM OMAR S LABANI",
-    "Magdi MOAZ HARIRI",
-    "Abdul Rahman Awad Al-Maliki",
-    "MOWAFFAA MUHANNAD HARIRI",
-    "MOHAMMED Hossam Murad",
-    "Hamza Faisal Minshawi",
-    "Abdulrahman Ageel ALOgla",
-    "KENAN WASEEM ALZAMZAMI",
-    "Jasser Muhammad Hashim Al-Ansari",
-    "Elias Luai Zakariya Zamil",
-    "Noureldin Mohamed Ahmed Badr",
-    "hasan Abdulwahab shafei",
-    "Ahmed Raed Al-Ghamdi",
-    "Mohammed Hamad Al-Otaibi",
-    "Hashem Ahmed Essam Bajaber",
-    "Yazan Eyad Alhwsawi",
-    "EYAD MOHAMED IBRAHIM ESMAIL ELSAYED",
-    "Adham yasser mouhamed",
-    "Omar Ahmed salah eldefrawy",
-    "Anmar salman althagafi",
-    "Feras Muwaffaq Aljuaid",
-    "Mohammed Abdulmajeed Mohammed Alanqazi",
-    "Luai Imad Saeed Mohammed Ghaleb",
-    "AHMAD IHAB FAROUK ELMADANI"
-  ]
-
-};
-
-
-// ==========================================
-// BEHAVIOR OPTIONS
-// ==========================================
-
-const violations = [
-  "Missed homework",
-  "Didn't bring his sheet",
-  "Didn't bring his notebook",
-  "Didn't bring his book",
-  "Eating in the session",
-  "Late for the session",
-  "Making noise",
-  "Other..."
-];
-
-const bonuses = [
-  "Remaining quiet all the day",
-  "Participating actively",
-  "Other..."
-];
-
-
-// ==========================================
-// SCREEN ELEMENTS
-// ==========================================
-
-const loginScreen =
-  document.getElementById("login-screen");
-
-const dashboard =
-  document.getElementById("dashboard");
-
-const classScreen =
-  document.getElementById("class-screen");
-
-const historyScreen =
-  document.getElementById("history-screen");
-
-const reportScreen =
-  document.getElementById("report-screen");
-
-const analysisScreen =
-  document.getElementById("analysis-screen");
-
-
-// ==========================================
-// LOGIN ELEMENTS
-// ==========================================
-
-const emailInput =
-  document.getElementById("email");
-
-const passwordInput =
-  document.getElementById("password");
-
-const loginBtn =
-  document.getElementById("login-btn");
-
-const logoutBtn =
-  document.getElementById("logout-btn");
-
-const loginMessage =
-  document.getElementById("login-message");
-
-const teacherEmail =
-  document.getElementById("teacher-email");
-
-
-// ==========================================
-// CLASS ELEMENTS
-// ==========================================
-
-const backBtn =
-  document.getElementById("back-btn");
-
-const classTitle =
-  document.getElementById("class-title");
-
-const classCount =
-  document.getElementById("class-count");
-
-const studentsList =
-  document.getElementById("students-list");
-
-
-// ==========================================
-// HISTORY ELEMENTS
-// ==========================================
-
-const historyBackBtn =
-  document.getElementById("history-back-btn");
-
-const historyStudentName =
-  document.getElementById("history-student-name");
-
-const historyClassName =
-  document.getElementById("history-class-name");
-
-const historyStatus =
-  document.getElementById("history-status");
-
-const historyTableContainer =
-  document.getElementById("history-table-container");
-
-const historyTableBody =
-  document.getElementById("history-table-body");
-
-
-// ==========================================
-// REPORT ELEMENTS
-// ==========================================
-
-const reportBackBtn =
-  document.getElementById("report-back-btn");
-
-const printReportBtn =
-  document.getElementById("print-report-btn");
-
-const reportStudentName =
-  document.getElementById("report-student-name");
-
-const reportClassName =
-  document.getElementById("report-class-name");
-
-const reportBonusCount =
-  document.getElementById("report-bonus-count");
-
-const reportViolationCount =
-  document.getElementById("report-violation-count");
-
-const reportTotalScore =
-  document.getElementById("report-total-score");
-
-const reportStatus =
-  document.getElementById("report-status");
-
-const reportTableContainer =
-  document.getElementById("report-table-container");
-
-const reportTableBody =
-  document.getElementById("report-table-body");
-
-const reportGeneratedDate =
-  document.getElementById("report-generated-date");
-
-
-// ==========================================
-// ANALYSIS ELEMENTS
-// ==========================================
-
-const analysisBackBtn =
-  document.getElementById("analysis-back-btn");
-
-const translateAnalysisBtn =
-  document.getElementById("translate-analysis-btn");
-
-const printAnalysisBtn =
-  document.getElementById("print-analysis-btn");
-
-const analysisStudentName =
-  document.getElementById("analysis-student-name");
-
-const analysisClassName =
-  document.getElementById("analysis-class-name");
-
-const analysisBonusCount =
-  document.getElementById("analysis-bonus-count");
-
-const analysisViolationCount =
-  document.getElementById("analysis-violation-count");
-
-const analysisTotalScore =
-  document.getElementById("analysis-total-score");
-
-const analysisTopViolation =
-  document.getElementById("analysis-top-violation");
-
-const analysisStatus =
-  document.getElementById("analysis-status");
-
-const analysisChart =
-  document.getElementById("analysis-chart");
-
-const analysisDescription =
-  document.getElementById("analysis-description");
-
-const analysisSummaryTitle =
-  document.getElementById("analysis-summary-title");
-
-const analysisGeneratedDate =
-  document.getElementById("analysis-generated-date");
-
-
-// ==========================================
-// CURRENT STATE
-// ==========================================
-
-let currentClass = null;
-
-let currentHistoryStudent = null;
-
-let currentAnalysisLanguage = "en";
-
-let currentAnalysisText = {
-  en: "",
-  ar: ""
-};
-// ==========================================
-// PART 2 - VERSION 73
-// CELEBRATIONS, LOGIN, STUDENT CARDS
-// ==========================================
-
-
-// ==========================================
-// CELEBRATION / FEEDBACK IMAGE
-// ==========================================
-
-function showBehaviorImage(imagePath) {
-
-  const oldOverlay =
-    document.getElementById(
-      "behavior-feedback-overlay"
+  const supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
     );
 
-  if (oldOverlay) {
-    oldOverlay.remove();
-  }
 
-  const overlay =
-    document.createElement("div");
+  // ==========================================
+  // LOGIN DATA
+  // ==========================================
 
-  overlay.id =
-    "behavior-feedback-overlay";
+  const ADMIN_EMAIL =
+    "elsayedramadan500@gmail.com";
 
-  const image =
-    document.createElement("img");
+  const ADMIN_PASSWORD =
+    "Sara9112";
 
-  image.src = imagePath;
 
-  image.alt =
-    "Behavior feedback";
+  // ==========================================
+  // STUDENTS
+  // ==========================================
 
-  overlay.style.position = "fixed";
-  overlay.style.inset = "0";
-  overlay.style.width = "100vw";
-  overlay.style.height = "100vh";
-  overlay.style.display = "flex";
-  overlay.style.alignItems = "center";
-  overlay.style.justifyContent = "center";
-  overlay.style.background =
-    "rgba(255,255,255,0.35)";
-  overlay.style.backdropFilter = "blur(4px)";
-  overlay.style.zIndex = "999999";
-  overlay.style.opacity = "0";
-  overlay.style.transition =
-    "opacity 0.35s ease";
+  const students = {
 
-  image.style.width = "94vw";
-  image.style.height = "94vh";
-  image.style.maxWidth = "1200px";
-  image.style.maxHeight = "94vh";
-  image.style.objectFit = "contain";
-  image.style.borderRadius = "30px";
-  image.style.filter =
-    "drop-shadow(0 20px 45px rgba(0,0,0,0.30))";
-  image.style.transform = "scale(0.70)";
-  image.style.opacity = "0";
-  image.style.transition =
-    "transform 0.55s cubic-bezier(.2,1.4,.4,1), opacity 0.35s ease";
+    "7/A": [
+      "AHMAD ABDULRAHIM AWADH ALZAHRANI",
+      "Ahmed Ehab Maged Mohamed Abdelrahman",
+      "ASSAF ABDULRAHMAN HIZAB ALSULAMI",
+      "Muhammad Ahmad Mahmoud Al-Bar",
+      "Yassin Mahmoud Sharaf Al-Din",
+      "EYAD ELSAYED WAGIH FOUAD",
+      "Youssef Ziad Amjad Helmy",
+      "Abdulaziz Ahmed Abdulaziz Diab Shandi",
+      "Abdulrahman Amr Gaber Ismail Abulkassem",
+      "Baraa sameh zakaria awad",
+      "ABDALLAH YOUSSEF ABDULLAH YOUSSEF",
+      "Yassin Ali Youssef Ibrahim",
+      "ASER ALI MAHMOUD SHAHIN",
+      "Mazen BaSiM Mahmoud Mokhtar Gouda",
+      "Dan Ahmed Elhanafy",
+      "Elias Hatim Lahza",
+      "Malik Ahmed",
+      "Mohammed Khaled el sharawy",
+      "Firas Mohammed Bakr Malibari"
+    ],
 
-  overlay.appendChild(image);
-  document.body.appendChild(overlay);
+    "7/B": [
+      "WASEEM OMAR S LABANI",
+      "Magdi MOAZ HARIRI",
+      "Abdul Rahman Awad Al-Maliki",
+      "MOWAFFAA MUHANNAD HARIRI",
+      "MOHAMMED Hossam Murad",
+      "Hamza Faisal Minshawi",
+      "Abdulrahman Ageel ALOgla",
+      "KENAN WASEEM ALZAMZAMI",
+      "Jasser Muhammad Hashim Al-Ansari",
+      "Elias Luai Zakariya Zamil",
+      "Noureldin Mohamed Ahmed Badr",
+      "hasan Abdulwahab shafei",
+      "Ahmed Raed Al-Ghamdi",
+      "Mohammed Hamad Al-Otaibi",
+      "Hashem Ahmed Essam Bajaber",
+      "Yazan Eyad Alhwsawi",
+      "EYAD MOHAMED IBRAHIM ESMAIL ELSAYED",
+      "Adham yasser mouhamed",
+      "Omar Ahmed salah eldefrawy",
+      "Anmar salman althagafi",
+      "Feras Muwaffaq Aljuaid",
+      "Mohammed Abdulmajeed Mohammed Alanqazi",
+      "Luai Imad Saeed Mohammed Ghaleb",
+      "AHMAD IHAB FAROUK ELMADANI"
+    ]
 
-  requestAnimationFrame(function() {
-    overlay.style.opacity = "1";
-    image.style.opacity = "1";
-    image.style.transform = "scale(1)";
-  });
+  };
 
-  setTimeout(function() {
+
+  // ==========================================
+  // BEHAVIOR OPTIONS
+  // ==========================================
+
+  const violations = [
+    "Missed homework",
+    "Didn't bring his sheet",
+    "Didn't bring his notebook",
+    "Didn't bring his book",
+    "Eating in the session",
+    "Late for the session",
+    "Making noise",
+    "Other..."
+  ];
+
+  const bonuses = [
+    "Remaining quiet all the day",
+    "Participating actively",
+    "Other..."
+  ];
+
+
+  // ==========================================
+  // SCREEN ELEMENTS
+  // ==========================================
+
+  const loginScreen =
+    document.getElementById("login-screen");
+
+  const dashboard =
+    document.getElementById("dashboard");
+
+  const classScreen =
+    document.getElementById("class-screen");
+
+  const historyScreen =
+    document.getElementById("history-screen");
+
+  const reportScreen =
+    document.getElementById("report-screen");
+
+  const analysisScreen =
+    document.getElementById("analysis-screen");
+
+
+  // ==========================================
+  // LOGIN ELEMENTS
+  // ==========================================
+
+  const emailInput =
+    document.getElementById("email");
+
+  const passwordInput =
+    document.getElementById("password");
+
+  const loginBtn =
+    document.getElementById("login-btn");
+
+  const logoutBtn =
+    document.getElementById("logout-btn");
+
+  const loginMessage =
+    document.getElementById("login-message");
+
+  const teacherEmail =
+    document.getElementById("teacher-email");
+
+
+  // ==========================================
+  // CLASS ELEMENTS
+  // ==========================================
+
+  const backBtn =
+    document.getElementById("back-btn");
+
+  const classTitle =
+    document.getElementById("class-title");
+
+  const classCount =
+    document.getElementById("class-count");
+
+  const studentsList =
+    document.getElementById("students-list");
+
+
+  // ==========================================
+  // HISTORY ELEMENTS
+  // ==========================================
+
+  const historyBackBtn =
+    document.getElementById("history-back-btn");
+
+  const historyStudentName =
+    document.getElementById("history-student-name");
+
+  const historyClassName =
+    document.getElementById("history-class-name");
+
+  const historyStatus =
+    document.getElementById("history-status");
+
+  const historyTableContainer =
+    document.getElementById("history-table-container");
+
+  const historyTableBody =
+    document.getElementById("history-table-body");
+
+
+  // ==========================================
+  // REPORT ELEMENTS
+  // ==========================================
+
+  const reportBackBtn =
+    document.getElementById("report-back-btn");
+
+  const printReportBtn =
+    document.getElementById("print-report-btn");
+
+  const reportStudentName =
+    document.getElementById("report-student-name");
+
+  const reportClassName =
+    document.getElementById("report-class-name");
+
+  const reportBonusCount =
+    document.getElementById("report-bonus-count");
+
+  const reportViolationCount =
+    document.getElementById("report-violation-count");
+
+  const reportTotalScore =
+    document.getElementById("report-total-score");
+
+  const reportStatus =
+    document.getElementById("report-status");
+
+  const reportTableContainer =
+    document.getElementById("report-table-container");
+
+  const reportTableBody =
+    document.getElementById("report-table-body");
+
+  const reportGeneratedDate =
+    document.getElementById("report-generated-date");
+
+
+  // ==========================================
+  // ANALYSIS ELEMENTS
+  // ==========================================
+
+  const analysisBackBtn =
+    document.getElementById("analysis-back-btn");
+
+  const translateAnalysisBtn =
+    document.getElementById("translate-analysis-btn");
+
+  const printAnalysisBtn =
+    document.getElementById("print-analysis-btn");
+
+  const analysisStudentName =
+    document.getElementById("analysis-student-name");
+
+  const analysisClassName =
+    document.getElementById("analysis-class-name");
+
+  const analysisBonusCount =
+    document.getElementById("analysis-bonus-count");
+
+  const analysisViolationCount =
+    document.getElementById("analysis-violation-count");
+
+  const analysisTotalScore =
+    document.getElementById("analysis-total-score");
+
+  const analysisTopViolation =
+    document.getElementById("analysis-top-violation");
+
+  const analysisStatus =
+    document.getElementById("analysis-status");
+
+  const analysisChart =
+    document.getElementById("analysis-chart");
+
+  const analysisDescription =
+    document.getElementById("analysis-description");
+
+  const analysisSummaryTitle =
+    document.getElementById("analysis-summary-title");
+
+  const analysisGeneratedDate =
+    document.getElementById("analysis-generated-date");
+
+
+  // ==========================================
+  // CURRENT STATE
+  // ==========================================
+
+  let currentClass = null;
+
+  let currentHistoryStudent = null;
+
+  let currentAnalysisLanguage = "en";
+
+  let currentAnalysisText = {
+    en: "",
+    ar: ""
+  };
+
+  // ==========================================
+  // PART 2 - VERSION 73
+  // CELEBRATIONS, LOGIN, STUDENT CARDS
+  // ==========================================
+
+
+  // ==========================================
+  // CELEBRATION / FEEDBACK IMAGE
+  // ==========================================
+
+  function showBehaviorImage(imagePath) {
+
+    const oldOverlay =
+      document.getElementById(
+        "behavior-feedback-overlay"
+      );
+
+    if (oldOverlay) {
+      oldOverlay.remove();
+    }
+
+    const overlay =
+      document.createElement("div");
+
+    overlay.id =
+      "behavior-feedback-overlay";
+
+    const image =
+      document.createElement("img");
+
+    image.src = imagePath;
+
+    image.alt =
+      "Behavior feedback";
+
+    overlay.style.position = "fixed";
+    overlay.style.inset = "0";
+    overlay.style.width = "100vw";
+    overlay.style.height = "100vh";
+    overlay.style.display = "flex";
+    overlay.style.alignItems = "center";
+    overlay.style.justifyContent = "center";
+    overlay.style.background =
+      "rgba(255,255,255,0.35)";
+    overlay.style.backdropFilter = "blur(4px)";
+    overlay.style.zIndex = "999999";
     overlay.style.opacity = "0";
-    image.style.transform = "scale(1.03)";
-  }, 4000);
+    overlay.style.transition =
+      "opacity 0.35s ease";
 
-  setTimeout(function() {
-    overlay.remove();
-  }, 4500);
+    image.style.width = "94vw";
+    image.style.height = "94vh";
+    image.style.maxWidth = "1200px";
+    image.style.maxHeight = "94vh";
+    image.style.objectFit = "contain";
+    image.style.borderRadius = "30px";
+    image.style.filter =
+      "drop-shadow(0 20px 45px rgba(0,0,0,0.30))";
 
-}
+    image.style.transform = "scale(0.70)";
+    image.style.opacity = "0";
+    image.style.transition =
+      "transform 0.55s cubic-bezier(.2,1.4,.4,1), opacity 0.35s ease";
 
+    overlay.appendChild(image);
+    document.body.appendChild(overlay);
 
-// ==========================================
-// BONUS IMAGE
-// ==========================================
+    requestAnimationFrame(function() {
+      overlay.style.opacity = "1";
+      image.style.opacity = "1";
+      image.style.transform = "scale(1)";
+    });
 
-function showBonusCelebration() {
+    setTimeout(function() {
+      overlay.style.opacity = "0";
+      image.style.transform = "scale(1.03)";
+    }, 4000);
 
-  showBehaviorImage(
-    "./bonus-celebration.png?v=68"
-  );
+    setTimeout(function() {
+      overlay.remove();
+    }, 4500);
 
-}
-
-
-// ==========================================
-// VIOLATION IMAGE
-// ==========================================
-
-function showMinusCelebration() {
-
-  showBehaviorImage(
-    "./minus-celebration.png?v=68"
-  );
-
-}
-
-
-// ==========================================
-// SCREEN FUNCTIONS
-// ==========================================
-
-function hideAllScreens() {
-
-  if (loginScreen) {
-    loginScreen.classList.add("hidden");
   }
 
-  if (dashboard) {
-    dashboard.classList.add("hidden");
-  }
 
-  if (classScreen) {
-    classScreen.classList.add("hidden");
-  }
+  // ==========================================
+  // BONUS IMAGE
+  // ==========================================
 
-  if (historyScreen) {
-    historyScreen.classList.add("hidden");
-  }
+  function showBonusCelebration() {
 
-  if (reportScreen) {
-    reportScreen.classList.add("hidden");
-  }
-
-  if (analysisScreen) {
-    analysisScreen.classList.add("hidden");
-  }
-
-}
-
-
-function showDashboard() {
-
-  hideAllScreens();
-
-  dashboard.classList.remove("hidden");
-
-  if (teacherEmail) {
-    teacherEmail.textContent =
-      "Logged in as: " + ADMIN_EMAIL;
-  }
-
-}
-
-
-function showLogin() {
-
-  hideAllScreens();
-
-  loginScreen.classList.remove("hidden");
-
-  if (loginMessage) {
-    loginMessage.textContent = "";
-  }
-
-}
-
-
-// ==========================================
-// LOGIN
-// ==========================================
-
-function login() {
-
-  const enteredEmail =
-    emailInput.value.trim().toLowerCase();
-
-  const enteredPassword =
-    passwordInput.value.trim();
-
-  loginMessage.textContent = "";
-
-  if (
-    enteredEmail === ADMIN_EMAIL.toLowerCase() &&
-    enteredPassword === ADMIN_PASSWORD
-  ) {
-
-    sessionStorage.setItem(
-      "teacherLoggedIn",
-      "true"
+    showBehaviorImage(
+      "./bonus-celebration.png?v=68"
     );
 
-    passwordInput.value = "";
+  }
 
-    showDashboard();
 
-  } else {
+  // ==========================================
+  // VIOLATION IMAGE
+  // ==========================================
 
-    loginMessage.textContent =
-      "Incorrect email or password.";
+  function showMinusCelebration() {
+
+    showBehaviorImage(
+      "./minus-celebration.png?v=68"
+    );
 
   }
 
-}
+
+  // ==========================================
+  // SCREEN FUNCTIONS
+  // ==========================================
+
+  function hideAllScreens() {
+
+    if (loginScreen) {
+      loginScreen.classList.add("hidden");
+    }
+
+    if (dashboard) {
+      dashboard.classList.add("hidden");
+    }
+
+    if (classScreen) {
+      classScreen.classList.add("hidden");
+    }
+
+    if (historyScreen) {
+      historyScreen.classList.add("hidden");
+    }
+
+    if (reportScreen) {
+      reportScreen.classList.add("hidden");
+    }
+
+    if (analysisScreen) {
+      analysisScreen.classList.add("hidden");
+    }
+
+  }
 
 
-if (loginBtn) {
+  function showDashboard() {
 
-  loginBtn.addEventListener(
-    "click",
-    login
-  );
+    hideAllScreens();
 
-}
+    dashboard.classList.remove("hidden");
+
+    if (teacherEmail) {
+      teacherEmail.textContent =
+        "Logged in as: " + ADMIN_EMAIL;
+    }
+
+  }
 
 
-if (emailInput) {
+  function showLogin() {
 
-  emailInput.addEventListener(
-    "keydown",
-    function(event) {
+    hideAllScreens();
 
-      if (event.key === "Enter") {
-        login();
-      }
+    loginScreen.classList.remove("hidden");
+
+    if (loginMessage) {
+      loginMessage.textContent = "";
+    }
+
+  }
+
+
+  // ==========================================
+  // LOGIN
+  // ==========================================
+
+  function login() {
+
+    const enteredEmail =
+      emailInput.value.trim().toLowerCase();
+
+    const enteredPassword =
+      passwordInput.value.trim();
+
+    loginMessage.textContent = "";
+
+    if (
+      enteredEmail === ADMIN_EMAIL.toLowerCase() &&
+      enteredPassword === ADMIN_PASSWORD
+    ) {
+
+      sessionStorage.setItem(
+        "teacherLoggedIn",
+        "true"
+      );
+
+      passwordInput.value = "";
+
+      showDashboard();
+
+    } else {
+
+      loginMessage.textContent =
+        "Incorrect email or password.";
 
     }
-  );
 
-}
+  }
 
 
-if (passwordInput) {
+  if (loginBtn) {
 
-  passwordInput.addEventListener(
-    "keydown",
+    loginBtn.addEventListener(
+      "click",
+      login
+    );
+
+  }
+
+
+  if (emailInput) {
+
+    emailInput.addEventListener(
+      "keydown",
+      function(event) {
+
+        if (event.key === "Enter") {
+          login();
+        }
+
+      }
+    );
+
+  }
+
+
+  if (passwordInput) {
+
+    passwordInput.addEventListener(
+      "keydown",
+
     function(event) {
 
       if (event.key === "Enter") {
@@ -716,6 +722,7 @@ function createStudentCard(studentName, index) {
   analysisButton.textContent = "📊 Analysis";
 
   analysisButton.addEventListener(
+
     "click",
     function() {
 
@@ -896,6 +903,7 @@ function showViolationMenu(studentName) {
   if (
     !Number.isInteger(number) ||
     number < 1 ||
+
     number > violations.length
   ) {
 
@@ -1016,168 +1024,6 @@ async function saveBehaviorRecord(
 // WHATSAPP - SHARE STUDENT REPORT AS PDF
 // ==========================================
 
-async function sendStudentWhatsAppReport(studentName, className) {
-
-  if (typeof html2pdf === "undefined") {
-    alert("PDF library is not loaded. Please refresh the page.");
-    return;
-  }
-
-  const reportElement = document.getElementById("report-screen");
-
-  if (!reportElement) {
-    alert("Report template was not found.");
-    return;
-  }
-
-  const safeName = studentName
-    .replace(/[^a-zA-Z0-9 ]/g, "")
-    .trim()
-    .replace(/\s+/g, "_");
-
-  const fileName = safeName + "_Behavior_Report.pdf";
-
-  try {
-
-    // Load the student's real report data
-    const loaded = await loadStudentReportData(studentName, className);
-
-if (!loaded) {
-  alert("Could not load the student's report.");
-  return;
-}
-    // Create a temporary report copy for PDF export
-const pdfContainer = document.createElement("div");
-
-pdfContainer.style.position = "fixed";
-pdfContainer.style.left = "0";
-pdfContainer.style.zIndex = "-9999";
-pdfContainer.style.pointerEvents = "none";
-pdfContainer.style.top = "0";
-pdfContainer.style.width = "794px";
-pdfContainer.style.background = "#ffffff";
-pdfContainer.style.padding = "20px";
-pdfContainer.style.boxSizing = "border-box";
-
-const pdfReport = reportElement.cloneNode(true);
-
-pdfReport.classList.remove("hidden");
-pdfReport.style.display = "block";
-pdfReport.style.width = "100%";
-pdfReport.style.maxWidth = "none";
-pdfReport.style.margin = "0";
-pdfReport.style.boxShadow = "none";
-
-// Remove buttons from the PDF copy only
-pdfReport.querySelectorAll(
-  ".screen-top, #report-back-btn, #print-report-btn"
-).forEach(function(element) {
-  element.remove();
-});
-
-pdfContainer.appendChild(pdfReport);
-document.body.appendChild(pdfContainer);
-    // Keep the report screen hidden during PDF preparation
-
-    const options = {
-      margin: 8,
-      filename: fileName,
-      image: {
-        type: "jpeg",
-        quality: 0.98
-      },
-      html2canvas: {
-        scale: 2,
-        useCORS: true
-      },
-      jsPDF: {
-        unit: "mm",
-        format: "a4",
-        orientation: "portrait"
-      },
-      pagebreak: {
-        mode: ["css", "legacy"]
-      }
-    };
-
-    let pdfBlob;
-
-try {
-
-  pdfBlob = await html2pdf()
-    .set(options)
-    .from(pdfReport)
-    .outputPdf("blob");
-
-} finally {
-
-  // Remove the temporary PDF report
-  if (pdfContainer && pdfContainer.parentNode) {
-    pdfContainer.remove();
-  }
-
-}
-
-    const pdfFile = new File(
-      [pdfBlob],
-      fileName,
-      { type: "application/pdf" }
-    );
-
-    // Share the PDF using the device's native share menu
-    if (
-      navigator.canShare &&
-      navigator.canShare({ files: [pdfFile] }) &&
-      navigator.share
-    ) {
-
-      await navigator.share({
-        files: [pdfFile],
-        title: "Student Behavior Report",
-        text: "Student Behavior Report - " + studentName
-      });
-
-    } else {
-
-      // Fallback when PDF file sharing is unsupported
-      const downloadUrl = URL.createObjectURL(pdfBlob);
-
-      const link = document.createElement("a");
-      link.href = downloadUrl;
-      link.download = fileName;
-
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-
-      setTimeout(function() {
-        URL.revokeObjectURL(downloadUrl);
-      }, 60000);
-
-      alert(
-        "Your PDF has been downloaded.\n\n" +
-        "Your browser does not support direct PDF sharing.\n" +
-        "Open WhatsApp and attach the downloaded PDF."
-      );
-
-    }
-
-  } catch (error) {
-
-    if (error.name === "AbortError") {
-      return;
-    }
-
-    console.error("WhatsApp PDF sharing error:", error);
-
-    alert(
-      "Could not prepare or share the PDF report. " +
-      "Please try again."
-    );
-
-  }
-
-}
 // ==========================================
 // END OF PART 3
 // ==========================================
@@ -1238,6 +1084,7 @@ async function openStudentHistory(
       historyStatus.textContent =
         "No records for this student yet.";
       return;
+
     }
 
     historyStatus.textContent = "";
@@ -1778,186 +1625,187 @@ async function openStudentReport(studentName, className) {
 
 }
 // ==========================================
-// CREATE REPORT ROW
-// ==========================================
 
-function createReportRow(record) {
+  // CREATE REPORT ROW
+  // ==========================================
 
-  const row = document.createElement("tr");
+  function createReportRow(record) {
 
-  if (record.category === "Bonus") {
-    row.classList.add("positive-row");
-  } else {
-    row.classList.add("negative-row");
-  }
+    const row = document.createElement("tr");
 
-  const dateObject = new Date(record.created_at);
-
-  const date = dateObject.toLocaleDateString(
-    "en-GB"
-  );
-
-  const time = dateObject.toLocaleTimeString(
-    "en-US",
-    {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true
-    }
-  );
-
-  const typeNames = {
-    "Violation": "Violation",
-    "Bonus": "Bonus"
-  };
-
-  const reportNames = {
-    "Behavior violation": "Behavior violation",
-    "Missed homework": "Missed homework",
-    "Didn't bring his sheet": "Didn't bring his sheet",
-    "Didn't bring his notebook": "Didn't bring his notebook",
-    "Didn't bring his book": "Didn't bring his book",
-    "Eating in the session": "Eating in the session",
-    "Late for the session": "Late for the session",
-    "Making noise": "Making noise",
-    "Remaining quiet all the day": "Remaining quiet all the day",
-    "Participating actively": "Participating actively"
-  };
-
-  const reportType =
-    typeNames[record.category] || record.category;
-
-  const reportDetails =
-    reportNames[record.action_name] ||
-    record.action_name;
-
-  const points = Number(record.points) || 0;
-
-  addCell(row, date);
-  addCell(row, time);
-  addCell(row, reportType);
-  addCell(row, reportDetails);
-  addCell(
-    row,
-    (points > 0 ? "+" : "") + points
-  );
-
-  reportTableBody.appendChild(row);
-
-}
-
-
-// ==========================================
-// END OF PART 5
-// ==========================================
-// ==========================================
-// PART 6 - VERSION 73
-// STUDENT BEHAVIOR ANALYSIS
-// ==========================================
-
-
-// ==========================================
-// ANALYSIS DATA
-// ==========================================
-
-let currentAnalysisStudent = null;
-let currentAnalysisClass = null;
-
-let currentAnalysisRecords = [];
-
-
-// ==========================================
-// OPEN STUDENT ANALYSIS
-// ==========================================
-
-async function openStudentAnalysis(
-  studentName,
-  className
-) {
-
-  currentAnalysisStudent = studentName;
-  currentAnalysisClass = className;
-
-  currentAnalysisLanguage = "en";
-
-  hideAllScreens();
-
-  analysisScreen.classList.remove("hidden");
-
-  analysisStudentName.textContent = studentName;
-  analysisClassName.textContent = className;
-
-  analysisBonusCount.textContent = "0";
-  analysisViolationCount.textContent = "0";
-  analysisTotalScore.textContent = "0";
-  analysisTopViolation.textContent = "None";
-
-  analysisStatus.textContent =
-    "Loading student analysis...";
-
-  analysisChart.innerHTML = "";
-
-  analysisDescription.textContent = "";
-
-  try {
-
-    const { data, error } =
-      await supabaseClient
-        .from("behavior_records")
-        .select(
-          "category, action_name, points, created_at"
-        )
-        .eq("student_name", studentName)
-        .eq("class_name", className)
-        .eq("forgiven", false)
-        .order("created_at", {
-          ascending: false
-        });
-
-    if (error) {
-      throw error;
+    if (record.category === "Bonus") {
+      row.classList.add("positive-row");
+    } else {
+      row.classList.add("negative-row");
     }
 
-    currentAnalysisRecords = data || [];
+    const dateObject = new Date(record.created_at);
 
-    renderStudentAnalysis();
-
-  } catch (error) {
-
-    console.error(
-      "Analysis loading error:",
-      error
+    const date = dateObject.toLocaleDateString(
+      "en-GB"
     );
 
-    analysisStatus.textContent =
-      "Could not load student analysis.";
+    const time = dateObject.toLocaleTimeString(
+      "en-US",
+      {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+      }
+    );
+
+    const typeNames = {
+      "Violation": "Violation",
+      "Bonus": "Bonus"
+    };
+
+    const reportNames = {
+      "Behavior violation": "Behavior violation",
+      "Missed homework": "Missed homework",
+      "Didn't bring his sheet": "Didn't bring his sheet",
+      "Didn't bring his notebook": "Didn't bring his notebook",
+      "Didn't bring his book": "Didn't bring his book",
+      "Eating in the session": "Eating in the session",
+      "Late for the session": "Late for the session",
+      "Making noise": "Making noise",
+      "Remaining quiet all the day": "Remaining quiet all the day",
+      "Participating actively": "Participating actively"
+    };
+
+    const reportType =
+      typeNames[record.category] || record.category;
+
+    const reportDetails =
+      reportNames[record.action_name] ||
+      record.action_name;
+
+    const points = Number(record.points) || 0;
+
+    addCell(row, date);
+    addCell(row, time);
+    addCell(row, reportType);
+    addCell(row, reportDetails);
+    addCell(
+      row,
+      (points > 0 ? "+" : "") + points
+    );
+
+    reportTableBody.appendChild(row);
 
   }
 
-}
+
+  // ==========================================
+  // END OF PART 5
+  // ==========================================
+  // ==========================================
+  // PART 6 - VERSION 73
+  // STUDENT BEHAVIOR ANALYSIS
+  // ==========================================
 
 
-// ==========================================
-// ANALYSIS CALCULATIONS
-// ==========================================
+  // ==========================================
+  // ANALYSIS DATA
+  // ==========================================
 
-function calculateStudentAnalysis(records) {
+  let currentAnalysisStudent = null;
+  let currentAnalysisClass = null;
 
-  const bonusRecords = records.filter(
-    function(record) {
-      return record.category === "Bonus";
+  let currentAnalysisRecords = [];
+
+
+  // ==========================================
+  // OPEN STUDENT ANALYSIS
+  // ==========================================
+
+  async function openStudentAnalysis(
+    studentName,
+    className
+  ) {
+
+    currentAnalysisStudent = studentName;
+    currentAnalysisClass = className;
+
+    currentAnalysisLanguage = "en";
+
+    hideAllScreens();
+
+    analysisScreen.classList.remove("hidden");
+
+    analysisStudentName.textContent = studentName;
+    analysisClassName.textContent = className;
+
+    analysisBonusCount.textContent = "0";
+    analysisViolationCount.textContent = "0";
+    analysisTotalScore.textContent = "0";
+    analysisTopViolation.textContent = "None";
+
+    analysisStatus.textContent =
+      "Loading student analysis...";
+
+    analysisChart.innerHTML = "";
+
+    analysisDescription.textContent = "";
+
+    try {
+
+      const { data, error } =
+        await supabaseClient
+          .from("behavior_records")
+          .select(
+            "category, action_name, points, created_at"
+          )
+          .eq("student_name", studentName)
+          .eq("class_name", className)
+          .eq("forgiven", false)
+          .order("created_at", {
+            ascending: false
+          });
+
+      if (error) {
+        throw error;
+      }
+
+      currentAnalysisRecords = data || [];
+
+      renderStudentAnalysis();
+
+    } catch (error) {
+
+      console.error(
+        "Analysis loading error:",
+        error
+      );
+
+      analysisStatus.textContent =
+        "Could not load student analysis.";
+
     }
-  );
 
-  const violationRecords = records.filter(
-    function(record) {
-      return record.category === "Violation";
-    }
-  );
+  }
 
-  const bonusCount = bonusRecords.length;
 
-  const violationCount = violationRecords.length;
+  // ==========================================
+  // ANALYSIS CALCULATIONS
+  // ==========================================
+
+  function calculateStudentAnalysis(records) {
+
+    const bonusRecords = records.filter(
+      function(record) {
+        return record.category === "Bonus";
+      }
+    );
+
+    const violationRecords = records.filter(
+      function(record) {
+        return record.category === "Violation";
+      }
+    );
+
+    const bonusCount = bonusRecords.length;
+
+    const violationCount = violationRecords.length;
 
   const totalScore = records.reduce(
     function(total, record) {
@@ -2627,6 +2475,7 @@ window.addEventListener("afterprint", function() {
   );
 
 });
+
 // ==========================================
 // WHATSAPP PDF SHARING - FINAL OVERRIDE
 // ==========================================
@@ -2662,10 +2511,10 @@ sendStudentWhatsAppReport = async function(studentName, className) {
 
     // Get the student's latest report from Supabase.
     // This does not open the Report screen.
-    const loaded = await loadStudentReportData(
-      studentName,
-      className
-    );
+    const loaded = !reportScreen.classList.contains("hidden") &&
+      reportStudentName.textContent.trim() === studentName &&
+      reportClassName.textContent.trim() === className
+      ? true : await loadStudentReportData(studentName, className);
 
     if (!loaded) {
       throw new Error("Could not load student report.");
@@ -2676,16 +2525,15 @@ sendStudentWhatsAppReport = async function(studentName, className) {
 
     pdfContainer.style.cssText = `
       position: absolute;
-      left: 0;
+      left: -10000px;
       top: 0;
       width: 794px;
       padding: 20px;
       box-sizing: border-box;
       background: white;
-      z-index: -1;
+      z-index: 1;
       pointer-events: none;
     `;
-
     const pdfReport = originalReport.cloneNode(true);
 
     pdfReport.classList.remove("hidden");
@@ -2881,56 +2729,40 @@ sendStudentWhatsAppReport = async function(studentName, className) {
 // SHARE PDF FROM REPORT SCREEN
 // ==========================================
 
-const shareReportWhatsAppBtn =
-  document.getElementById("share-report-whatsapp-btn");
-
-if (shareReportWhatsAppBtn) {
-  shareReportWhatsAppBtn.addEventListener("click", async function() {
-
-    const studentName = reportStudentName.textContent.trim();
-    const className = reportClassName.textContent.trim();
-
-    if (!studentName || !className) {
-      alert("Please open a student report first.");
-      return;
-    }
-
-    await sendStudentWhatsAppReport(studentName, className);
-
-  });
-}
 // ==========================================
 // ACTIVATE WHATSAPP BUTTON INSIDE REPORT
 // ==========================================
 
-document.addEventListener("click", async function(event) {
+const shareReportWhatsappBtn =
+  document.getElementById("share-report-whatsapp-btn");
 
-  const button = event.target.closest(
-    "#share-report-whatsapp-btn"
+if (shareReportWhatsappBtn) {
+
+  shareReportWhatsappBtn.addEventListener(
+    "click",
+    function() {
+
+      const studentName =
+        reportStudentName.textContent.trim();
+
+      const className =
+        reportClassName.textContent.trim();
+
+      if (!studentName || !className) {
+        alert("Please open a student report first.");
+        return;
+      }
+
+      sendStudentWhatsAppReport(
+        studentName,
+        className
+      );
+
+    }
   );
 
-  if (!button) return;
+}
 
-  event.preventDefault();
-
-  if (button.disabled) return;
-
-  const studentName =
-    document.getElementById("report-student-name")
-      .textContent.trim();
-
-  const className =
-    document.getElementById("report-class-name")
-      .textContent.trim();
-
-  if (!studentName || !className) {
-    alert("Please open a student report first.");
-    return;
-  }
-
-  await sendStudentWhatsAppReport(
-    studentName,
-    className
-  );
-
-});
+// ==========================================
+// END OF APP.JS
+// ==========================================
