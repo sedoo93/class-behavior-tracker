@@ -2878,3 +2878,25 @@ sendStudentWhatsAppReport = async function(studentName, className) {
 // ==========================================
 // END OF WHATSAPP PDF SHARING OVERRIDE
 // ==========================================
+// ==========================================
+// SHARE PDF FROM REPORT SCREEN
+// ==========================================
+
+const shareReportWhatsAppBtn =
+  document.getElementById("share-report-whatsapp-btn");
+
+if (shareReportWhatsAppBtn) {
+  shareReportWhatsAppBtn.addEventListener("click", async function() {
+
+    const studentName = reportStudentName.textContent.trim();
+    const className = reportClassName.textContent.trim();
+
+    if (!studentName || !className) {
+      alert("Please open a student report first.");
+      return;
+    }
+
+    await sendStudentWhatsAppReport(studentName, className);
+
+  });
+}
