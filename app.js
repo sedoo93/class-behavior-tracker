@@ -2900,3 +2900,38 @@ if (shareReportWhatsAppBtn) {
 
   });
 }
+// ==========================================
+// ACTIVATE WHATSAPP BUTTON INSIDE REPORT
+// ==========================================
+
+document.addEventListener("click", async function(event) {
+
+  const button = event.target.closest(
+    "#share-report-whatsapp-btn"
+  );
+
+  if (!button) return;
+
+  event.preventDefault();
+
+  if (button.disabled) return;
+
+  const studentName =
+    document.getElementById("report-student-name")
+      .textContent.trim();
+
+  const className =
+    document.getElementById("report-class-name")
+      .textContent.trim();
+
+  if (!studentName || !className) {
+    alert("Please open a student report first.");
+    return;
+  }
+
+  await sendStudentWhatsAppReport(
+    studentName,
+    className
+  );
+
+});
