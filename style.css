@@ -1491,3 +1491,7 @@ header.main-header-with-logos .main-header-text p {
     font-size: 11px !important;
   }
 }
+/* Keep inactive screens hidden */
+.hidden {
+  display: none !important;
+}
