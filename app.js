@@ -57,7 +57,7 @@ const students = {
     "Elias Hatim Lahza",
     "Malik Ahmed",
     "Mohammed Khaled el sharawy",
-"Feras Melibary"
+"Firas Mohammed Bakr Malibari"
   ],
 
   "7/B": [
