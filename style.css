@@ -1371,3 +1371,61 @@ input {
     font-size: 12px;
   }
 }
+/* =====================================
+   MAIN HEADER - SCHOOL & COGNIA LOGOS
+   ===================================== */
+
+.main-header-with-logos {
+  display: grid;
+  grid-template-columns: 130px minmax(0, 1fr) 130px;
+  align-items: center;
+  gap: 20px;
+  padding: 22px 35px;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.main-header-logo {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  background: rgba(255,255,255,0.88);
+  border-radius: 14px;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.main-header-text {
+  min-width: 0;
+}
+
+.main-header-text h1 {
+  margin: 0 0 10px;
+}
+
+.main-header-text p {
+  margin: 0;
+}
+
+@media (max-width: 700px) {
+  .main-header-with-logos {
+    grid-template-columns: 65px minmax(0, 1fr) 65px;
+    gap: 8px;
+    padding: 16px 10px;
+  }
+
+  .main-header-logo {
+    width: 65px;
+    height: 65px;
+    padding: 4px;
+  }
+
+  .main-header-text h1 {
+    font-size: 20px;
+  }
+
+  .main-header-text p {
+    font-size: 12px;
+  }
+}
