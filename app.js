@@ -1041,8 +1041,12 @@ async function sendStudentWhatsAppReport(studentName, className) {
   try {
 
     // Load the student's real report data
-    await openStudentReport(studentName, className);
+    const loaded = await loadStudentReportData(studentName, className);
 
+if (!loaded) {
+  alert("Could not load the student's report.");
+  return;
+}
     // Temporarily prepare the report for PDF generation
     reportElement.classList.remove("hidden");
 
