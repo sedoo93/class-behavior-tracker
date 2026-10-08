@@ -1099,10 +1099,23 @@ document.body.appendChild(pdfContainer);
       }
     };
 
-    const pdfBlob = await html2pdf()
-      .set(options)
-      .from(pdfReport)
-      .outputPdf("blob");
+    let pdfBlob;
+
+try {
+
+  pdfBlob = await html2pdf()
+    .set(options)
+    .from(pdfReport)
+    .outputPdf("blob");
+
+} finally {
+
+  // Remove the temporary PDF report
+  if (pdfContainer && pdfContainer.parentNode) {
+    pdfContainer.remove();
+  }
+
+}
 
     const pdfFile = new File(
       [pdfBlob],
