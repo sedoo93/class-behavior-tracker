@@ -1623,16 +1623,11 @@ async function deleteBehaviorRecord(
 // OPEN STUDENT REPORT
 // ==========================================
 
-async function openStudentReport(
-  studentName,
-  className
-) {
+// ==========================================
+// LOAD REPORT DATA WITHOUT OPENING SCREEN
+// ==========================================
 
-  currentClass = className;
-
-  hideAllScreens();
-
-  reportScreen.classList.remove("hidden");
+async function loadStudentReportData(studentName, className) {
 
   reportStudentName.textContent = studentName;
   reportClassName.textContent = className;
@@ -1644,7 +1639,6 @@ async function openStudentReport(
   reportStatus.textContent = "Loading report...";
 
   reportTableBody.innerHTML = "";
-
   reportTableContainer.classList.add("hidden");
 
   try {
@@ -1662,10 +1656,7 @@ async function openStudentReport(
       });
 
     if (error) {
-      console.error("Report error:", error);
-      reportStatus.textContent =
-        "Could not load report.";
-      return;
+      throw error;
     }
 
     const records = data || [];
@@ -1701,17 +1692,15 @@ async function openStudentReport(
     reportGeneratedDate.textContent =
       new Date().toLocaleString("en-GB");
 
-    if (records.length === 0) {
-      reportStatus.textContent =
-        "No active behavior records for this student.";
-      return;
+    reportStatus.textContent = records.length
+      ? ""
+      : "No active behavior records for this student.";
+
+    if (records.length) {
+      reportTableContainer.classList.remove("hidden");
     }
 
-    reportStatus.textContent = "";
-
-    reportTableContainer.classList.remove(
-      "hidden"
-    );
+    return true;
 
   } catch (error) {
 
@@ -1720,11 +1709,28 @@ async function openStudentReport(
     reportStatus.textContent =
       "Could not load report.";
 
+    return false;
+
   }
 
 }
 
 
+// ==========================================
+// OPEN REPORT SCREEN (ORIGINAL BUTTON)
+// ==========================================
+
+async function openStudentReport(studentName, className) {
+
+  currentClass = className;
+
+  hideAllScreens();
+
+  reportScreen.classList.remove("hidden");
+
+  await loadStudentReportData(studentName, className);
+
+}
 // ==========================================
 // CREATE REPORT ROW
 // ==========================================
