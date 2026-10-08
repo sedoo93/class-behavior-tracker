@@ -42,7 +42,7 @@ const students = {
     "AHMAD ABDULRAHIM AWADH ALZAHRANI",
     "Ahmed Ehab Maged Mohamed Abdelrahman",
     "ASSAF ABDULRAHMAN HIZAB ALSULAMI",
-    "Mohamed El-Bar",
+    "Muhammad Ahmad Mahmoud Al-Bar",
     "Yassin Mahmoud Sharaf Al-Din",
     "EYAD ELSAYED WAGIH FOUAD",
     "Youssef Ziad Amjad Helmy",
