@@ -2628,3 +2628,253 @@ window.addEventListener("afterprint", function() {
   );
 
 });
+// ==========================================
+// WHATSAPP PDF SHARING - FINAL OVERRIDE
+// ==========================================
+
+sendStudentWhatsAppReport = async function(studentName, className) {
+
+  if (typeof html2pdf !== "function") {
+    alert("PDF library is missing. Please refresh the page.");
+    return;
+  }
+
+  const originalReport = document.getElementById("report-screen");
+
+  if (!originalReport) {
+    alert("Report template was not found.");
+    return;
+  }
+
+  const button = document.activeElement;
+  const isWhatsAppButton =
+    button &&
+    button.classList &&
+    button.classList.contains("whatsapp-btn");
+
+  let pdfContainer = null;
+
+  if (isWhatsAppButton) {
+    button.disabled = true;
+    button.textContent = "Preparing PDF...";
+  }
+
+  try {
+
+    // Get the student's latest report from Supabase.
+    // This does not open the Report screen.
+    const loaded = await loadStudentReportData(
+      studentName,
+      className
+    );
+
+    if (!loaded) {
+      throw new Error("Could not load student report.");
+    }
+
+    // Create a separate copy of the existing report.
+    pdfContainer = document.createElement("div");
+
+    pdfContainer.style.cssText = `
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 794px;
+      padding: 20px;
+      box-sizing: border-box;
+      background: white;
+      z-index: -1;
+      pointer-events: none;
+    `;
+
+    const pdfReport = originalReport.cloneNode(true);
+
+    pdfReport.classList.remove("hidden");
+
+    pdfReport.style.setProperty(
+      "display",
+      "block",
+      "important"
+    );
+
+    pdfReport.style.setProperty(
+      "width",
+      "100%",
+      "important"
+    );
+
+    pdfReport.style.setProperty(
+      "max-width",
+      "none",
+      "important"
+    );
+
+    pdfReport.style.setProperty(
+      "margin",
+      "0",
+      "important"
+    );
+
+    pdfReport.style.setProperty(
+      "box-shadow",
+      "none",
+      "important"
+    );
+
+    // Remove report navigation and printing buttons.
+    pdfReport.querySelectorAll(
+      ".screen-top, #report-back-btn, #print-report-btn"
+    ).forEach(function(element) {
+      element.remove();
+    });
+
+    pdfContainer.appendChild(pdfReport);
+    document.body.appendChild(pdfContainer);
+
+    // Wait for fonts to finish loading.
+    if (document.fonts && document.fonts.ready) {
+      await document.fonts.ready;
+    }
+
+    const safeName = studentName
+      .replace(/[^a-zA-Z0-9 ]/g, "")
+      .trim()
+      .replace(/\s+/g, "_") || "Student";
+
+    const fileName =
+      safeName + "_Behavior_Report.pdf";
+
+    // PDF settings
+    const options = {
+      margin: 8,
+      filename: fileName,
+
+      image: {
+        type: "jpeg",
+        quality: 0.98
+      },
+
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        scrollX: 0,
+        scrollY: 0
+      },
+
+      jsPDF: {
+        unit: "mm",
+        format: "a4",
+        orientation: "portrait"
+      },
+
+      pagebreak: {
+        mode: ["css", "legacy"]
+      }
+    };
+
+    // Generate PDF from the copied report.
+    const pdfBlob = await html2pdf()
+      .set(options)
+      .from(pdfReport)
+      .outputPdf("blob");
+
+    if (!pdfBlob || pdfBlob.size === 0) {
+      throw new Error("Generated PDF is empty.");
+    }
+
+    // Clean up temporary report.
+    pdfContainer.remove();
+    pdfContainer = null;
+
+    const pdfFile = new File(
+      [pdfBlob],
+      fileName,
+      { type: "application/pdf" }
+    );
+
+    // Open the device's native sharing window.
+    // The teacher chooses WhatsApp and the recipient.
+    if (
+      typeof navigator.share === "function" &&
+      typeof navigator.canShare === "function" &&
+      navigator.canShare({ files: [pdfFile] })
+    ) {
+
+      try {
+
+        await navigator.share({
+          files: [pdfFile],
+          title: "Student Behavior Report"
+        });
+
+        return;
+
+      } catch (shareError) {
+
+        // The teacher cancelled sharing.
+        if (shareError.name === "AbortError") {
+          return;
+        }
+
+        console.warn(
+          "Native file sharing failed:",
+          shareError
+        );
+
+      }
+
+    }
+
+    // Fallback for desktop browsers.
+    const downloadUrl = URL.createObjectURL(pdfBlob);
+
+    const link = document.createElement("a");
+    link.href = downloadUrl;
+    link.download = fileName;
+
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    setTimeout(function() {
+      URL.revokeObjectURL(downloadUrl);
+    }, 60000);
+
+    alert(
+      "Your PDF report has been downloaded.\n\n" +
+      "Open WhatsApp and attach the PDF " +
+      "to the correct parent's chat.\n\n" +
+      "Please verify the recipient before sending."
+    );
+
+  } catch (error) {
+
+    console.error(
+      "WhatsApp PDF generation error:",
+      error
+    );
+
+    alert(
+      "Could not prepare the PDF report.\n" +
+      "Please try again."
+    );
+
+  } finally {
+
+    if (pdfContainer && pdfContainer.parentNode) {
+      pdfContainer.remove();
+    }
+
+    if (isWhatsAppButton) {
+      button.disabled = false;
+      button.textContent = "💬 WhatsApp";
+    }
+
+  }
+
+};
+
+// ==========================================
+// END OF WHATSAPP PDF SHARING OVERRIDE
+// ==========================================
