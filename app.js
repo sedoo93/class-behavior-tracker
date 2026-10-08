@@ -771,7 +771,6 @@ function createStudentCard(studentName, index) {
   actions.appendChild(historyButton);
   actions.appendChild(reportButton);
   actions.appendChild(analysisButton);
-  actions.appendChild(whatsappButton);
 
 
   // ========================================
