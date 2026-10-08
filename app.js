@@ -2496,17 +2496,16 @@ if (analysisBackBtn) {
 
 if (printReportBtn) {
 
-  printReportBtn.addEventListener(
-    "click",
-    function() {
+  printReportBtn.addEventListener("click", function() {
 
-      window.print();
+    document.body.classList.remove("print-analysis");
+    document.body.classList.add("print-report");
 
-    }
-  );
+    window.print();
+
+  });
 
 }
-
 
 // ==========================================
 // ANALYSIS PDF
@@ -2514,14 +2513,14 @@ if (printReportBtn) {
 
 if (printAnalysisBtn) {
 
-  printAnalysisBtn.addEventListener(
-    "click",
-    function() {
+  printAnalysisBtn.addEventListener("click", function() {
 
-      window.print();
+    document.body.classList.remove("print-report");
+    document.body.classList.add("print-analysis");
 
-    }
-  );
+    window.print();
+
+  });
 
 }
 
@@ -2637,3 +2636,15 @@ if (document.readyState === "loading") {
 // ==========================================
 // END OF APP.JS - VERSION 73
 // ==========================================
+// ==========================================
+// CLEAN PRINT MODE AFTER PRINTING
+// ==========================================
+
+window.addEventListener("afterprint", function() {
+
+  document.body.classList.remove(
+    "print-report",
+    "print-analysis"
+  );
+
+});
