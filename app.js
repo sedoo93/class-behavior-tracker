@@ -736,40 +736,6 @@ function createStudentCard(studentName, index) {
 
 
   // ========================================
-  // WHATSAPP BUTTON - NEW
-  // ========================================
-
-  const whatsappButton =
-    document.createElement("button");
-
-  whatsappButton.type = "button";
-
-  whatsappButton.className = "whatsapp-btn";
-
-  whatsappButton.textContent = "💬 WhatsApp";
-
-  whatsappButton.style.background = "#25D366";
-  whatsappButton.style.color = "#ffffff";
-  whatsappButton.style.border = "none";
-  whatsappButton.style.borderRadius = "8px";
-  whatsappButton.style.padding = "10px 14px";
-  whatsappButton.style.cursor = "pointer";
-  whatsappButton.style.fontWeight = "bold";
-
-  whatsappButton.addEventListener(
-    "click",
-    function() {
-
-      sendStudentWhatsAppReport(
-        studentName,
-        currentClass
-      );
-
-    }
-  );
-
-
-  // ========================================
   // ADD BUTTONS
   // ========================================
 
@@ -778,7 +744,6 @@ function createStudentCard(studentName, index) {
   actions.appendChild(historyButton);
   actions.appendChild(reportButton);
   actions.appendChild(analysisButton);
-  actions.appendChild(whatsappButton);
 
 
   // ========================================
