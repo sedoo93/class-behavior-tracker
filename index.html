@@ -18,7 +18,7 @@
     href="./Classroom%20Behaviour%20Tracker%20Badge.png?v=100"
   >
 
-  <link rel="stylesheet" href="style.css?v=101">
+  <link rel="stylesheet" href="style.css?v=102">
 
 </head>
 
@@ -211,6 +211,10 @@
 
 
         <div id="students-list"></div>
+        <div class="class-download-panel">
+          <button type="button" id="download-class-zip-btn">📦 Download All Class Reports (ZIP)</button>
+          <p id="class-download-status" role="status" aria-live="polite"></p>
+        </div>
 
       </div>
 
@@ -598,7 +602,8 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-  <script src="app.js?v=101"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="app.js?v=102"></script>
 
 </body>
 
