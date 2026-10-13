@@ -563,7 +563,7 @@ function openClass(className) {
   currentClass = className;
 
   const classStudents =
-    students[className] || [];
+    getClassStudents(className);
 
   hideAllScreens();
 
@@ -617,6 +617,20 @@ function createStudentCard(studentName, index) {
   name.className = "student-name";
 
   name.textContent = studentName;
+
+  const nameWrap = document.createElement("div");
+  nameWrap.className = "student-name-wrap";
+  const editNameButton = document.createElement("button");
+  editNameButton.type = "button";
+  editNameButton.className = "edit-student-name-btn";
+  editNameButton.textContent = "✏️";
+  editNameButton.title = "Edit student name";
+  editNameButton.setAttribute("aria-label", "Edit name of " + studentName);
+  editNameButton.addEventListener("click", function() {
+    editStudentName(studentName, currentClass);
+  });
+  nameWrap.appendChild(name);
+  nameWrap.appendChild(editNameButton);
 
   const actions =
     document.createElement("div");
@@ -751,7 +765,7 @@ function createStudentCard(studentName, index) {
   // ========================================
 
   card.appendChild(number);
-  card.appendChild(name);
+  card.appendChild(nameWrap);
   card.appendChild(actions);
 
   studentsList.appendChild(card);
@@ -2731,3 +2745,143 @@ if (shareReportWhatsappBtn) {
 // ==========================================
 // END OF APP.JS
 // ==========================================
+
+
+// ==========================================
+// VERSION 102 - EDIT STUDENT NAME + CLASS ZIP
+// ==========================================
+// Name overrides are stored in this browser. Behavior records are renamed
+// in Supabase so the student's existing history follows the new name.
+const STUDENT_NAME_STORAGE_KEY = "trackerStudentNameOverridesV102";
+
+function getStudentNameOverrides() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(STUDENT_NAME_STORAGE_KEY) || "{}");
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch (_) { return {}; }
+}
+
+function getClassStudents(className) {
+  const overrides = getStudentNameOverrides()[className] || {};
+  return (students[className] || []).map(function(originalName) {
+    return overrides[originalName] || originalName;
+  });
+}
+
+async function editStudentName(oldName, className) {
+  const proposed = prompt("Edit student name:", oldName);
+  if (proposed === null) return;
+  const newName = proposed.trim().replace(/\s+/g, " ");
+  if (!newName) { alert("Student name cannot be empty."); return; }
+  if (newName === oldName) return;
+  if (getClassStudents(className).some(function(name) {
+    return name.toLocaleLowerCase() === newName.toLocaleLowerCase();
+  })) { alert("This name already exists in the class."); return; }
+  if (!confirm("Change student name?\n\n" + oldName + "\n→ " + newName +
+    "\n\nThe student's existing behavior records will keep their scores and history.")) return;
+
+  try {
+    // Rename existing records first. Do not change the visible list if the update fails.
+    const result = await supabaseClient.from("behavior_records")
+      .update({ student_name: newName })
+      .eq("class_name", className).eq("student_name", oldName)
+      .select("id");
+    if (result.error) throw result.error;
+
+    const overrides = getStudentNameOverrides();
+    if (!overrides[className]) overrides[className] = {};
+    const originalName = (students[className] || []).find(function(original) {
+      return (overrides[className][original] || original) === oldName;
+    });
+    if (!originalName) throw new Error("Student not found in class list.");
+    overrides[className][originalName] = newName;
+    localStorage.setItem(STUDENT_NAME_STORAGE_KEY, JSON.stringify(overrides));
+    openClass(className);
+    alert("Student name updated. Existing behavior records remain linked.\n\nNote: The class name list is saved in this browser only.");
+  } catch (error) {
+    console.error("Student rename failed:", error);
+    alert("Could not update student name. Please check database permissions and try again.");
+  }
+}
+
+function safeReportFileName(name) {
+  return (name.normalize("NFKC").replace(/[\\/:*?"<>|\x00-\x1f]/g, "")
+    .trim().replace(/\s+/g, "_").slice(0, 110) || "Student") + "_Behavior_Report.pdf";
+}
+
+function createDetachedPdfReport() {
+  const source = document.getElementById("report-screen");
+  const container = document.createElement("div");
+  container.style.cssText = "position:fixed;left:-12000px;top:0;width:794px;background:white;padding:20px;box-sizing:border-box;pointer-events:none;";
+  const clone = source.cloneNode(true);
+  clone.classList.remove("hidden");
+  clone.style.setProperty("display", "block", "important");
+  clone.style.setProperty("width", "100%", "important");
+  clone.style.setProperty("max-width", "none", "important");
+  clone.style.setProperty("margin", "0", "important");
+  clone.style.setProperty("box-shadow", "none", "important");
+  clone.querySelectorAll(".screen-top").forEach(function(node) { node.remove(); });
+  container.appendChild(clone);
+  document.body.appendChild(container);
+  return { container: container, report: clone };
+}
+
+async function downloadClassReportsZip() {
+  const button = document.getElementById("download-class-zip-btn");
+  const status = document.getElementById("class-download-status");
+  if (!currentClass) return;
+  if (typeof JSZip === "undefined" || typeof html2pdf !== "function") {
+    alert("PDF or ZIP library failed to load. Refresh the page and try again."); return;
+  }
+  const className = currentClass;
+  const names = getClassStudents(className);
+  if (!names.length) { alert("No students in this class."); return; }
+  if (!confirm("Generate " + names.length + " individual PDF reports for Class " + className + "?\nThis may take a few minutes.")) return;
+  button.disabled = true;
+  const previousText = button.textContent;
+  const zip = new JSZip();
+  let temp = null;
+  try {
+    if (document.fonts && document.fonts.ready) await document.fonts.ready;
+    for (let i = 0; i < names.length; i++) {
+      status.textContent = "Preparing " + (i + 1) + " of " + names.length + ": " + names[i];
+      const loaded = await loadStudentReportData(names[i], className);
+      if (!loaded) throw new Error("Could not load report for " + names[i]);
+      temp = createDetachedPdfReport();
+      const options = {
+        margin: 8,
+        image: { type: "jpeg", quality: .98 },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff", scrollX: 0, scrollY: 0 },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        pagebreak: { mode: ["css", "legacy"] }
+      };
+      const blob = await html2pdf().set(options).from(temp.report).outputPdf("blob");
+      if (!blob || !blob.size) throw new Error("Empty PDF for " + names[i]);
+      let fileName = safeReportFileName(names[i]);
+      if (zip.file(fileName)) fileName = (i + 1) + "_" + fileName;
+      zip.file(fileName, blob);
+      temp.container.remove(); temp = null;
+    }
+    status.textContent = "Compressing reports...";
+    const zipBlob = await zip.generateAsync({ type: "blob", compression: "DEFLATE", compressionOptions: { level: 6 } });
+    const url = URL.createObjectURL(zipBlob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "Class_" + className.replace(/[^a-zA-Z0-9_-]/g, "_") + "_Reports.zip";
+    document.body.appendChild(anchor);
+    anchor.click(); anchor.remove();
+    setTimeout(function() { URL.revokeObjectURL(url); }, 60000);
+    status.textContent = "Done! " + names.length + " PDF reports downloaded in one ZIP.";
+  } catch (error) {
+    console.error("Class ZIP error:", error);
+    status.textContent = "Download failed: " + error.message;
+    alert("Could not complete class reports. No incomplete ZIP was downloaded.");
+  } finally {
+    if (temp) temp.container.remove();
+    button.disabled = false;
+    button.textContent = previousText;
+  }
+}
+
+const classZipButton = document.getElementById("download-class-zip-btn");
+if (classZipButton) classZipButton.addEventListener("click", downloadClassReportsZip);
