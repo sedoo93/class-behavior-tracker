@@ -1490,3 +1490,14 @@ header.main-header-with-logos .main-header-text p {
 .hidden {
   display: none !important;
 }
+
+/* VERSION 102 - CLASS ZIP AND STUDENT NAME EDIT */
+.student-name-wrap { display:flex; align-items:center; gap:10px; min-width:0; }
+.student-name { overflow-wrap:anywhere; }
+.edit-student-name-btn { flex:none; border:0; border-radius:8px; padding:8px 10px; background:#fff3cd; color:#805400; cursor:pointer; font-size:16px; }
+.edit-student-name-btn:hover { background:#ffe69c; }
+.class-download-panel { margin-top:26px; padding:20px; border:1px solid #dbeafe; background:rgba(255,255,255,.94); border-radius:14px; text-align:center; }
+#download-class-zip-btn { background:#173f91; color:white; border:0; padding:15px 22px; font-size:16px; font-weight:700; border-radius:10px; cursor:pointer; max-width:100%; }
+#download-class-zip-btn:disabled { opacity:.55; cursor:wait; }
+#class-download-status { margin:12px 0 0; color:#334155; font-weight:600; }
+@media (max-width:750px) { .student-name-wrap { grid-column:2; } }
