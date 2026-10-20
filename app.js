@@ -48,7 +48,7 @@
       "ASSAF ABDULRAHMAN HIZAB ALSULAMI",
       "Muhammad Ahmad Mahmoud Al-Bar",
       "Yassin Mahmoud Sharaf Al-Din",
-      "EYAD ELSAYED WAGIH FOUAD",
+      "Hamza Faisal Minshawi",
       "Youssef Ziad Amjad Helmy",
       "Abdulaziz Ahmed Abdulaziz Diab Shandi",
       "Abdulrahman Amr Gaber Ismail Abulkassem",
@@ -70,7 +70,7 @@
       "Abdul Rahman Awad Al-Maliki",
       "MOWAFFAA MUHANNAD HARIRI",
       "MOHAMMED Hossam Murad",
-      "Hamza Faisal Minshawi",
+      "EYAD ELSAYED WAGIH FOUAD",
       "Abdulrahman Ageel ALOgla",
       "KENAN WASEEM ALZAMZAMI",
       "Jasser Muhammad Hashim Al-Ansari",
@@ -725,31 +725,6 @@ function createStudentCard(studentName, index) {
 
 
   // ========================================
-  // ANALYSIS BUTTON
-  // ========================================
-
-  const analysisButton =
-    document.createElement("button");
-
-  analysisButton.className = "analysis-btn";
-
-  analysisButton.textContent = "📊 Analysis";
-
-  analysisButton.addEventListener(
-
-    "click",
-    function() {
-
-      openStudentAnalysis(
-        studentName,
-        currentClass
-      );
-
-    }
-  );
-
-
-  // ========================================
   // ADD BUTTONS
   // ========================================
 
@@ -757,7 +732,6 @@ function createStudentCard(studentName, index) {
   actions.appendChild(violationButton);
   actions.appendChild(historyButton);
   actions.appendChild(reportButton);
-  actions.appendChild(analysisButton);
 
 
   // ========================================
