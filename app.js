@@ -1,6 +1,5 @@
 
-  // SECURITY NOTE: The legacy browser-side password is visible to visitors.
-  // Migrate login to Supabase Auth and enable RLS before using real student data.
+  // Supabase Auth protects teacher sign-in; database access must be restricted with RLS.
   // ==========================================
   // MR. SAYED'S CLASS BEHAVIOR TRACKER
   // VERSION 73 - WHATSAPP UPDATE
@@ -98,6 +97,7 @@
   const VALID_CLASSES = ["7/A", "7/B"];
   const CLASS_IDS = {"7/A":1,"7/B":2};
   const CLASS_NAMES = {1:"7/A",2:"7/B"};
+  // Keep student IDs stable across name edits and class transfers.
   const normalizeName = value => String(value || "").trim().replace(/\s+/g, " ");
   function studentByName(name, className) {
     return studentRoster.find(s => s.name === name && s.class_name === className && !s.archived);
@@ -2455,7 +2455,7 @@ async function manageRestore(s) {
 }
 async function manageDelete(s) {
   if (!s.archived) return;
-  if (!confirm("PERMANENTLY DELETE " + s.name + " and ALL behavior records? This cannot be undone.")) return;
+  if (!confirm("PERMANENTLY DELETE " + s.name + "? Only archived students with NO behavior history can be deleted. This cannot be undone.")) return;
   const typed = prompt("Type DELETE to confirm permanent deletion:");
   if (typed !== "DELETE") return;
   try {
