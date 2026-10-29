@@ -18,7 +18,7 @@
     href="./Classroom%20Behaviour%20Tracker%20Badge.png?v=100"
   >
 
-  <link rel="stylesheet" href="style.css?v=103">
+  <link rel="stylesheet" href="style.css?v=107">
 
 </head>
 
@@ -137,6 +137,10 @@
         </div>
 
 
+        <div class="tracker-toolbar">
+          <button type="button" id="manage-students-btn">👥 Manage Students</button>
+          <button type="button" id="theme-toggle-btn">🌙 Night Mode</button>
+        </div>
         <div class="class-grid">
 
           <button
@@ -176,6 +180,25 @@
 
       </div>
 
+
+      <!-- STUDENT MANAGEMENT -->
+      <section id="manage-screen" class="hidden" aria-label="Manage Students">
+        <div class="screen-top"><h2>👥 Manage Students</h2>
+          <button type="button" id="manage-back-btn" class="manage-neutral">← Back to Dashboard</button></div>
+        <div class="manage-add">
+          <label for="new-student-name">Student name</label>
+          <input id="new-student-name" type="text" maxlength="180" placeholder="Full student name">
+          <label for="new-student-class">Class</label>
+          <select id="new-student-class"><option value="7/A">7/A</option><option value="7/B">7/B</option></select>
+          <button type="button" id="add-student-btn">＋ Add Student</button>
+        </div>
+        <div class="manage-tabs">
+          <button type="button" id="manage-active-tab">Active Students</button>
+          <button type="button" id="manage-archive-tab">Archived Students</button>
+        </div>
+        <input id="manage-search" type="search" placeholder="Search students..." aria-label="Search students">
+        <p id="manage-count"></p><div id="manage-list"></div>
+      </section>
 
       <!-- CLASS SCREEN -->
 
@@ -603,7 +626,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-  <script src="app.js?v=103"></script>
+  <script src="app.js?v=107"></script>
 
 </body>
 
