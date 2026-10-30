@@ -1501,3 +1501,44 @@ header.main-header-with-logos .main-header-text p {
 #download-class-zip-btn:disabled { opacity:.55; cursor:wait; }
 #class-download-status { margin:12px 0 0; color:#334155; font-weight:600; }
 @media (max-width:750px) { .student-name-wrap { grid-column:2; } }
+
+/* VERSION 104 — Student management and night mode */
+.tracker-toolbar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px}
+.tracker-toolbar button,.manage-add button,.manage-tabs button,.manage-actions button,#manage-back-btn{border:0;border-radius:10px;padding:12px 17px;font-weight:700;cursor:pointer}
+#manage-students-btn,#add-student-btn{background:#2563eb;color:white}
+#theme-toggle-btn,.manage-neutral,#manage-back-btn{background:#e2e8f0;color:#14213d}
+#manage-screen{padding:25px;border-radius:20px;background:rgba(248,250,252,.96);box-shadow:0 8px 25px #0002}
+.manage-add{display:grid;grid-template-columns:minmax(180px,2fr) minmax(110px,1fr) auto;gap:10px;align-items:end;margin-bottom:24px}
+.manage-add label{grid-row:1;margin:0}
+.manage-add input,.manage-add select{grid-row:2;width:100%;padding:13px;border-radius:9px;border:1px solid #cbd5e1;font-size:16px}
+.manage-add button{grid-row:2}
+.manage-tabs{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.manage-tabs button{background:#dbeafe;color:#1d4ed8}
+#manage-search{margin-bottom:10px}
+.manage-student-row{display:flex;justify-content:space-between;align-items:center;gap:15px;background:#fff;border:1px solid #e2e8f0;padding:14px;border-radius:12px;margin:10px 0}
+.manage-student-row strong,.manage-student-row small{display:block;overflow-wrap:anywhere}
+.manage-student-row small{margin-top:5px;color:#64748b}
+.manage-actions{display:flex;gap:7px;flex-wrap:wrap}
+.manage-warning{background:#fef3c7;color:#92400e}.manage-success{background:#dcfce7;color:#166534}.manage-danger{background:#fee2e2;color:#991b1b}
+@media(max-width:750px){.manage-add{display:flex;flex-direction:column;align-items:stretch}.manage-add label,.manage-add input,.manage-add select,.manage-add button{grid-row:auto}.manage-student-row{align-items:flex-start;flex-direction:column}}
+html[data-theme="dark"] body{color:#e2e8f0;background-image:linear-gradient(rgba(2,6,23,.91),rgba(15,23,42,.94)),url("./classroom-bg-new.png")!important}
+html[data-theme="dark"] header h1,html[data-theme="dark"] header p{color:#e2e8f0;text-shadow:none}
+html[data-theme="dark"] #dashboard,html[data-theme="dark"] #class-screen,html[data-theme="dark"] #manage-screen,html[data-theme="dark"] .card,html[data-theme="dark"] #history-screen,html[data-theme="dark"] #analysis-screen{background:rgba(15,23,42,.96);color:#f1f5f9}
+html[data-theme="dark"] .class-card,html[data-theme="dark"] .student-card,html[data-theme="dark"] .manage-student-row,html[data-theme="dark"] .class-download-panel,html[data-theme="dark"] .history-student-info,html[data-theme="dark"] .analysis-student-info,html[data-theme="dark"] .analysis-card,html[data-theme="dark"] .analysis-section{background:#1e293b;color:#f1f5f9;border-color:#334155}
+html[data-theme="dark"] .class-card strong,html[data-theme="dark"] .report-card strong,html[data-theme="dark"] .analysis-card strong,html[data-theme="dark"] .analysis-section h3{color:#93c5fd}
+html[data-theme="dark"] .class-card span,html[data-theme="dark"] .class-header p,html[data-theme="dark"] .screen-top p,html[data-theme="dark"] .manage-student-row small,html[data-theme="dark"] #class-download-status{color:#cbd5e1}
+html[data-theme="dark"] input,html[data-theme="dark"] select{background:#0f172a;color:#f8fafc;border-color:#475569}
+html[data-theme="dark"] .records-table th{background:#334155;color:#f8fafc}
+html[data-theme="dark"] .records-table td{border-color:#475569}
+html[data-theme="dark"] .positive-row{background:#123524}html[data-theme="dark"] .negative-row{background:#421d26}
+html[data-theme="dark"] .positive-points{color:#86efac}html[data-theme="dark"] .negative-points{color:#fca5a5}
+html[data-theme="dark"] .chart-track{background:#475569}
+/* Reports always retain their original white design, including PDF/ZIP exports. */
+html[data-theme="dark"] #report-screen,html[data-theme="dark"] #report-screen .report-card,html[data-theme="dark"] #report-screen .report-student-info{background:#fff;color:#14213d}
+html[data-theme="dark"] #report-screen .records-table th{background:#f1f5f9;color:#334155}
+html[data-theme="dark"] #report-screen .positive-row{background:#f0fdf4}html[data-theme="dark"] #report-screen .negative-row{background:#fff7f7}
+html[data-theme="dark"] #report-screen .positive-points{color:#166534}html[data-theme="dark"] #report-screen .negative-points{color:#b91c1c}
+@media print{html[data-theme="dark"] #report-screen{background:#fff!important;color:#14213d!important}}
+
+.password-recovery-btn{display:block;margin:12px auto;padding:9px 14px;border:0;background:transparent;color:#1d4ed8;text-decoration:underline;cursor:pointer}
+@media print{#report-screen,#report-screen *,#analysis-screen,#analysis-screen *{color:#14213d!important;background-color:white!important}}

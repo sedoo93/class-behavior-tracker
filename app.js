@@ -1,6 +1,5 @@
 
-  // SECURITY NOTE: The legacy browser-side password is visible to visitors.
-  // Migrate login to Supabase Auth and enable RLS before using real student data.
+  // Supabase Auth protects teacher sign-in; database access must be restricted with RLS.
   // ==========================================
   // MR. SAYED'S CLASS BEHAVIOR TRACKER
   // VERSION 73 - WHATSAPP UPDATE
@@ -32,15 +31,14 @@
   const ADMIN_EMAIL =
     "elsayedramadan500@gmail.com";
 
-  const ADMIN_PASSWORD =
-    "Sara9112";
+  // Authentication is handled by Supabase Auth.
 
 
   // ==========================================
   // STUDENTS
   // ==========================================
 
-  const students = {
+  const seedStudents = {
 
     "7/A": [
       "AHMAD ABDULRAHIM AWADH ALZAHRANI",
@@ -93,6 +91,29 @@
 
   };
 
+
+  let students = { "7/A": [], "7/B": [] };
+  let studentRoster = [];
+  const VALID_CLASSES = ["7/A", "7/B"];
+  const CLASS_IDS = {"7/A":1,"7/B":2};
+  const CLASS_NAMES = {1:"7/A",2:"7/B"};
+  // Keep student IDs stable across name edits and class transfers.
+  const normalizeName = value => String(value || "").trim().replace(/\s+/g, " ");
+  function studentByName(name, className) {
+    return studentRoster.find(s => s.name === name && s.class_name === className && !s.archived);
+  }
+  async function refreshRoster() {
+    const { data, error } = await supabaseClient.from("students")
+      .select("id,name,class_id,active,created_at")
+      .order("created_at", {ascending:true});
+    if (error) throw error;
+    studentRoster = (data || []).map(s => ({...s, class_name: CLASS_NAMES[s.class_id], archived: !s.active}));
+    students = { "7/A": [], "7/B": [] };
+    studentRoster.filter(s => !s.archived).forEach(s => {
+      if (students[s.class_name]) students[s.class_name].push(s.name);
+    });
+    renderManagement();
+  }
 
   // ==========================================
   // BEHAVIOR OPTIONS
@@ -418,6 +439,7 @@
   // ==========================================
 
   function hideAllScreens() {
+    document.getElementById("manage-screen")?.classList.add("hidden");
 
     if (loginScreen) {
       loginScreen.classList.add("hidden");
@@ -454,7 +476,7 @@
 
     if (teacherEmail) {
       teacherEmail.textContent =
-        "Logged in as: " + ADMIN_EMAIL;
+        "Teacher: " + ADMIN_EMAIL;
     }
 
   }
@@ -477,37 +499,15 @@
   // LOGIN
   // ==========================================
 
-  function login() {
-
-    const enteredEmail =
-      emailInput.value.trim().toLowerCase();
-
-    const enteredPassword =
-      passwordInput.value.trim();
-
-    loginMessage.textContent = "";
-
-    if (
-      enteredEmail === ADMIN_EMAIL.toLowerCase() &&
-      enteredPassword === ADMIN_PASSWORD
-    ) {
-
-      sessionStorage.setItem(
-        "teacherLoggedIn",
-        "true"
-      );
-
-      passwordInput.value = "";
-
-      showDashboard();
-
-    } else {
-
-      loginMessage.textContent =
-        "Incorrect email or password.";
-
-    }
-
+  async function login() {
+    const email = emailInput.value.trim().toLowerCase();
+    const password = passwordInput.value;
+    loginMessage.textContent = "Signing in...";
+    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    passwordInput.value = "";
+    if (error) { loginMessage.textContent = "Login failed. Check your email and password."; return; }
+    try { await refreshRoster(); showDashboard(); }
+    catch (err) { loginMessage.textContent = "Could not load students. Check database setup."; await supabaseClient.auth.signOut(); showLogin(); }
   }
 
 
@@ -908,6 +908,8 @@ async function saveBehaviorRecord(
   points
 ) {
 
+  if (!studentByName(studentName, currentClass)?.id) { alert("Student not found in roster. Refresh and retry."); return; }
+
   try {
 
     const { error } =
@@ -917,6 +919,7 @@ async function saveBehaviorRecord(
           {
             student_name: studentName,
             class_name: currentClass,
+            student_id: studentByName(studentName, currentClass)?.id,
             category: category,
             action_name: actionName,
             points: points,
@@ -1019,8 +1022,7 @@ async function openStudentHistory(
         .select(
           "id, student_name, class_name, category, action_name, points, created_at, forgiven, forgiven_at"
         )
-        .eq("student_name", studentName)
-        .eq("class_name", className)
+        .eq("student_id", studentByName(studentName, className)?.id ?? -1)
         .order("created_at", {
           ascending: false
         });
@@ -1495,8 +1497,7 @@ async function loadStudentReportData(studentName, className) {
       .select(
         "id, category, action_name, points, created_at, forgiven"
       )
-      .eq("student_name", studentName)
-      .eq("class_name", className)
+      .eq("student_id", studentByName(studentName, className)?.id ?? -1)
       .eq("forgiven", false)
       .order("created_at", {
         ascending: false
@@ -1709,8 +1710,7 @@ async function openStudentReport(studentName, className) {
           .select(
             "category, action_name, points, created_at"
           )
-          .eq("student_name", studentName)
-          .eq("class_name", className)
+          .eq("student_id", studentByName(studentName, className)?.id ?? -1)
           .eq("forgiven", false)
           .order("created_at", {
             ascending: false
@@ -2328,35 +2328,15 @@ if (translateAnalysisBtn) {
 // LOGOUT
 // ==========================================
 
-function logout() {
-
-  const confirmed = confirm(
-    "Are you sure you want to log out?"
-  );
-
-  if (!confirmed) {
-    return;
-  }
-
-  sessionStorage.removeItem(
-    "teacherLoggedIn"
-  );
-
+async function logout() {
+  if (!confirm("Are you sure you want to log out?")) return;
+  await supabaseClient.auth.signOut();
   currentClass = null;
-  currentHistoryStudent = null;
-  currentAnalysisStudent = null;
-  currentAnalysisClass = null;
-
-  if (emailInput) {
-    emailInput.value = "";
-  }
-
-  if (passwordInput) {
-    passwordInput.value = "";
-  }
-
+  studentRoster = [];
+  students = {"7/A":[],"7/B":[]};
+  if (emailInput) emailInput.value = "";
+  if (passwordInput) passwordInput.value = "";
   showLogin();
-
 }
 
 
@@ -2374,27 +2354,146 @@ if (logoutBtn) {
 // APPLICATION STARTUP
 // ==========================================
 
-function initializeApplication() {
 
-  initializeClassButtons();
-
-  const isLoggedIn =
-    sessionStorage.getItem(
-      "teacherLoggedIn"
-    ) === "true";
-
-  if (isLoggedIn) {
-
-    showDashboard();
-
-  } else {
-
-    showLogin();
-
+// Student management: the roster is stored in Supabase, not in browser storage.
+const manageScreen = document.getElementById("manage-screen");
+let manageTab = "active";
+function showManage() { hideAllScreens(); manageScreen.classList.remove("hidden"); renderManagement(); }
+function renderManagement() {
+  const list = document.getElementById("manage-list");
+  if (!list) return;
+  const q = (document.getElementById("manage-search")?.value || "").toLocaleLowerCase();
+  const entries = studentRoster.filter(s => s.archived === (manageTab === "archive"))
+    .filter(s => s.name.toLocaleLowerCase().includes(q));
+  list.replaceChildren();
+  document.getElementById("manage-count").textContent = entries.length + " students";
+  entries.forEach(s => {
+    const row = document.createElement("div"); row.className = "manage-student-row";
+    const info = document.createElement("div");
+    const name = document.createElement("strong"); name.textContent = s.name;
+    const cls = document.createElement("small"); cls.textContent = "Class " + s.class_name;
+    info.append(name,cls);
+    const actions = document.createElement("div"); actions.className = "manage-actions";
+    function action(label, className, handler) {
+      const btn = document.createElement("button"); btn.type="button"; btn.textContent=label;
+      btn.className=className; btn.addEventListener("click",handler); actions.appendChild(btn);
+    }
+    if (!s.archived) {
+      action("Edit", "manage-neutral", () => manageEditStudent(s));
+      action("Transfer", "manage-neutral", () => manageTransfer(s));
+      action("Archive", "manage-warning", () => manageArchive(s));
+    } else {
+      action("Restore", "manage-success", () => manageRestore(s));
+      action("Delete Permanently", "manage-danger", () => manageDelete(s));
+    }
+    row.append(info,actions); list.appendChild(row);
+  });
+  if (!entries.length) list.textContent = "No students found.";
+}
+async function updateStudentRow(id, values) {
+  const { data, error } = await supabaseClient.from("students")
+    .update({active: !values.archived}).eq("id",id).select("id");
+  if (error) throw error;
+  if (!data?.length) throw new Error("Update was not permitted.");
+}
+async function manageAddStudent() {
+  const name = normalizeName(document.getElementById("new-student-name").value);
+  const className = document.getElementById("new-student-class").value;
+  if (!name || !VALID_CLASSES.includes(className)) { alert("Enter a valid student name and class."); return; }
+  if (studentRoster.some(s => s.name.toLocaleLowerCase() === name.toLocaleLowerCase() && s.class_name === className)) {
+    alert("This student already exists in that class, including the archive."); return;
   }
-
+  try {
+    const { error } = await supabaseClient.from("students").insert({name,class_id:CLASS_IDS[className],active:true});
+    if (error) throw error;
+    document.getElementById("new-student-name").value = "";
+    await refreshRoster(); alert("Student added successfully.");
+  } catch (e) { alert("Could not add student: " + e.message); }
+}
+async function manageEditStudent(s) {
+  if (!s) return;
+  const name = prompt("Edit student name:",s.name);
+  if (name === null) return;
+  const cleaned = normalizeName(name);
+  if (!cleaned || cleaned === s.name) return;
+  if (studentRoster.some(x => x.id !== s.id && x.class_name === s.class_name && x.name.toLocaleLowerCase() === cleaned.toLocaleLowerCase())) {
+    alert("Name already exists in this class."); return;
+  }
+  if (!confirm("Rename " + s.name + " to " + cleaned + "? The behavior history will be updated.")) return;
+  try {
+    const { error } = await supabaseClient.rpc("tracker_change_student", {p_id:s.id,p_name:cleaned,p_class:s.class_name});
+    if (error) throw error;
+    await refreshRoster(); if (currentClass === s.class_name && !classScreen.classList.contains("hidden")) openClass(currentClass);
+  } catch(e) { alert("Rename failed: " + e.message); }
+}
+async function manageTransfer(s) {
+  const target = s.class_name === "7/A" ? "7/B" : "7/A";
+  if (!confirm("Transfer " + s.name + " from " + s.class_name + " to " + target + "? Behavior history will follow.")) return;
+  try {
+    const {error} = await supabaseClient.rpc("tracker_change_student", {p_id:s.id,p_name:s.name,p_class:target});
+    if (error) throw error;
+    await refreshRoster(); alert("Student transferred to " + target + ".");
+  } catch(e) { alert("Transfer failed: " + e.message); }
+}
+async function manageArchive(s) {
+  if (!confirm("Archive " + s.name + "? Their history will be preserved.")) return;
+  try { await updateStudentRow(s.id,{archived:true}); await refreshRoster(); }
+  catch(e) { alert("Archive failed: " + e.message); }
+}
+async function manageRestore(s) {
+  const target = prompt("Restore to class (7/A or 7/B):",s.class_name);
+  if (target === null) return;
+  const cls = target.trim().toUpperCase();
+  if (!VALID_CLASSES.includes(cls)) { alert("Choose 7/A or 7/B."); return; }
+  try {
+    if (cls !== s.class_name) {
+      const {error} = await supabaseClient.rpc("tracker_change_student",{p_id:s.id,p_name:s.name,p_class:cls});
+      if (error) throw error;
+    }
+    await updateStudentRow(s.id,{archived:false}); await refreshRoster();
+  } catch(e) { alert("Restore failed: " + e.message); }
+}
+async function manageDelete(s) {
+  if (!s.archived) return;
+  if (!confirm("PERMANENTLY DELETE " + s.name + "? Only archived students with NO behavior history can be deleted. This cannot be undone.")) return;
+  const typed = prompt("Type DELETE to confirm permanent deletion:");
+  if (typed !== "DELETE") return;
+  try {
+    const {error} = await supabaseClient.rpc("tracker_delete_student",{p_id:s.id});
+    if (error) throw error;
+    await refreshRoster(); alert("Student permanently deleted.");
+  } catch(e) { alert("Delete failed: " + e.message); }
+}
+function initManagement() {
+  document.getElementById("manage-students-btn")?.addEventListener("click",showManage);
+  document.getElementById("manage-back-btn")?.addEventListener("click",showDashboard);
+  document.getElementById("add-student-btn")?.addEventListener("click",manageAddStudent);
+  document.getElementById("manage-search")?.addEventListener("input",renderManagement);
+  document.getElementById("manage-active-tab")?.addEventListener("click",()=>{manageTab="active";renderManagement();});
+  document.getElementById("manage-archive-tab")?.addEventListener("click",()=>{manageTab="archive";renderManagement();});
+}
+function initTheme() {
+  const saved = localStorage.getItem("trackerTheme") === "dark" ? "dark" : "light";
+  document.documentElement.dataset.theme = saved;
+  const btn = document.getElementById("theme-toggle-btn");
+  const sync = () => { btn.textContent = document.documentElement.dataset.theme === "dark" ? "☀️ Light Mode" : "🌙 Night Mode"; };
+  btn?.addEventListener("click",()=>{
+    const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme = next;
+    localStorage.setItem("trackerTheme",next); sync();
+  });
+  if (btn) sync();
 }
 
+async function initializeApplication() {
+  initializeClassButtons();
+  initManagement();
+  initTheme();
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if (!session) { showLogin(); return; }
+  try { await refreshRoster(); showDashboard(); }
+  catch (err) { console.error(err); showLogin(); loginMessage.textContent = "Database setup required. See SETUP.md."; }
+}
 
 // ==========================================
 // START APPLICATION
@@ -2726,56 +2825,9 @@ if (shareReportWhatsappBtn) {
 // ==========================================
 // Name overrides are stored in this browser. Behavior records are renamed
 // in Supabase so the student's existing history follows the new name.
-const STUDENT_NAME_STORAGE_KEY = "trackerStudentNameOverridesV102";
-
-function getStudentNameOverrides() {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(STUDENT_NAME_STORAGE_KEY) || "{}");
-    return parsed && typeof parsed === "object" ? parsed : {};
-  } catch (_) { return {}; }
-}
-
-function getClassStudents(className) {
-  const overrides = getStudentNameOverrides()[className] || {};
-  return (students[className] || []).map(function(originalName) {
-    return overrides[originalName] || originalName;
-  });
-}
-
+function getClassStudents(className) { return students[className] || []; }
 async function editStudentName(oldName, className) {
-  const proposed = prompt("Edit student name:", oldName);
-  if (proposed === null) return;
-  const newName = proposed.trim().replace(/\s+/g, " ");
-  if (!newName) { alert("Student name cannot be empty."); return; }
-  if (newName === oldName) return;
-  if (getClassStudents(className).some(function(name) {
-    return name.toLocaleLowerCase() === newName.toLocaleLowerCase();
-  })) { alert("This name already exists in the class."); return; }
-  if (!confirm("Change student name?\n\n" + oldName + "\n→ " + newName +
-    "\n\nThe student's existing behavior records will keep their scores and history.")) return;
-
-  try {
-    // Rename existing records first. Do not change the visible list if the update fails.
-    const result = await supabaseClient.from("behavior_records")
-      .update({ student_name: newName })
-      .eq("class_name", className).eq("student_name", oldName)
-      .select("id");
-    if (result.error) throw result.error;
-
-    const overrides = getStudentNameOverrides();
-    if (!overrides[className]) overrides[className] = {};
-    const originalName = (students[className] || []).find(function(original) {
-      return (overrides[className][original] || original) === oldName;
-    });
-    if (!originalName) throw new Error("Student not found in class list.");
-    overrides[className][originalName] = newName;
-    localStorage.setItem(STUDENT_NAME_STORAGE_KEY, JSON.stringify(overrides));
-    openClass(className);
-    alert("Student name updated. Existing behavior records remain linked.\n\nNote: The class name list is saved in this browser only.");
-  } catch (error) {
-    console.error("Student rename failed:", error);
-    alert("Could not update student name. Please check database permissions and try again.");
-  }
+  await manageEditStudent(studentByName(oldName,className));
 }
 
 function safeReportFileName(name) {
@@ -2859,3 +2911,28 @@ async function downloadClassReportsZip() {
 
 const classZipButton = document.getElementById("download-class-zip-btn");
 if (classZipButton) classZipButton.addEventListener("click", downloadClassReportsZip);
+
+// Version 105: password recovery on the deployed GitHub Pages URL.
+(function setupPasswordRecovery(){
+ const login = document.getElementById('login-screen');
+ if (!login) return;
+ const reset = document.createElement('button');
+ reset.type='button'; reset.textContent='Forgot password?'; reset.className='password-recovery-btn';
+ reset.addEventListener('click',async()=>{
+   const email=(document.getElementById('email')?.value||'').trim();
+   if(!email){ alert('Enter your email address first.'); return; }
+   const {error}=await supabaseClient.auth.resetPasswordForEmail(email,{redirectTo:'https://sedoo93.github.io/class-behavior-tracker/'});
+   alert(error ? 'Could not send reset email: '+error.message : 'If the account exists, a recovery email has been sent.');
+ });
+ login.appendChild(reset);
+ supabaseClient.auth.onAuthStateChange((event)=>{
+   if(event!=='PASSWORD_RECOVERY') return;
+   setTimeout(async()=>{
+     const pwd=prompt('Enter your NEW password (at least 12 characters):');
+     if(!pwd) return;
+     if(pwd.length<12){alert('Use at least 12 characters.');return;}
+     const {error}=await supabaseClient.auth.updateUser({password:pwd});
+     alert(error ? 'Reset failed: '+error.message : 'Password updated.');
+   },0);
+ });
+})();
